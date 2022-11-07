@@ -10,7 +10,6 @@ const FName AVillageBuilderPlayerController::TurnRightBinding("TurnRight");
 
 void AVillageBuilderPlayerController::BeginPlay()
 {
-
 	if (IsValid(InputComponent) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderPlayerController::BeginPlay IsValid(InputComponent) == false"));
@@ -40,6 +39,7 @@ void AVillageBuilderPlayerController::Tick(float DeltaTime)
 
 	UpdateMovement(DeltaTime);
 	UpdateTurnRotation();
+	UpdateRotation(DeltaTime);
 
 	
 }
@@ -50,22 +50,31 @@ void AVillageBuilderPlayerController::UpdateMovement(float DeltaTime)
 	const float MoveForwardValue = GetInputAxisValue(MoveForwardBinding);
 	const float MoveRightValue = GetInputAxisValue(MoveRightBinding);
 
-	ControlledVillager->UpdateMovement(MoveForwardValue, MoveRightValue);
+	if (MoveForwardValue!=0 || MoveRightValue!=0) {
+		ControlledVillager->UpdateMovement(MoveForwardValue, MoveRightValue);
+	}
 }
 
 void AVillageBuilderPlayerController::UpdateTurnRotation()
 {
-	float X = InputComponent->GetAxisValue("LookUp");
-	float Y = InputComponent->GetAxisValue("LookRight");
+	float X = GetInputAxisValue(TurnRightBinding);
+	float Y = GetInputAxisValue(LookUpBinding);
+
+	X *= MouseTurnRate;
+	Y *= MouseTurnRate;
 
 	/*if (InputDeviceType == EInputDeviceType::Gamepad)
 	{
 		X *= GamepadTurnRate;
 		Y *= GamepadTurnRate;
 	}*/
-	
-	ControlledVillager->TurnAtRate(X);
-	ControlledVillager->LookUpAtRate(Y);
+	if (X != 0) {
+		ControlledVillager->TurnAtRate(X);
+	}
+
+	if (Y != 0) {
+		ControlledVillager->LookUpAtRate(Y);
+	}
 	
 }
 

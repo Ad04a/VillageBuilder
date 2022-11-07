@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	float GamepadTurnRate;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
+	float MouseTurnRate = 20;
+
 public:
 
 	void Tick(float DeltaTime);

@@ -7,25 +7,42 @@
 #include "Camera/CameraComponent.h"
 #include "Villager.generated.h"
 
+UENUM(BlueprintType)
+enum ETrait {
+	Vitality      UMETA(DisplayName = "Vitality"),
+	Survivability UMETA(DisplayName = "Survivability"),
+	Agility       UMETA(DisplayName = "Agility"),
+	Strength      UMETA(DisplayName = "Strength"),
+	Dexterity     UMETA(DisplayName = "Dexterity")
+};
+
+UENUM(BlueprintType)
+enum EStat {
+	//Default UMETA(Displayname = "Default")
+	Health  UMETA(DisplayName = "Health"),
+	Energy  UMETA(DisplayName = "Energy"),
+	Hunger  UMETA(DisplayName = "Hunger"),
+	Thirst  UMETA(DisplayName = "Thirst"),
+	Speed   UMETA(DisplayName = "Speed")
+};
+
 USTRUCT(BlueprintType)
-struct FStatStruct
+struct FStatInfoStruct
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	int TicksToDecay = 72;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	int Starting = TicksToDecay/10;
 	
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Stats)
-	int Max = Starting;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	int Default = 50;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	int PerLevel = 5;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	int Max = 50;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
 	int Current = Max;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	int DepletionRate = 1;  //(DeplantionRate = Max/(Endurace * 5%Max)) --------- 100/((x/4)*(x/4)+6)
 };
 
 USTRUCT(BlueprintType)
@@ -33,11 +50,20 @@ struct FTraitInfoStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
-	int Value;
+	UPROPERTY(VisibleAnywhere)
+	int Level = 1;
 
-	UPROPERTY()
-		FString Description;
+	UPROPERTY(EditDefaultsOnly)
+	FString Description;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Level)
+	bool CanLevelUp = true;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Level)
+	int CurrentXp = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Level)
+	int NeededXpPerLevel = 10;
 };
 
 USTRUCT(BlueprintType)
@@ -46,23 +72,15 @@ struct FLoadInfoStruct
 	GENERATED_BODY()
 
 	UPROPERTY()
-	TMap<FString, FStatStruct> StatsMap;
+	TMap<TEnumAsByte<EStat>, FStatInfoStruct> StatsMap;
 
 	UPROPERTY()
-	TMap<FString, FTraitInfoStruct> TraitsMap;
+	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
 
 	UPROPERTY()
-	int CurrentLevel;
-
-	UPROPERTY()
-	int CurrentXP; 
-
-	UPROPERTY()
-	FVector Position;
+	FTransform Position;
 	/*, InWorkPlace*/
 };
-
-
 
 UCLASS()
 class VILLAGEBUILDER_API AVillager : public ACharacter
@@ -83,51 +101,23 @@ protected:
 	FLoadInfoStruct LoadInfo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Traits)
-	TMap<FString, FTraitInfoStruct> TraitsMap;
+	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
+	TMap<TEnumAsByte<EStat>, FStatInfoStruct> StatsMap;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	TMap<FString, FStatStruct> StatsMap;
-
-	TMap<FString, TSet<FString>> AdditionTraitStatRelation;
-	TMap<FString, TSet<FString>> DeplentionTraitStatRelation;
-
-	/*UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Traits)
-	int Vitality = 1; -- max health, max hunger
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Traits)
-	int Endurance = 1; -- max stamina, max thirst
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Traits)
-	int Strenght = 1; -- attk dmg
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Traits)
-	int Dexterity = 1; -- attk + craftin speed
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Traits)
-	int Atletics = 1; -- drop off stamina
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Traits)
-	int Survavabilty = 1; -- hunger i thirst dropoff*/ 
+	TMap<TEnumAsByte<EStat>, TEnumAsByte<ETrait>> StatTraitRelation;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Traits)
-	int TraitsCap = 20;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Level)
-	int LevelCap = 10;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Level)
-	int CurrentLevel = 1;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Level)
-	int CurrentXp = 0;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Level)
-	int NeededXpPerLevel = 100;
+	int TraitsCap = 50;
 
 	bool IsMovementEnabled = true;
 	bool IsRotationEnabled = true;
 
 	FRotator MovementInputRotator;
 
-	//FJobInfoStruct JobInfo;
-
-	void LevelUp();
-	void CalculateStats();
+	//FJobInfoStruct JobInfo
 
 public:	
 	AVillager();
@@ -143,7 +133,7 @@ public:
 	void Init(/*InGlobalTimeManager, InControllerType , InColonyState*/);
 	FLoadInfoStruct SaveInfo();
 	void Load(FLoadInfoStruct InLoadInfo);
-	void RecieveXP(int XPAmount);
+	void RecieveXP(ETrait, int XPAmount);
 	void AssignJob(/*(FJobInfoStruct InJobInfo)/(WorkStation)*/);
 	
 

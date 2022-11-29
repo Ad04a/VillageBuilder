@@ -22,48 +22,52 @@ void AVillager::BeginPlay()
 
 void AVillager::Init()
 {
-	TSet<FString> Stats;
+	int PossibleLevel = TraitsCap; //depending on the current colony level
+	TArray<TEnumAsByte<ETrait>> TraitList;
+	TraitsMap.GetKeys(TraitList);
+	for (TEnumAsByte<ETrait> Trait : TraitList) {
+		TraitsMap.Find(Trait)->Level = FMath::RandRange(1, PossibleLevel);
+	}
 
-	Stats.Add("Health");
-	Stats.Add("Hunger");
-	AdditionTraitStatRelation.Add(FString("Vitality"), Stats);
-	Stats.Empty();
+	TArray<TEnumAsByte<EStat>> StatList;
 
-	Stats.Add("Energy");
-	Stats.Add("Thirst");
-	AdditionTraitStatRelation.Add(FString("Endurance"), Stats);
-	Stats.Empty();
+	StatTraitRelation.GetKeys(StatList);
+	StatTraitRelation.GenerateValueArray(TraitList);
 
-	Stats.Add("Energy");
-	DeplentionTraitStatRelation.Add(FString("Agility"), Stats);
-	Stats.Empty();
+	for (int i = 0; i < StatList.Num(); i++) {
 
-	Stats.Add("Hunger");
-	Stats.Add("Thirst");
-	DeplentionTraitStatRelation.Add(FString("Survavabilty"), Stats);
-	Stats.Empty();
-	
+		FStatInfoStruct* Stat = StatsMap.Find(StatList[i]);
+		if (Stat == nullptr) {
+			UE_LOG(LogTemp, Error, TEXT("AVillager::Init IsValid(Stat) == false"));
+			return;
+		}
+		FTraitInfoStruct* Trait = TraitsMap.Find(TraitList[i]);
+		if (Trait == nullptr) {
+			UE_LOG(LogTemp, Error, TEXT("AVillager::Init IsValid(Trait) == false"));
+			return;
+		}
+		Stat->Max = Stat->Default + Trait->Level * Stat->PerLevel;
+		Stat->Current = Stat->Max;
+	}
+
+
 }
 
 void AVillager::Load(FLoadInfoStruct InLoadInfo)
 {
 	StatsMap       = InLoadInfo.StatsMap;
 	TraitsMap      = InLoadInfo.TraitsMap;
-	CurrentLevel   = InLoadInfo.CurrentLevel;
-	CurrentXp      = InLoadInfo.CurrentXP;
-	SetActorLocation(InLoadInfo.Position);
+	SetActorTransform(InLoadInfo.Position);
 }
 
 FLoadInfoStruct AVillager::SaveInfo()
 {
-	FLoadInfoStruct LoadInfo;
-	LoadInfo.StatsMap     = StatsMap;
-	LoadInfo.TraitsMap    = TraitsMap;
-	LoadInfo.CurrentLevel = CurrentLevel;
-	LoadInfo.CurrentXP    = CurrentXp;
-	LoadInfo.Position     = GetActorLocation();
+	FLoadInfoStruct SaveInfo;
+	SaveInfo.StatsMap     = StatsMap;
+	SaveInfo.TraitsMap    = TraitsMap;
+	SaveInfo.Position     = GetActorTransform();
 
-	return LoadInfo;
+	return SaveInfo;
 }
 
 void AVillager::Tick(float DeltaTime)
@@ -71,82 +75,15 @@ void AVillager::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AVillager::LevelUp()
+void AVillager::RecieveXP(ETrait, int XPAmount)
 {
-	CurrentLevel++;
-	//LevelUp 3 traits according to job info or choose 3 if Player leveled up
-	CalculateStats();
-}
 
-void AVillager::RecieveXP(int XPAmount)
-{
-	if (CurrentLevel >= LevelCap) {
-		return;
-	}
-
-	CurrentXp += XPAmount;
-
-	if (CurrentXp >= CurrentLevel * NeededXpPerLevel) {
-
-		LevelUp();
-		CurrentXp -= CurrentLevel * NeededXpPerLevel;
-	}
 
 }
 
 void AVillager::AssignJob()
 {
 }
-
-
-void AVillager::CalculateStats()
-{
-
-	for (TPair<FString, TSet<FString>> Relation : AdditionTraitStatRelation) {
-
-		FTraitInfoStruct* TraitInfo = TraitsMap.Find(Relation.Key);
-		if (TraitInfo == nullptr) {
-			UE_LOG(LogTemp, Error, TEXT("AVillager::CalculateStats Trait %s not found"), *Relation.Key);
-			return;
-		}
-		int TraitValue = TraitInfo->Value;
-
-		for (FString Stat : Relation.Value) {
-
-			FStatStruct* StatInfo = StatsMap.Find(Stat);
-			if (StatInfo == nullptr) {
-				UE_LOG(LogTemp, Error, TEXT("AVillager::CalculateStats For Trait %s Stat %s not found"), *Relation.Key, *Stat);
-				return
-			}
-			StatInfo->Max += (StatInfo->TicksToDecay - StatInfo->Starting) / (TraitValue + LevelCap-2);
-			StatInfo->Current = StatInfo->Max;
-		}
-	}
-
-	for (TPair<FString, TSet<FString>> Relation : DeplentionTraitStatRelation) {
-
-		FTraitInfoStruct* TraitInfo = TraitsMap.Find(Relation.Key);
-		if (TraitInfo == nullptr) {
-			UE_LOG(LogTemp, Error, TEXT("AVillager::CalculateStats Trait %s not found"), *Relation.Key);
-			return;
-		}
-		int TraitValue = TraitInfo->Value;
-
-		for (FString Stat : Relation.Value) {
-
-			FStatStruct* StatInfo = StatsMap.Find(Stat);
-			if (StatInfo == nullptr) {
-				UE_LOG(LogTemp, Error, TEXT("AVillager::CalculateStats For Trait %s Stat %s not found"), *Relation.Key, *Stat);
-				return
-			}
-
-			StatInfo->DepletionRate = (StatInfo->Starting) / ((TraitValue/4)*(TraitValue/4) + 4);
-		}
-	}
-
-
-}
-
 
 
 void AVillager::SetIsMovementEnabled(bool State)
@@ -190,16 +127,9 @@ void AVillager::TurnAtRate(float Rate)
 		return;
 	}
 
-	FStatStruct* EnergyStat = StatsMap.Find("Energy");
-	if (EnergyStat == nullptr) {
+	//Functionality to move slower with lower energy
 
-		UE_LOG(LogTemp, Error, TEXT("AVillager::TurnAtRate Stat 'Energy' not found"));
-		return;
-	}
-
-	float Energy = EnergyStat->Current / EnergyStat->Max;
-
-	AddControllerYawInput(Rate*Energy * World->GetDeltaSeconds());
+	AddControllerYawInput(Rate * World->GetDeltaSeconds());
 }
 
 void AVillager::LookUpAtRate(float Rate)
@@ -216,14 +146,8 @@ void AVillager::LookUpAtRate(float Rate)
 		return;
 	}
 
-	FStatStruct* EnergyStat = StatsMap.Find("Energy");
-	if (EnergyStat == nullptr) {
+	//Functionality to turn slower with lower energy
 
-		UE_LOG(LogTemp, Error, TEXT("AVillager::LookUpAtRate Stat 'Energy' not found"));
-		return;
-	}
-
-	float Energy  = EnergyStat->Current / EnergyStat->Max;
 
 	AddControllerPitchInput(Rate *Energy * World->GetDeltaSeconds());
 	

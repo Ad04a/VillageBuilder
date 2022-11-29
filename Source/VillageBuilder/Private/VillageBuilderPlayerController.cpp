@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Villager.h"
 #include "VillageBuilderPlayerController.h"
+#include "Villager.h"
 
 const FName AVillageBuilderPlayerController::MoveForwardBinding("MoveForward");
 const FName AVillageBuilderPlayerController::MoveRightBinding("MoveRight");
@@ -16,12 +16,7 @@ void AVillageBuilderPlayerController::BeginPlay()
 		return;
 	}
 
-	ControlledVillager = Cast<AVillager>(GetCharacter());
-
-	if (IsValid(ControlledVillager) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderPlayerController::BeginPlay IsValid(ControlledVillager) == false"));
-		return;
-	}
+	
 
 
 	//InputComponent->BindAction("PrimaryAction", IE_Pressed, ControlledCharacter, &ATestFPCharacter::OnPrimaryAction);
@@ -31,6 +26,17 @@ void AVillageBuilderPlayerController::BeginPlay()
 
 	InputComponent->BindAxis(TurnRightBinding);
 	InputComponent->BindAxis(LookUpBinding);
+}
+
+void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
+	Super::OnPossess(InPawn);
+
+	ControlledVillager = Cast<AVillager>(GetCharacter());
+
+	if (IsValid(ControlledVillager) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderPlayerController::BeginPlay IsValid(ControlledVillager) == false"));
+		return;
+	}
 }
 
 void AVillageBuilderPlayerController::Tick(float DeltaTime)

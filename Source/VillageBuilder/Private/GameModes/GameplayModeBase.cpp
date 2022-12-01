@@ -1,11 +1,11 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 
-#include "VillageBuilderGameModeBase.h"
+#include "GameModes/GameplayModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "VillageBuilderPlayerController.h"
 
-void AVillageBuilderGameModeBase::StartPlay() {
+void AGameplayModeBase::StartPlay() {
 
 	Super::StartPlay();
 	

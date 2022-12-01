@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "Villager.h"
+#include "Characters/Villager.h"
 #include "VillageBuilderPlayerController.generated.h"
 
 /**

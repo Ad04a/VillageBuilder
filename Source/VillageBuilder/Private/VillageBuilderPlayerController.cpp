@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "VillageBuilderPlayerController.h"
-#include "Villager.h"
+#include "UI/HUDS/GameplayHUDBase.h"
 
 const FName AVillageBuilderPlayerController::MoveForwardBinding("MoveForward");
 const FName AVillageBuilderPlayerController::MoveRightBinding("MoveRight");
@@ -16,9 +16,6 @@ void AVillageBuilderPlayerController::BeginPlay()
 		return;
 	}
 
-	
-
-
 	//InputComponent->BindAction("PrimaryAction", IE_Pressed, ControlledCharacter, &ATestFPCharacter::OnPrimaryAction);
 
 	InputComponent->BindAxis(MoveForwardBinding);
@@ -32,11 +29,18 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	Super::OnPossess(InPawn);
 
 	ControlledVillager = Cast<AVillager>(GetCharacter());
-
 	if (IsValid(ControlledVillager) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderPlayerController::BeginPlay IsValid(ControlledVillager) == false"));
+		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderPlayerController::OnPossess IsValid(ControlledVillager) == false"));
 		return;
 	}
+
+	AGameplayHUDBase* HUD = Cast<AGameplayHUDBase>(GetHUD());
+	if (IsValid(HUD) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderPlayerController::OnPossess IsValid(HUD) == false"));
+		return;
+	}
+
+	HUD->BindPlayerToStatWidget(ControlledVillager);
 }
 
 void AVillageBuilderPlayerController::Tick(float DeltaTime)

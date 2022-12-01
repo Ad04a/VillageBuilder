@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Villager.h"
-#include "VillageBuilderGameModeBase.generated.h"
+#include "Characters/Villager.h"
+#include "GameplayModeBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VILLAGEBUILDER_API AVillageBuilderGameModeBase : public AGameModeBase
+class VILLAGEBUILDER_API AGameplayModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	

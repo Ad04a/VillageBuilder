@@ -7,6 +7,8 @@
 #include "Camera/CameraComponent.h"
 #include "Villager.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStatUpdatedSignature, float, Percent);
+
 UENUM(BlueprintType)
 enum ETrait {
 	Vitality      UMETA(DisplayName = "Vitality"),
@@ -42,6 +44,9 @@ struct FStatInfoStruct
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
 	int Current = Max;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	int ChangeValue = 1;
 
 };
 
@@ -88,7 +93,7 @@ class VILLAGEBUILDER_API AVillager : public ACharacter
 	GENERATED_BODY()
 
 private:
-	
+	float StatDepletion = 0;
 
 protected:
 	// Called when the game starts or when spawned
@@ -112,6 +117,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Traits)
 	int TraitsCap = 50;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Traits)
+	float StatDepletionInterval = 1;
+
 	bool IsMovementEnabled = true;
 	bool IsRotationEnabled = true;
 
@@ -120,6 +128,12 @@ protected:
 	//FJobInfoStruct JobInfo
 
 public:	
+
+	FStatUpdatedSignature OnHungerUpdated;
+	FStatUpdatedSignature OnThirstUpdated;
+	FStatUpdatedSignature OnEnergyUpdated;
+	FStatUpdatedSignature OnHealthUpdated;
+
 	AVillager();
 	virtual void Tick(float DeltaTime) override;
 
@@ -135,6 +149,10 @@ public:
 	void Load(FLoadInfoStruct InLoadInfo);
 	void RecieveXP(ETrait, int XPAmount);
 	void AssignJob(/*(FJobInfoStruct InJobInfo)/(WorkStation)*/);
+
+	void AcknowledgeStatWidgetBinding();
+
+	void SetStat(EStat StatName, int InValue, FStatUpdatedSignature DelegateToUpdate);
 	
 
 };

@@ -34,19 +34,19 @@ struct FStatInfoStruct
 	GENERATED_BODY()
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	int Default = 50;
+	float Default = 50;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	int PerLevel = 5;
+	float PerLevel = 5;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-	int Max = 50;
+	float Max = 50;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-	int Current = Max;
+	float Current = Max;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	int ChangeValue = 1;
+	float ChangeValue = 1;
 
 };
 
@@ -95,6 +95,10 @@ class VILLAGEBUILDER_API AVillager : public ACharacter
 private:
 	float StatDepletion = 0;
 
+	FStatUpdatedSignature* GetDelegateToUpdate(EStat StatName);
+
+	void Die();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -117,8 +121,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Traits)
 	int TraitsCap = 50;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Traits)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float StatDepletionInterval = 1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float SaturationForPassiveHealing = 0.5;
 
 	bool IsMovementEnabled = true;
 	bool IsRotationEnabled = true;
@@ -152,7 +159,6 @@ public:
 
 	void AcknowledgeStatWidgetBinding();
 
-	void SetStat(EStat StatName, int InValue, FStatUpdatedSignature DelegateToUpdate);
-	
+	void AddStatValue(EStat StatName, float InValue);
 
 };

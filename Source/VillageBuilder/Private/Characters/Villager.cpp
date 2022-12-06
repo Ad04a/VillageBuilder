@@ -84,24 +84,52 @@ void AVillager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	int Hunger, Thirst, Energy = 0;
+
+	FStatInfoStruct* Health = StatsMap.Find(EStat::Health);
+	if (Health->Current == 0) {
+		Die();
+	}
+
 
 	StatDepletion += DeltaTime;
 	if (StatDepletion >= StatDepletionInterval) {
 
-		Hunger = StatsMap.Find(EStat::Hunger)->Current;
-		SetStat(EStat::Hunger, Hunger + StatsMap.Find(EStat::Hunger)->ChangeValue, OnHungerUpdated);
+		FStatInfoStruct* Thirst = StatsMap.Find(EStat::Thirst);
+		AddStatValue(EStat::Thirst, Thirst->ChangeValue);
 
-		Thirst = StatsMap.Find(EStat::Thirst)->Current;
-		SetStat(EStat::Thirst, Thirst + StatsMap.Find(EStat::Thirst)->ChangeValue, OnThirstUpdated);
+		if (Thirst->Current == 0) {
+			AddStatValue(EStat::Health, Health->Max * -0.05);
+		}
 
-		Energy = StatsMap.Find(EStat::Energy)->Current;
-		SetStat(EStat::Energy, Energy + StatsMap.Find(EStat::Energy)->ChangeValue, OnEnergyUpdated);
+		FStatInfoStruct* Hunger = StatsMap.Find(EStat::Hunger);
+		AddStatValue(EStat::Hunger, Hunger->ChangeValue);
+
+		if (Hunger->Current == 0) {
+			AddStatValue(EStat::Health, Health->Max * -0.02);
+		}
+
+		FStatInfoStruct* Energy = StatsMap.Find(EStat::Energy);
+		AddStatValue(EStat::Energy, Energy->ChangeValue);
+
+		if (Energy->Current == 0) {
+			AddStatValue(EStat::Health, Health->Max * -0.01);
+		}
+
+		if (Hunger->Current > Hunger->Max * SaturationForPassiveHealing && Thirst->Current > Thirst->Max * SaturationForPassiveHealing) {
+
+			AddStatValue(EStat::Health, Health->ChangeValue);
+		}
 
 		StatDepletion = 0;
 	}
 
 	 
+
+}
+
+void AVillager::Die()
+{
+
 
 }
 
@@ -117,12 +145,14 @@ void AVillager::AssignJob()
 
 void AVillager::AcknowledgeStatWidgetBinding()
 {
-	SetStat(EStat::Hunger, StatsMap.Find(EStat::Hunger)->Current, OnHungerUpdated);
-	SetStat(EStat::Energy, StatsMap.Find(EStat::Energy)->Current, OnEnergyUpdated);
-	SetStat(EStat::Thirst, StatsMap.Find(EStat::Thirst)->Current, OnThirstUpdated);
-	SetStat(EStat::Health, StatsMap.Find(EStat::Health)->Current, OnHealthUpdated);
+	AddStatValue(EStat::Hunger, 0);
+	AddStatValue(EStat::Energy, 0);
+	AddStatValue(EStat::Thirst, 0);
+	AddStatValue(EStat::Health, 0);
 
 }
+
+
 
 
 void AVillager::SetIsMovementEnabled(bool State)
@@ -192,29 +222,41 @@ void AVillager::LookUpAtRate(float Rate)
 	
 }
 
-void AVillager::SetStat(EStat StatName, int InValue, FStatUpdatedSignature DelegateToUpdate) 
+void AVillager::AddStatValue(EStat StatName, float InValue)
 {
 
 	FStatInfoStruct* Stat = StatsMap.Find(StatName);
 	if (Stat == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("AVillager::Init::InitStats IsValid(Stat) == false"));
+		UE_LOG(LogTemp, Error, TEXT("AVillager::AddStatValue IsValid(Stat) == false"));
 		return;
 	}
-	if (InValue < 0)
-	{
-		Stat->Current = FMath::Max(InValue, 0);
-	}
-	else if(InValue > Stat->Max)
-	{
-		Stat->Current = FMath::Max(InValue, Stat->Max);
-	}
-	else
-	{
-		Stat->Current = InValue;
-	}
+	
+	Stat->Current = FMath::Clamp(Stat->Current+InValue, 0, Stat->Max);
 
-	float Current = Stat->Current;
-	float Max = Stat->Max;
-	DelegateToUpdate.Broadcast(Current / Max);
+	FStatUpdatedSignature* DelegateToUpdate = GetDelegateToUpdate(StatName);
+	if (DelegateToUpdate == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("AVillager::AddStatValue IsValid(DelegateToUpdate) == false"));
+		return;
+	}
+	DelegateToUpdate->Broadcast(Stat->Current / Stat->Max);
 }
 
+FStatUpdatedSignature* AVillager::GetDelegateToUpdate(EStat StatName)
+{
+	switch (StatName)
+	{
+		case EStat::Energy :
+			return &OnEnergyUpdated;
+
+		case EStat::Health :
+			return &OnHealthUpdated;
+
+		case EStat::Hunger :
+			return &OnHungerUpdated;
+
+		case EStat::Thirst :
+			return &OnThirstUpdated;
+
+		default: return nullptr;
+	}
+}

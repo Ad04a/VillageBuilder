@@ -7,26 +7,22 @@ const FName AVillageBuilderPlayerController::MoveForwardBinding("MoveForward");
 const FName AVillageBuilderPlayerController::MoveRightBinding("MoveRight");
 const FName AVillageBuilderPlayerController::LookUpBinding("LookUp");
 const FName AVillageBuilderPlayerController::TurnRightBinding("TurnRight");
+const FName AVillageBuilderPlayerController::InteractBinding("Interact");
+
 
 void AVillageBuilderPlayerController::BeginPlay()
 {
+	
+}
+
+void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
+	Super::OnPossess(InPawn);
+
 	if (IsValid(InputComponent) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderPlayerController::BeginPlay IsValid(InputComponent) == false"));
 		return;
 	}
-
-	//InputComponent->BindAction("PrimaryAction", IE_Pressed, ControlledCharacter, &ATestFPCharacter::OnPrimaryAction);
-
-	InputComponent->BindAxis(MoveForwardBinding);
-	InputComponent->BindAxis(MoveRightBinding);
-
-	InputComponent->BindAxis(TurnRightBinding);
-	InputComponent->BindAxis(LookUpBinding);
-}
-
-void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
-	Super::OnPossess(InPawn);
 
 	ControlledVillager = Cast<AVillager>(GetCharacter());
 	if (IsValid(ControlledVillager) == false) {
@@ -40,7 +36,16 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 		return;
 	}
 
+	InputComponent->BindAxis(MoveForwardBinding);
+	InputComponent->BindAxis(MoveRightBinding);
+
+	InputComponent->BindAxis(TurnRightBinding);
+	InputComponent->BindAxis(LookUpBinding);
+
+	InputComponent->BindAction(InteractBinding, IE_Pressed, ControlledVillager, &AVillager::Interact);
+
 	HUD->BindPlayerToStatWidget(ControlledVillager);
+	ControlledVillager->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);
 }
 
 void AVillageBuilderPlayerController::Tick(float DeltaTime)

@@ -84,6 +84,7 @@ void AVillager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	CheckForInteractables();
 
 	FStatInfoStruct* Health = StatsMap.Find(EStat::Health);
 	if (Health->Current == 0) {
@@ -131,6 +132,57 @@ void AVillager::Die()
 {
 
 
+}
+
+void AVillager::Interact()
+{
+	if (FocusedActor != nullptr)
+	{
+		Cast<IInteractable>(FocusedActor)->Execute_InteractRequest(FocusedActor, this);
+	}
+}
+
+void AVillager::CheckForInteractables()
+{
+	FVector StartTrace = CameraComponent->GetComponentLocation();
+	FVector EndTrace = CameraComponent->GetForwardVector() * Reach + StartTrace;
+	
+	const FName TraceTag("MyTraceTag");
+
+	
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillager::CheckForInteractables IsValid(World) == false"));
+		return;
+	}
+	World->DebugDrawTraceTag = TraceTag;
+
+	FHitResult HitResult; 
+	FCollisionQueryParams CQP;
+	CQP.AddIgnoredActor(this);
+	CQP.TraceTag = TraceTag;
+	
+	
+	World->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldDynamic, CQP);
+
+	IInteractable* InteractableObject = Cast<IInteractable>(HitResult.GetActor());
+
+	
+
+	if (InteractableObject == nullptr && FocusedActor != nullptr)
+	{
+		FocusedActor = nullptr;
+		OnInteraction.Broadcast(FText());
+		return;
+	}
+	if (Cast<IInteractable>(FocusedActor) != InteractableObject) 
+	{
+		FocusedActor = HitResult.GetActor();
+		OnInteraction.Broadcast(Cast<IInteractable>(FocusedActor)->Execute_DisplayInteractText(FocusedActor));
+	}
+	
+	
 }
 
 void AVillager::RecieveXP(ETrait, int XPAmount)

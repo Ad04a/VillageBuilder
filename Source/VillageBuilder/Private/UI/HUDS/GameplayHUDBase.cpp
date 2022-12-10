@@ -29,6 +29,13 @@ void AGameplayHUDBase::BeginPlay()
 		return;
 	}
 
+	InteractionWidget = Cast<UInteractionWidgetBase>(CreateWidget<UUserWidget>(World, InteractionWidgetClass));
+	if (IsValid(InteractionWidget) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(InteractionWidget) == false"));
+		return;
+	}
+	OnInteraction.AddDynamic(InteractionWidget, &UInteractionWidgetBase::UpdateInteractionText);
+
 	ShowStats();
 }
 
@@ -38,6 +45,24 @@ void AGameplayHUDBase::ShowStats()
 
 	if (PlayerOwner && StatWidget) {
 		StatWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = false;
+		PlayerOwner->SetInputMode(FInputModeGameOnly());
+	}
+}
+
+void AGameplayHUDBase::ShowInteraction(FText ActionText)
+{
+	
+	if (FText().EqualTo(ActionText)) {
+		ShowStats();
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::NoInteration"));
+		return;
+	}
+	UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::Interacted"));
+	OnInteraction.Broadcast(ActionText);
+
+	if (PlayerOwner && InteractionWidget) {
+		InteractionWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = false;
 		PlayerOwner->SetInputMode(FInputModeGameOnly());
 	}

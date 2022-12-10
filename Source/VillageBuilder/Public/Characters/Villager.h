@@ -5,9 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
+#include "InteractableObjects/Interactable.h"
 #include "Villager.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStatUpdatedSignature, float, Percent);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractingSignature, FText, ActionText);
 
 UENUM(BlueprintType)
 enum ETrait {
@@ -99,6 +101,10 @@ private:
 
 	void Die();
 
+	void CheckForInteractables();
+
+	AActor* FocusedActor;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -127,6 +133,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float SaturationForPassiveHealing = 0.5;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Inventory)
+	float Reach = 1;
+
 	bool IsMovementEnabled = true;
 	bool IsRotationEnabled = true;
 
@@ -140,6 +149,7 @@ public:
 	FStatUpdatedSignature OnThirstUpdated;
 	FStatUpdatedSignature OnEnergyUpdated;
 	FStatUpdatedSignature OnHealthUpdated;
+	FInteractingSignature OnInteraction;
 
 	AVillager();
 	virtual void Tick(float DeltaTime) override;
@@ -161,4 +171,6 @@ public:
 
 	void AddStatValue(EStat StatName, float InValue);
 
+	UFUNCTION()
+	void Interact();
 };

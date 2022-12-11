@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
+#include "Headers/StatAndTraitEnums.h"
 #include "StatWidgetBase.generated.h"
 
 /**
@@ -28,16 +29,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UProgressBar* HealthBar;
 
+	TMap<TEnumAsByte<EStat>, UProgressBar*> StatMap;
+
 public:
 	UFUNCTION()
-	void SetHunger(float HungerPercent);
-				  
-	UFUNCTION()	   
-	void SetThirst(float ThirstPercent);
-				   
-	UFUNCTION()	   
-	void SetEnergy(float EnergyPercent);
-				   
-	UFUNCTION()	   
-	void SetHealth(float HealthPercent);
+	void SetStat(EStat StatName, float Current, float Max);
+
+	void NativeOnInitialized();
 };

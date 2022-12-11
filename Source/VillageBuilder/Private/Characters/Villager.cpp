@@ -134,9 +134,26 @@ void AVillager::Die()
 
 }
 
+void AVillager::ShowTraitMenu()
+{
+	if (IsInteracting == false)
+	{
+		ToggleTraitsMenu(this);
+		CanInteract = !CanInteract;
+	}
+	
+}
+
+void AVillager::ToggleTraitsMenu(AVillager* Caller) {
+	
+	OnToggleTraitsMenu.Broadcast(Caller);
+	IsMovementEnabled = !IsMovementEnabled;
+	IsRotationEnabled = !IsRotationEnabled;
+}
+
 void AVillager::Interact()
 {
-	if (FocusedActor != nullptr)
+	if (FocusedActor != nullptr && CanInteract == true)
 	{
 		Cast<IInteractable>(FocusedActor)->Execute_InteractRequest(FocusedActor, this);
 	}
@@ -195,26 +212,13 @@ void AVillager::AssignJob()
 {
 }
 
-void AVillager::AcknowledgeStatWidgetBinding()
+void AVillager::AcknowledgeWidgetBinding()
 {
 	AddStatValue(EStat::Hunger, 0);
 	AddStatValue(EStat::Energy, 0);
 	AddStatValue(EStat::Thirst, 0);
 	AddStatValue(EStat::Health, 0);
 
-}
-
-
-
-
-void AVillager::SetIsMovementEnabled(bool State)
-{
-	IsMovementEnabled = State;
-}
-
-void AVillager::SetIsRotationEnabled(bool State)
-{
-	IsRotationEnabled = State;
 }
 
 void AVillager::UpdateMovement(float MoveForwardValue, float MoveRightValue)
@@ -276,7 +280,6 @@ void AVillager::LookUpAtRate(float Rate)
 
 void AVillager::AddStatValue(EStat StatName, float InValue)
 {
-
 	FStatInfoStruct* Stat = StatsMap.Find(StatName);
 	if (Stat == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("AVillager::AddStatValue IsValid(Stat) == false"));
@@ -285,30 +288,27 @@ void AVillager::AddStatValue(EStat StatName, float InValue)
 	
 	Stat->Current = FMath::Clamp(Stat->Current+InValue, 0, Stat->Max);
 
-	FStatUpdatedSignature* DelegateToUpdate = GetDelegateToUpdate(StatName);
-	if (DelegateToUpdate == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("AVillager::AddStatValue IsValid(DelegateToUpdate) == false"));
-		return;
-	}
-	DelegateToUpdate->Broadcast(Stat->Current / Stat->Max);
+	OnStatUpdated.Broadcast(StatName,Stat->Current, Stat->Max);
 }
 
-FStatUpdatedSignature* AVillager::GetDelegateToUpdate(EStat StatName)
+int AVillager::GetTrait(ETrait TraitName)
 {
-	switch (StatName)
-	{
-		case EStat::Energy :
-			return &OnEnergyUpdated;
-
-		case EStat::Health :
-			return &OnHealthUpdated;
-
-		case EStat::Hunger :
-			return &OnHungerUpdated;
-
-		case EStat::Thirst :
-			return &OnThirstUpdated;
-
-		default: return nullptr;
+	FTraitInfoStruct* Trait = TraitsMap.Find(TraitName);
+	if (Trait == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("AVillager::GetTrait IsValid(Trait) == false"));
+		return 0;
 	}
+
+	return Trait->Level;
+}
+
+void AVillager::InteractRequest_Implementation(class AVillager* InteractingVillager)
+{
+	InteractingVillager->ToggleTraitsMenu(this);
+	InteractingVillager->IsInteracting = !InteractingVillager->IsInteracting;
+}
+
+FText AVillager::DisplayInteractText_Implementation()
+{
+	return FText::FromString( "Talk with Villager" );//Add name variable
 }

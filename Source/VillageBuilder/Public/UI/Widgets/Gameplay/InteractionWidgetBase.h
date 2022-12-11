@@ -19,8 +19,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* InteractionText;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* InteractionKey;
+
 public:
 	UFUNCTION()
 	void UpdateInteractionText(FText ActionText);
 
+	UFUNCTION()
+	void UpdateInteractionKey(FText ActionKeyName);
 };

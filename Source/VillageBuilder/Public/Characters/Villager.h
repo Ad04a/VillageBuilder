@@ -6,98 +6,23 @@
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "InteractableObjects/Interactable.h"
+#include "Headers/StatAndTraitStructure.h"
 #include "Villager.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FStatUpdatedSignature, float, Percent);
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FStatUpdatedSignature, EStat, StatName, float, Current, float, Max);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTraitMenuSignature, AVillager*, Caller);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractingSignature, FText, ActionText);
 
-UENUM(BlueprintType)
-enum ETrait {
-	Vitality      UMETA(DisplayName = "Vitality"),
-	Survivability UMETA(DisplayName = "Survivability"),
-	Agility       UMETA(DisplayName = "Agility"),
-	Strength      UMETA(DisplayName = "Strength"),
-	Dexterity     UMETA(DisplayName = "Dexterity")
-};
-
-UENUM(BlueprintType)
-enum EStat {
-	//Default UMETA(Displayname = "Default")
-	Health  UMETA(DisplayName = "Health"),
-	Energy  UMETA(DisplayName = "Energy"),
-	Hunger  UMETA(DisplayName = "Hunger"),
-	Thirst  UMETA(DisplayName = "Thirst"),
-	Speed   UMETA(DisplayName = "Speed")
-};
-
-USTRUCT(BlueprintType)
-struct FStatInfoStruct
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	float Default = 50;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	float PerLevel = 5;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-	float Max = 50;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
-	float Current = Max;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	float ChangeValue = 1;
-
-};
-
-USTRUCT(BlueprintType)
-struct FTraitInfoStruct
-{
-	GENERATED_BODY()
-
-	UPROPERTY(VisibleAnywhere)
-	int Level = 1;
-
-	UPROPERTY(EditDefaultsOnly)
-	FString Description;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Level)
-	bool CanLevelUp = true;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Level)
-	int CurrentXp = 0;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Level)
-	int NeededXpPerLevel = 10;
-};
-
-USTRUCT(BlueprintType)
-struct FLoadInfoStruct
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	TMap<TEnumAsByte<EStat>, FStatInfoStruct> StatsMap;
-
-	UPROPERTY()
-	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
-
-	UPROPERTY()
-	FTransform Position;
-	/*, InWorkPlace*/
-};
 
 UCLASS()
-class VILLAGEBUILDER_API AVillager : public ACharacter
+class VILLAGEBUILDER_API AVillager : public ACharacter, public IInteractable
 {
 	GENERATED_BODY()
 
 private:
 	float StatDepletion = 0;
-
-	FStatUpdatedSignature* GetDelegateToUpdate(EStat StatName);
 
 	void Die();
 
@@ -136,8 +61,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Inventory)
 	float Reach = 1;
 
-	bool IsMovementEnabled = true;
-	bool IsRotationEnabled = true;
+	
 
 	FRotator MovementInputRotator;
 
@@ -145,11 +69,9 @@ protected:
 
 public:	
 
-	FStatUpdatedSignature OnHungerUpdated;
-	FStatUpdatedSignature OnThirstUpdated;
-	FStatUpdatedSignature OnEnergyUpdated;
-	FStatUpdatedSignature OnHealthUpdated;
+	FStatUpdatedSignature OnStatUpdated;
 	FInteractingSignature OnInteraction;
+	FTraitMenuSignature OnToggleTraitsMenu;
 
 	AVillager();
 	virtual void Tick(float DeltaTime) override;
@@ -158,8 +80,10 @@ public:
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
 
-	void SetIsMovementEnabled(bool State);
-	void SetIsRotationEnabled(bool State);
+	bool IsMovementEnabled = true;
+	bool IsRotationEnabled = true;
+	bool IsInteracting = false;
+	bool CanInteract = true;
 
 	void Init(/*InGlobalTimeManager, InControllerType , InColonyState*/);
 	FLoadInfoStruct SaveInfo();
@@ -167,10 +91,26 @@ public:
 	void RecieveXP(ETrait, int XPAmount);
 	void AssignJob(/*(FJobInfoStruct InJobInfo)/(WorkStation)*/);
 
-	void AcknowledgeStatWidgetBinding();
+	void AcknowledgeWidgetBinding();
 
 	void AddStatValue(EStat StatName, float InValue);
 
+	int GetTrait(ETrait TraitName);
+
+	UFUNCTION()
+	void ShowTraitMenu();
+
+	UFUNCTION()
+	void ToggleTraitsMenu(AVillager* Caller);
+
 	UFUNCTION()
 	void Interact();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
+	void InteractRequest(class AVillager* InteractingVillager);
+	virtual void InteractRequest_Implementation(class AVillager* InteractingVillager);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
+	FText DisplayInteractText();
+	virtual FText DisplayInteractText_Implementation();
 };

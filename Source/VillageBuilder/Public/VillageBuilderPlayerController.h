@@ -33,6 +33,8 @@ protected:
 	static const FName LookUpBinding;
 	static const FName TurnRightBinding;
 	static const FName InteractBinding;
+	static const FName TraitsMenuBinding;
+	
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	float GamepadTurnRate;

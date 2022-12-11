@@ -8,7 +8,7 @@ const FName AVillageBuilderPlayerController::MoveRightBinding("MoveRight");
 const FName AVillageBuilderPlayerController::LookUpBinding("LookUp");
 const FName AVillageBuilderPlayerController::TurnRightBinding("TurnRight");
 const FName AVillageBuilderPlayerController::InteractBinding("Interact");
-
+const FName AVillageBuilderPlayerController::TraitsMenuBinding("TraitsMenu");
 
 void AVillageBuilderPlayerController::BeginPlay()
 {
@@ -43,9 +43,11 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	InputComponent->BindAxis(LookUpBinding);
 
 	InputComponent->BindAction(InteractBinding, IE_Pressed, ControlledVillager, &AVillager::Interact);
+	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, ControlledVillager, &AVillager::ShowTraitMenu);
 
 	HUD->BindPlayerToStatWidget(ControlledVillager);
 	ControlledVillager->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);
+	ControlledVillager->OnToggleTraitsMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowTraitMenu);
 }
 
 void AVillageBuilderPlayerController::Tick(float DeltaTime)

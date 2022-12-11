@@ -21,4 +21,5 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "GameStart")
 	TSubclassOf<AVillager> PawnClass;
 
+
 };

@@ -3,25 +3,19 @@
 
 #include "UI/Widgets/Gameplay/StatWidgetBase.h"
 
-void UStatWidgetBase::SetHunger(float HungerPercent)
+void UStatWidgetBase::SetStat(EStat StatName, float Current, float Max)
 {
-	HungerBar->SetPercent(HungerPercent);
+	UProgressBar** ProgressBar = StatMap.Find(StatName);
+	if (ProgressBar == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("UStatWidgetBase::SetStat IsValid(Stat) == false"));
+		return;
+	}
+	(*ProgressBar)->SetPercent(Current/Max);
 }
 
-
-void UStatWidgetBase::SetThirst(float ThirstPercent)
-{
-	ThirstBar->SetPercent(ThirstPercent);
-}
-
-
-void UStatWidgetBase::SetEnergy(float EnergyPercent)
-{
-	EnergyBar->SetPercent(EnergyPercent);
-}
-
-
-void UStatWidgetBase::SetHealth(float HealthPercent)
-{
-	HealthBar->SetPercent(HealthPercent);
+void UStatWidgetBase::NativeOnInitialized() {
+	StatMap.Add(EStat::Hunger, HungerBar);
+	StatMap.Add(EStat::Energy, EnergyBar);
+	StatMap.Add(EStat::Health, HealthBar);
+	StatMap.Add(EStat::Thirst, ThirstBar);
 }

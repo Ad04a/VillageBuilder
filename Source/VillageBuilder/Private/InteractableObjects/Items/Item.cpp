@@ -28,6 +28,6 @@ void AItem::InteractRequest_Implementation(class AVillager* InteractingVillager)
 
 FText AItem::DisplayInteractText_Implementation()
 {
-	return FText::FromString(InteractAction.ToString() + " " + DisplayName.ToString());
+	return FText::FromString( "Pick up " + DisplayName.ToString());
 }
 

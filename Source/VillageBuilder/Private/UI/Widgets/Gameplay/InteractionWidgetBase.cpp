@@ -7,3 +7,8 @@
 void UInteractionWidgetBase::UpdateInteractionText(FText ActionText) {
 	InteractionText->SetText(ActionText);
 }
+
+void UInteractionWidgetBase::UpdateInteractionKey(FText ActionKeyName)
+{
+	InteractionKey->SetText(ActionKeyName);
+}

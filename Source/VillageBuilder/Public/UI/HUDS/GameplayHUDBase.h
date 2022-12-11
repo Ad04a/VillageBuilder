@@ -6,16 +6,20 @@
 #include "GameFramework/HUD.h"
 #include "UI/Widgets/Gameplay/StatWidgetBase.h"
 #include "UI/Widgets/Gameplay/InteractionWidgetBase.h"
+#include "UI/Widgets/Gameplay/TraitMenuWidgetBase.h"
+#include "Headers/StatAndTraitEnums.h"
 #include "GameplayHUDBase.generated.h"
 
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractingBroadcastetSignature, FText, ActionText);
 
 UCLASS()
 class VILLAGEBUILDER_API AGameplayHUDBase : public AHUD
 {
 	GENERATED_BODY()
-	
+
+private:
+	UFUNCTION()
+	void BindVillagerToTraitMenuWidget(AVillager* Villager);
+
 protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UStatWidgetBase> StatWidgetClass;
@@ -29,7 +33,11 @@ protected:
 	UPROPERTY()
 	class UInteractionWidgetBase* InteractionWidget;
 
-	FInteractingBroadcastetSignature OnInteraction;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UTraitMenuWidgetBase> TraitMenuWidgetClass;
+
+	UPROPERTY()
+	class UTraitMenuWidgetBase* TraitMenuWidget;
 
 	virtual void BeginPlay()override;
 
@@ -44,4 +52,7 @@ public:
 
 	UFUNCTION()
 	void BindPlayerToStatWidget(AVillager* Player);
+
+	UFUNCTION()
+	void ShowTraitMenu(AVillager* Caller);
 };

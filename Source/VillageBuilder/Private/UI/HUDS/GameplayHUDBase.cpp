@@ -34,15 +34,18 @@ void AGameplayHUDBase::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(InteractionWidget) == false"));
 		return;
 	}
-	OnInteraction.AddDynamic(InteractionWidget, &UInteractionWidgetBase::UpdateInteractionText);
+
+	TraitMenuWidget = Cast<UTraitMenuWidgetBase>(CreateWidget<UUserWidget>(World, TraitMenuWidgetClass));
+	if (IsValid(TraitMenuWidget) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(InteractionWidget) == false"));
+		return;
+	}
 
 	ShowStats();
 }
 
 void AGameplayHUDBase::ShowStats()
 {
-	Clear();
-
 	if (PlayerOwner && StatWidget) {
 		StatWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = false;
@@ -54,14 +57,13 @@ void AGameplayHUDBase::ShowInteraction(FText ActionText)
 {
 	
 	if (FText().EqualTo(ActionText)) {
-		ShowStats();
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::NoInteration"));
+		InteractionWidget->RemoveFromViewport();
 		return;
 	}
-	UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::Interacted"));
-	OnInteraction.Broadcast(ActionText);
+	
+	InteractionWidget->UpdateInteractionText(ActionText);
 
-	if (PlayerOwner && InteractionWidget) {
+	if (PlayerOwner && InteractionWidget && InteractionWidget->GetIsVisible()==false) {
 		InteractionWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = false;
 		PlayerOwner->SetInputMode(FInputModeGameOnly());
@@ -70,12 +72,42 @@ void AGameplayHUDBase::ShowInteraction(FText ActionText)
 
 void AGameplayHUDBase::BindPlayerToStatWidget(AVillager* Player)
 {
-	Player->OnHungerUpdated.AddDynamic(StatWidget, &UStatWidgetBase::SetHunger);
-	Player->OnThirstUpdated.AddDynamic(StatWidget, &UStatWidgetBase::SetThirst);
-	Player->OnEnergyUpdated.AddDynamic(StatWidget, &UStatWidgetBase::SetEnergy);
-	Player->OnHealthUpdated.AddDynamic(StatWidget, &UStatWidgetBase::SetHealth);
+	Player->OnStatUpdated.AddDynamic(StatWidget, &UStatWidgetBase::SetStat);
 
-	Player->AcknowledgeStatWidgetBinding();
+	Player->AcknowledgeWidgetBinding();
+}
+
+void AGameplayHUDBase::BindVillagerToTraitMenuWidget(AVillager* Villager)
+{
+
+	Villager->OnStatUpdated.AddDynamic(TraitMenuWidget, &UTraitMenuWidgetBase::SetStat);
+	Villager->AcknowledgeWidgetBinding();
+
+	for (ETrait Trait : TEnumRange<ETrait>()) 
+	{
+		TraitMenuWidget->SetTrait(Trait, Villager->GetTrait(Trait));
+	}
+
+	
+}
+
+void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
+{
+	BindVillagerToTraitMenuWidget(Caller);
+	
+	if (PlayerOwner && TraitMenuWidget) {
+
+		if (TraitMenuWidget->GetIsVisible()) 
+		{
+			TraitMenuWidget->RemoveFromViewport();
+			Caller->OnStatUpdated.RemoveAll(TraitMenuWidget);
+			return;
+		}
+		TraitMenuWidget->AddToViewport();
+		PlayerOwner->bShowMouseCursor = false;
+		PlayerOwner->SetInputMode(FInputModeGameOnly());
+	}
+
 }
 
 void AGameplayHUDBase::Clear()

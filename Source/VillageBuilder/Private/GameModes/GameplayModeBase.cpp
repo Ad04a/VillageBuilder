@@ -17,34 +17,41 @@ void AGameplayModeBase::StartPlay() {
 	}
 	
 
-	AVillager* Player = World->SpawnActor<AVillager>(PawnClass, FVector(0, 0, 0), FRotator());
-	
-	if (IsValid(Player) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(Player) == false"));
-		return;
-	}
-	Player->Init();
-
-
-
-	AVillager* Companion1 = World->SpawnActor<AVillager>(PawnClass, FVector(100, 100, 0), FRotator());
-	if (IsValid(Companion1) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(Companion1) == false"));
-		return;
-	}
-	AVillager* Companion2 = World->SpawnActor<AVillager>(PawnClass, FVector(50, 50, 0), FRotator());
-	if (IsValid(Companion2) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(Companion2) == false"));
-		return;
-	}
-	Companion1->Init();
-	Companion2->Init();
-
-
+	AVillager* Player = SpawnVillager(World, true);
+	AVillager* Companion1 = SpawnVillager(World, false, FVector(100, 100, 0));
+	AVillager* Companion2 = SpawnVillager(World, false, FVector(200, 200, 0));
 
 	APlayerController* Controller = UGameplayStatics::GetPlayerController(World, 0);
 	if (IsValid(Controller) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(Controller) == false"));
 	}
 	Controller->Possess(Player);
+}
+
+AVillager* AGameplayModeBase::SpawnVillager(UWorld* World, bool IsPlayer, FVector Position, FLoadInfoStruct LoadInfo)
+{
+	FVector Location = Position;
+	FRotator Rotation = FRotator(0, 0, 0);
+	FActorSpawnParameters Params;
+	if (IsPlayer)
+	{
+		Params.Name = FName("Player");
+	}
+
+	if(LoadInfo != FLoadInfoStruct())
+	{
+		Location = LoadInfo.Transform.GetLocation();
+		Rotation = LoadInfo.Transform.Rotator();
+	}
+		
+	AVillager* Villager = World->SpawnActor<AVillager>(PawnClass, Location, Rotation, Params);
+
+	if (IsValid(Villager) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::SpawnVillager IsValid(Player) == false"));
+		return nullptr;
+	}
+
+	Villager->Init(LoadInfo);
+
+	return Villager;
 }

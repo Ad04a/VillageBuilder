@@ -20,8 +20,17 @@ void AVillager::BeginPlay()
 	Super::BeginPlay();
 }
 
-void AVillager::Init()
+void AVillager::Init(FLoadInfoStruct InLoadInfo)
 {
+	if (InLoadInfo != FLoadInfoStruct())
+	{
+		StatsMap = InLoadInfo.StatsMap;
+		TraitsMap = InLoadInfo.TraitsMap;
+		SetActorTransform(InLoadInfo.Transform);
+		return;
+	}
+	
+
 	//------------InitTraits--------------
 
 	int PossibleLevel = TraitsCap; //depending on the current colony level
@@ -63,19 +72,12 @@ void AVillager::Init()
 
 }
 
-void AVillager::Load(FLoadInfoStruct InLoadInfo)
-{
-	StatsMap       = InLoadInfo.StatsMap;
-	TraitsMap      = InLoadInfo.TraitsMap;
-	SetActorTransform(InLoadInfo.Position);
-}
-
 FLoadInfoStruct AVillager::SaveInfo()
 {
 	FLoadInfoStruct SaveInfo;
 	SaveInfo.StatsMap     = StatsMap;
 	SaveInfo.TraitsMap    = TraitsMap;
-	SaveInfo.Position     = GetActorTransform();
+	SaveInfo.Transform     = GetActorTransform();
 
 	return SaveInfo;
 }

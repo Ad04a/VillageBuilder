@@ -55,12 +55,24 @@ struct FLoadInfoStruct
 	GENERATED_BODY()
 
 	UPROPERTY()
+	FName Name;
+
+	UPROPERTY()
 	TMap<TEnumAsByte<EStat>, FStatInfoStruct> StatsMap;
 
 	UPROPERTY()
 	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
 
 	UPROPERTY()
-	FTransform Position;
+	FTransform Transform;
 	/*, InWorkPlace*/
+
+	inline bool operator==(const FLoadInfoStruct& other) const
+	{
+		return other.Name == Name && other.Transform.GetLocation()==Transform.GetLocation();
+	}
+	inline bool operator != (const FLoadInfoStruct & other) const
+	{
+		return !(other.Name == Name && other.Transform.GetLocation() == Transform.GetLocation());
+	}
 };

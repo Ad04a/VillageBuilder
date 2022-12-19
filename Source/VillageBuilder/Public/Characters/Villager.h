@@ -85,9 +85,8 @@ public:
 	bool IsInteracting = false;
 	bool CanInteract = true;
 
-	void Init(/*InGlobalTimeManager, InControllerType , InColonyState*/);
+	void Init(FLoadInfoStruct InLoadInfo = FLoadInfoStruct()/*InColonyState*/);
 	FLoadInfoStruct SaveInfo();
-	void Load(FLoadInfoStruct InLoadInfo);
 	void RecieveXP(ETrait, int XPAmount);
 	void AssignJob(/*(FJobInfoStruct InJobInfo)/(WorkStation)*/);
 

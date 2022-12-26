@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Characters/Villager.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "InteractableObjects/Items/ItemSlotComponent.h"
-#include "InteractableObjects/Interactable.h"
+#include "Headers/Interactable.h"
+#include "Headers/ItemInfo.h"
 #include "Item.generated.h"
+
 
 UCLASS(BlueprintType)
 class VILLAGEBUILDER_API AItem : public AActor, public IInteractable
@@ -22,34 +24,49 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	
+	UPROPERTY(EditAnywhere)
+	class USceneComponent* Root = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UStaticMeshComponent* MeshComponent = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	class UProjectileMovementComponent* MovementComponent = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
+	float Weight;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
 	FText DisplayName;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item, meta = (Multiline = true))
 	FText Description;
 
-	UPROPERTY(EditAnywhere)
-	class USceneComponent* Root = nullptr;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
-	class UStaticMeshComponent* MeshComponent = nullptr;
+	TEnumAsByte<EItemType> ItemType;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
-	float Weight;
-
-	UPROPERTY()
-	UItemSlotComponent* OwningItemSlot;
-
-	virtual void Use(class AVillager* User) PURE_VIRTUAL(UItem, );
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	void InteractRequest(class AVillager* InteractingVillager);
-	virtual void InteractRequest_Implementation(class AVillager* InteractingVillager);
+	void InteractRequest(class AActor* InteractingActor);
+	virtual void InteractRequest_Implementation(class AActor* InteractingActor);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	FText DisplayInteractText();
 	virtual FText DisplayInteractText_Implementation();
 
-public:	
+public:
+
+	UFUNCTION()
+	EItemType GetItemType();
+
+	UFUNCTION()
+	virtual void Use(class AVillager* User) PURE_VIRTUAL(UItem, );
+
+	UFUNCTION()
+	UProjectileMovementComponent* GetMovementComponent();
+
+	/*UFUNCTION()
+	virtual FItemInfoStruct GetItemInfo();*/
 
 };

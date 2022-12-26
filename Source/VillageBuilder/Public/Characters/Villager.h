@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
-#include "InteractableObjects/Interactable.h"
-#include "Headers/StatAndTraitStructure.h"
+#include "InteractableObjects/Items/Item.h"
+#include "Headers/Interactable.h"
+#include "Headers/LoadInfo.h"
+#include "Headers/HandActionEnums.h"
 #include "Villager.generated.h"
 
 
@@ -49,6 +51,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	TMap<TEnumAsByte<EStat>, TEnumAsByte<ETrait>> StatTraitRelation;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	TMap<TEnumAsByte<EVillagerItemSlot>, AItem*> ItemSlots;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Traits)
 	int TraitsCap = 50;
 
@@ -86,7 +91,7 @@ public:
 	bool CanInteract = true;
 
 	void Init(FLoadInfoStruct InLoadInfo = FLoadInfoStruct()/*InColonyState*/);
-	FLoadInfoStruct SaveInfo();
+	FLoadInfoStruct GetSaveInfo();
 	void RecieveXP(ETrait, int XPAmount);
 	void AssignJob(/*(FJobInfoStruct InJobInfo)/(WorkStation)*/);
 
@@ -105,9 +110,15 @@ public:
 	UFUNCTION()
 	void Interact();
 
+	UFUNCTION()
+	void Equip(class AActor* ItemToEquip);
+
+	UFUNCTION()
+	void ItemAction(EVillagerItemSlot ItemSlot, EHandActionType ActionType);
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	void InteractRequest(class AVillager* InteractingVillager);
-	virtual void InteractRequest_Implementation(class AVillager* InteractingVillager);
+	void InteractRequest(class AActor* InteractingActor);
+	virtual void InteractRequest_Implementation(class AActor* InteractingActor);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	FText DisplayInteractText();

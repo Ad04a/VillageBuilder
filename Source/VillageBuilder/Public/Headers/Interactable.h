@@ -24,7 +24,7 @@ class VILLAGEBUILDER_API IInteractable
 public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	void InteractRequest(class AVillager* InteractingVillager);
+	void InteractRequest(class AActor* InteractingActor);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	FText DisplayInteractText();

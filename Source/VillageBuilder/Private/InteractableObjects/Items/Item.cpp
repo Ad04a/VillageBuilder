@@ -3,6 +3,8 @@
 
 #include "InteractableObjects/Items/Item.h"
 
+#include "Characters/Villager.h"
+
 // Sets default values
 AItem::AItem()
 {
@@ -11,6 +13,9 @@ AItem::AItem()
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(MeshComponent);
+
+	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Movement"));
+	MovementComponent->ProjectileGravityScale = 1;
 
 }
 
@@ -21,13 +26,35 @@ void AItem::BeginPlay()
 	
 }
 
-void AItem::InteractRequest_Implementation(class AVillager* InteractingVillager)
+void AItem::InteractRequest_Implementation(class AActor* InteractingActor)
 {
-	Use(InteractingVillager);
+	AVillager* InteractingVillager = Cast<AVillager>(InteractingActor);
+	//GetItemInfo();
+	InteractingVillager->Equip(this);
+	
 }
 
 FText AItem::DisplayInteractText_Implementation()
 {
 	return FText::FromString( "Pick up " + DisplayName.ToString());
 }
+
+EItemType AItem::GetItemType()
+{
+	return ItemType;
+}
+
+UProjectileMovementComponent* AItem::GetMovementComponent()
+{
+	return MovementComponent;
+}
+
+	/*a
+fiteminfostruct aitem::getiteminfo()
+{ 
+	fiteminfostruct iteminfo;
+	iteminfo.itemclass = getclass();
+	ue_log(logtemp, error, text("aitem::getiteminfo %s"), *iteminfo.itemclass->getname());
+	return iteminfo;
+}*/
 

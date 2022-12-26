@@ -9,6 +9,10 @@ const FName AVillageBuilderPlayerController::LookUpBinding("LookUp");
 const FName AVillageBuilderPlayerController::TurnRightBinding("TurnRight");
 const FName AVillageBuilderPlayerController::InteractBinding("Interact");
 const FName AVillageBuilderPlayerController::TraitsMenuBinding("TraitsMenu");
+const FName AVillageBuilderPlayerController::RightHandPrimaryBinding("RightHandPrimary");
+const FName AVillageBuilderPlayerController::RightHandSecondaryBinding("RightHandSecondary");
+const FName AVillageBuilderPlayerController::LeftHandPrimaryBinding("LeftHandPrimary");
+const FName AVillageBuilderPlayerController::LeftHandSecondaryBinding("LeftHandSecondary");
 
 void AVillageBuilderPlayerController::BeginPlay()
 {
@@ -48,6 +52,13 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	HUD->BindPlayerToStatWidget(ControlledVillager);
 	ControlledVillager->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);
 	ControlledVillager->OnToggleTraitsMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowTraitMenu);
+
+	InPawn->bUseControllerRotationYaw = true;
+
+	InputComponent->BindAction(RightHandPrimaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::RightHandPrimary);
+	InputComponent->BindAction(RightHandSecondaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::RightHandSecondary);
+	InputComponent->BindAction(LeftHandPrimaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::LeftHandPrimary);
+	InputComponent->BindAction(LeftHandSecondaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::LeftHandSecondary);
 }
 
 void AVillageBuilderPlayerController::Tick(float DeltaTime)
@@ -93,6 +104,23 @@ void AVillageBuilderPlayerController::UpdateTurnRotation()
 		ControlledVillager->LookUpAtRate(Y);
 	}
 	
+}
+
+void AVillageBuilderPlayerController::RightHandPrimary()
+{
+	ControlledVillager->ItemAction(EVillagerItemSlot::RightHand, EHandActionType::Primary);
+}
+void AVillageBuilderPlayerController::RightHandSecondary()
+{
+	ControlledVillager->ItemAction(EVillagerItemSlot::RightHand, EHandActionType::Secondary);
+}
+void AVillageBuilderPlayerController::LeftHandPrimary()
+{
+	ControlledVillager->ItemAction(EVillagerItemSlot::LeftHand, EHandActionType::Primary);
+}
+void AVillageBuilderPlayerController::LeftHandSecondary()
+{
+	ControlledVillager->ItemAction(EVillagerItemSlot::LeftHand, EHandActionType::Secondary);
 }
 
 

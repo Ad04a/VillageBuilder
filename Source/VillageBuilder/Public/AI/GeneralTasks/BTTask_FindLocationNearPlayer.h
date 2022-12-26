@@ -12,7 +12,7 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BehaviorTreeTypes.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 
 #include "AI/Villager/VillagerAIController.h"
 #include "Headers/VillagerBBKeys.h"

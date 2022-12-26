@@ -24,12 +24,17 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 {
 	if (InLoadInfo != FLoadInfoStruct())
 	{
-		StatsMap = InLoadInfo.StatsMap;
+		//ItemSlots = InLoadInfo.ItemSlots;
 		TraitsMap = InLoadInfo.TraitsMap;
+		StatsMap = InLoadInfo.StatsMap;
 		SetActorTransform(InLoadInfo.Transform);
 		return;
 	}
 	
+	//------------InitItemSlots-----------
+
+	ItemSlots.Add(EVillagerItemSlot::LeftHand, nullptr);
+	ItemSlots.Add(EVillagerItemSlot::RightHand, nullptr);
 
 	//------------InitTraits--------------
 
@@ -72,11 +77,12 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 
 }
 
-FLoadInfoStruct AVillager::SaveInfo()
+FLoadInfoStruct AVillager::GetSaveInfo()
 {
 	FLoadInfoStruct SaveInfo;
+	//SaveInfo.ItemSlots = ItemSlots;
+	SaveInfo.TraitsMap = TraitsMap;
 	SaveInfo.StatsMap     = StatsMap;
-	SaveInfo.TraitsMap    = TraitsMap;
 	SaveInfo.Transform     = GetActorTransform();
 
 	return SaveInfo;
@@ -159,6 +165,38 @@ void AVillager::Interact()
 	{
 		Cast<IInteractable>(FocusedActor)->Execute_InteractRequest(FocusedActor, this);
 	}
+}
+
+void AVillager::Equip(AActor* ItemToEquip)
+{
+	ItemToEquip->SetActorEnableCollision(false);
+	AItem* HoldingItem = *ItemSlots.Find(EVillagerItemSlot::RightHand);
+	if (IsValid(HoldingItem)== true) {
+		ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));
+		ItemSlots[EVillagerItemSlot::LeftHand] = Cast<AItem>(ItemToEquip);
+		return;
+	}
+	ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_r_Socket"));
+	ItemSlots[EVillagerItemSlot::RightHand] = Cast<AItem>(ItemToEquip);
+	
+}
+
+void AVillager::ItemAction(EVillagerItemSlot ItemSlot, EHandActionType ActionType)
+{
+	AItem* HoldingItem = *ItemSlots.Find(ItemSlot);
+	if (IsValid(HoldingItem) == false) 
+	{
+		return;
+	}
+	if (ActionType == EHandActionType::Secondary)
+	{
+		HoldingItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		HoldingItem->GetMovementComponent()->AddForce( CameraComponent->GetForwardVector() );
+		HoldingItem->SetActorEnableCollision(true);
+		ItemSlots[ItemSlot] = nullptr;
+		return;
+	}
+	HoldingItem->Use(this);
 }
 
 void AVillager::CheckForInteractables()
@@ -304,8 +342,14 @@ int AVillager::GetTrait(ETrait TraitName)
 	return Trait->Level;
 }
 
-void AVillager::InteractRequest_Implementation(class AVillager* InteractingVillager)
+void AVillager::InteractRequest_Implementation(class AActor* InteractingActor)
 {
+	AVillager* InteractingVillager = Cast<AVillager>(InteractingActor);
+	if (IsValid(InteractingVillager) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillager::InteractRequest_Implementation IsValid(InteractingVillager) == false"));
+		return;
+	}
 	InteractingVillager->ToggleTraitsMenu(this);
 	InteractingVillager->IsInteracting = !InteractingVillager->IsInteracting;
 }

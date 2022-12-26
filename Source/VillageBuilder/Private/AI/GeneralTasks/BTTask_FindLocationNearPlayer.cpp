@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/Villager/BTTask_FindLocationNearPlayer.h"
+#include "AI/GeneralTasks/BTTask_FindLocationNearPlayer.h"
 
 
 UBTTask_FindLocationNearPlayer::UBTTask_FindLocationNearPlayer() {
@@ -41,7 +41,7 @@ EBTNodeResult::Type UBTTask_FindLocationNearPlayer::ExecuteTask(UBehaviorTreeCom
 	}
 	FNavLocation TargetLocation;
 
-	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+	UNavigationSystemV1* NavigationSystem = UNavigationSystemV1::GetCurrent(World);
 	if (IsValid(NavigationSystem) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UBTTask_FindLocationNearPlayer::ExecuteTask IsValid(NavigationSystem) == false"));
@@ -55,7 +55,7 @@ EBTNodeResult::Type UBTTask_FindLocationNearPlayer::ExecuteTask(UBehaviorTreeCom
 		return EBTNodeResult::Failed;
 	}
 	
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(Controller, TargetLocation.Location);
+	Controller->GetBlackboard()->SetValueAsVector(VillagerBBKeys::TargetLocation, TargetLocation.Location);
 
 	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
 

@@ -13,7 +13,7 @@ AVillagerAIController::AVillagerAIController() {
 	BTree = TempBTree.Object;
 	BTree_component = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BTComponent"));
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
-
+	
 }
 
 void AVillagerAIController::BeginPlay() {
@@ -28,6 +28,7 @@ void AVillagerAIController::OnPossess(APawn* const InPawn) {
 		UE_LOG(LogTemp, Error, TEXT("AVillagerAIController::OnPossess IsValid(Blackboard) == false"));
 	}
 	Blackboard->InitializeBlackboard(*BTree->BlackboardAsset);
+	InPawn->bUseControllerRotationYaw = false;
 }
 
 UBlackboardComponent* AVillagerAIController::GetBlackboard()const {

@@ -4,19 +4,42 @@
 #include "InteractableObjects/Items/ConsumableItem.h"
 #include "Characters/Villager.h"
 
+AConsumableItem::AConsumableItem()
+{
+	
+}
+
+void AConsumableItem::BeginPlay()
+{
+	Super::BeginPlay();
+	LoadFromDataTable();
+}
+
 void AConsumableItem::Use(AVillager* User)
 {
 	User->AddStatValue(StatToUpdate, ConsumeValue);
 	Destroy();
 }
 
-	/*s
-FItemInfoStruct AConsumableItem::GetItemInfo()
+void AConsumableItem::LoadFromDataTable()
 {
-	FConsumableItemInfoStruct ItemInfo;
-	ItemInfo.ItemClass = GetClass();
-	ItemInfo.NumberOfUses = 5;
-	UE_LOG(LogTemp, Error, TEXT("AConsumableItem::GetItemInfo %d"), ItemInfo.NumberOfUses);
-	return ItemInfo;
-}*/
+	Super::LoadFromDataTable();
+
+	if (IsValid(SecondaryDataTable) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AConsumableItem::LoadFromDataTable() IsValid(DataTable) == false from %s"), *GetClass()->GetName());
+		return;
+	}
+
+	FConsumableItemData* ConsumableItemData = SecondaryDataTable->FindRow<FConsumableItemData>(GetClass()->GetFName(), "");
+
+	if (ConsumableItemData == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AConsumableItem::LoadFromDataTable() ConsumableItemData == nullptr from %s"), *GetClass()->GetName());
+		return;
+	}
+
+	ConsumeValue = ConsumableItemData->ConsumeValue;
+	StatToUpdate = ConsumableItemData->StatToUpdate;
+}
 

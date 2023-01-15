@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "InteractableObjects/Items/ItemSlotComponent.h"
 #include "Headers/Interactable.h"
 #include "Headers/ItemInfo.h"
@@ -24,26 +23,27 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	
-	UPROPERTY(EditAnywhere)
-	class USceneComponent* Root = nullptr;
+	virtual void LoadFromDataTable();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* MeshComponent = nullptr;
 
-	UPROPERTY(EditAnywhere)
-	class UProjectileMovementComponent* MovementComponent = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UDataTable* MainDataTable = nullptr;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UDataTable* SecondaryDataTable = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	float Weight;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	FText DisplayName;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item, meta = (Multiline = true))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item, meta = (Multiline = true))
 	FText Description;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	TEnumAsByte<EItemType> ItemType;
 
 
@@ -64,9 +64,9 @@ public:
 	virtual void Use(class AVillager* User) PURE_VIRTUAL(UItem, );
 
 	UFUNCTION()
-	UProjectileMovementComponent* GetMovementComponent();
+	void SetEnablePhysics(bool State);
 
-	/*UFUNCTION()
-	virtual FItemInfoStruct GetItemInfo();*/
+	UFUNCTION()
+	virtual FString SerializetemInfo() PURE_VIRTUAL(AItem::SerializetemInfo, return "";);
 
 };

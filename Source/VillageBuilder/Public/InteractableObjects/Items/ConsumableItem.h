@@ -12,25 +12,35 @@
  */
 
 USTRUCT(BlueprintType)
-struct FConsumableItemInfoStruct : public FItemInfoStruct
+struct FConsumableItemData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
-	int NumberOfUses = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ConsumeValue;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TEnumAsByte<EStat> StatToUpdate;
 };
 
 UCLASS()
 class VILLAGEBUILDER_API AConsumableItem : public AItem
 {
 	GENERATED_BODY()
-	
+
+public:
+	AConsumableItem();
+
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
+
+	virtual void BeginPlay() override;
+
+	virtual void LoadFromDataTable() override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	float ConsumeValue;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Item)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	TEnumAsByte<EStat> StatToUpdate;
 	
 public:

@@ -14,22 +14,44 @@ AItem::AItem()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(MeshComponent);
 
-	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Movement"));
-	MovementComponent->ProjectileGravityScale = 1;
-
+	
 }
 
 // Called when the game starts or when spawned
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	SetEnablePhysics(true);
+	LoadFromDataTable();
+}
+
+void AItem::LoadFromDataTable()
+{	
+	if (IsValid(MainDataTable) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AItem::LoadFromDataTable() IsValid(DataTable) == false from %s"), *GetClass()->GetName());
+		return;
+	}
+
+	FItemData* ItemData = MainDataTable->FindRow<FItemData>(GetClass()->GetFName(), "");
+
+	if (ItemData == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AItem::LoadFromDataTable() ItemData == nullptr from %s"), *GetClass()->GetName());
+		return;
+	}
+
+	Weight      = ItemData->Weight;
+	DisplayName = ItemData->DisplayName;
+	Description = ItemData->Description;
+	ItemType    = ItemData->ItemType;
 }
 
 void AItem::InteractRequest_Implementation(class AActor* InteractingActor)
 {
 	AVillager* InteractingVillager = Cast<AVillager>(InteractingActor);
 	//GetItemInfo();
+	
 	InteractingVillager->Equip(this);
 	
 }
@@ -44,17 +66,10 @@ EItemType AItem::GetItemType()
 	return ItemType;
 }
 
-UProjectileMovementComponent* AItem::GetMovementComponent()
+void AItem::SetEnablePhysics(bool State)
 {
-	return MovementComponent;
+	MeshComponent->SetSimulatePhysics(State);
+	SetActorEnableCollision(State);
 }
 
-	/*a
-fiteminfostruct aitem::getiteminfo()
-{ 
-	fiteminfostruct iteminfo;
-	iteminfo.itemclass = getclass();
-	ue_log(logtemp, error, text("aitem::getiteminfo %s"), *iteminfo.itemclass->getname());
-	return iteminfo;
-}*/
 

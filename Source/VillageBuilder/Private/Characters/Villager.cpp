@@ -169,16 +169,23 @@ void AVillager::Interact()
 
 void AVillager::Equip(AActor* ItemToEquip)
 {
-	ItemToEquip->SetActorEnableCollision(false);
+	//
+	AItem* NewItem = Cast<AItem>(ItemToEquip);
 	AItem* HoldingItem = *ItemSlots.Find(EVillagerItemSlot::RightHand);
-	if (IsValid(HoldingItem)== true) {
-		ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));
-		ItemSlots[EVillagerItemSlot::LeftHand] = Cast<AItem>(ItemToEquip);
+	if (IsValid(HoldingItem) == false) {
+		NewItem->SetEnablePhysics(false);
+		ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_r_Socket"));
+		ItemSlots[EVillagerItemSlot::RightHand] = NewItem;
 		return;
 	}
-	ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_r_Socket"));
-	ItemSlots[EVillagerItemSlot::RightHand] = Cast<AItem>(ItemToEquip);
-	
+
+	HoldingItem = *ItemSlots.Find(EVillagerItemSlot::LeftHand);
+	if (IsValid(HoldingItem) == false) {
+		NewItem->SetEnablePhysics(false);
+		ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));
+		ItemSlots[EVillagerItemSlot::LeftHand] = NewItem;
+		return;
+	}
 }
 
 void AVillager::ItemAction(EVillagerItemSlot ItemSlot, EHandActionType ActionType)
@@ -191,8 +198,7 @@ void AVillager::ItemAction(EVillagerItemSlot ItemSlot, EHandActionType ActionTyp
 	if (ActionType == EHandActionType::Secondary)
 	{
 		HoldingItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		HoldingItem->GetMovementComponent()->AddForce( CameraComponent->GetForwardVector() );
-		HoldingItem->SetActorEnableCollision(true);
+		HoldingItem->SetEnablePhysics(true);
 		ItemSlots[ItemSlot] = nullptr;
 		return;
 	}

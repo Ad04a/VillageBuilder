@@ -34,15 +34,13 @@ protected:
 	static const FName TurnRightBinding;
 	static const FName InteractBinding;
 	static const FName TraitsMenuBinding;
-	static const FName RightHandPrimaryBinding;
-	static const FName RightHandSecondaryBinding;
-	static const FName LeftHandPrimaryBinding;
-	static const FName LeftHandSecondaryBinding;
+	static const FName ItemPrimaryBinding;
+	static const FName ItemSecondaryBinding;
+	static const FName DropItemBinding;
 	
-	void RightHandPrimary();
-	void RightHandSecondary();
-	void LeftHandPrimary();
-	void LeftHandSecondary();
+	
+	void ItemPrimary();
+	void ItemSecondary();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	float GamepadTurnRate;

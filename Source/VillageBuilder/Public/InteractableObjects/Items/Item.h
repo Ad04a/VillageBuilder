@@ -7,6 +7,7 @@
 #include "InteractableObjects/Items/ItemSlotComponent.h"
 #include "Headers/Interactable.h"
 #include "Headers/ItemInfo.h"
+#include "Headers/ItemActionEnums.h"
 #include "Item.generated.h"
 
 
@@ -61,7 +62,7 @@ public:
 	EItemType GetItemType();
 
 	UFUNCTION()
-	virtual void Use(class AVillager* User) PURE_VIRTUAL(UItem, );
+	virtual void Use(class AVillager* User, EItemActionType ActionType) PURE_VIRTUAL(AItem::Use, );
 
 	UFUNCTION()
 	void SetEnablePhysics(bool State);

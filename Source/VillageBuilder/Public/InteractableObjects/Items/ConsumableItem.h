@@ -44,7 +44,7 @@ protected:
 	TEnumAsByte<EStat> StatToUpdate;
 	
 public:
-	virtual void Use(class AVillager* User) override;
+	virtual void Use(class AVillager* User, EItemActionType ActionType) override;
 
 	//virtual FItemInfoStruct GetItemInfo() override;
 };

@@ -31,10 +31,6 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 		return;
 	}
 	
-	//------------InitItemSlots-----------
-
-	ItemSlots.Add(EVillagerItemSlot::LeftHand, nullptr);
-	ItemSlots.Add(EVillagerItemSlot::RightHand, nullptr);
 
 	//------------InitTraits--------------
 
@@ -171,38 +167,33 @@ void AVillager::Equip(AActor* ItemToEquip)
 {
 	//
 	AItem* NewItem = Cast<AItem>(ItemToEquip);
-	AItem* HoldingItem = *ItemSlots.Find(EVillagerItemSlot::RightHand);
-	if (IsValid(HoldingItem) == false) {
+	if (IsValid(ItemSlot) == false) {
 		NewItem->SetEnablePhysics(false);
 		ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_r_Socket"));
-		ItemSlots[EVillagerItemSlot::RightHand] = NewItem;
+		ItemSlot = NewItem;
 		return;
 	}
 
-	HoldingItem = *ItemSlots.Find(EVillagerItemSlot::LeftHand);
-	if (IsValid(HoldingItem) == false) {
-		NewItem->SetEnablePhysics(false);
-		ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));
-		ItemSlots[EVillagerItemSlot::LeftHand] = NewItem;
-		return;
-	}
 }
 
-void AVillager::ItemAction(EVillagerItemSlot ItemSlot, EHandActionType ActionType)
+void AVillager::DropItem()
 {
-	AItem* HoldingItem = *ItemSlots.Find(ItemSlot);
-	if (IsValid(HoldingItem) == false) 
+	if (IsValid(ItemSlot) == false)
 	{
 		return;
 	}
-	if (ActionType == EHandActionType::Secondary)
+	ItemSlot->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	ItemSlot->SetEnablePhysics(true);
+	ItemSlot = nullptr;
+}
+
+void AVillager::ItemAction(EItemActionType ActionType)
+{
+	if (IsValid(ItemSlot) == false) 
 	{
-		HoldingItem->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		HoldingItem->SetEnablePhysics(true);
-		ItemSlots[ItemSlot] = nullptr;
 		return;
 	}
-	HoldingItem->Use(this);
+	ItemSlot->Use(this, ActionType);
 }
 
 void AVillager::CheckForInteractables()
@@ -363,4 +354,13 @@ void AVillager::InteractRequest_Implementation(class AActor* InteractingActor)
 FText AVillager::DisplayInteractText_Implementation()
 {
 	return FText::FromString( "Talk with Villager" );//Add name variable
+}
+
+EItemType AVillager::GetEquipItemType()
+{
+	if (ItemSlot == nullptr)
+	{
+		return EItemType::None;
+	}
+	return ItemSlot->GetItemType();
 }

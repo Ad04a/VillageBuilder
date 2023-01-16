@@ -15,8 +15,13 @@ void AConsumableItem::BeginPlay()
 	LoadFromDataTable();
 }
 
-void AConsumableItem::Use(AVillager* User)
+void AConsumableItem::Use(AVillager* User, EItemActionType ActionType)
 {
+	if (ActionType == EItemActionType::Secondary)
+	{
+		User->DropItem();
+		return;
+	}
 	User->AddStatValue(StatToUpdate, ConsumeValue);
 	Destroy();
 }

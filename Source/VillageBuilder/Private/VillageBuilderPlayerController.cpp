@@ -9,10 +9,9 @@ const FName AVillageBuilderPlayerController::LookUpBinding("LookUp");
 const FName AVillageBuilderPlayerController::TurnRightBinding("TurnRight");
 const FName AVillageBuilderPlayerController::InteractBinding("Interact");
 const FName AVillageBuilderPlayerController::TraitsMenuBinding("TraitsMenu");
-const FName AVillageBuilderPlayerController::RightHandPrimaryBinding("RightHandPrimary");
-const FName AVillageBuilderPlayerController::RightHandSecondaryBinding("RightHandSecondary");
-const FName AVillageBuilderPlayerController::LeftHandPrimaryBinding("LeftHandPrimary");
-const FName AVillageBuilderPlayerController::LeftHandSecondaryBinding("LeftHandSecondary");
+const FName AVillageBuilderPlayerController::ItemPrimaryBinding("ItemPrimary");
+const FName AVillageBuilderPlayerController::ItemSecondaryBinding("ItemSecondary");
+const FName AVillageBuilderPlayerController::DropItemBinding("DropItem");
 
 void AVillageBuilderPlayerController::BeginPlay()
 {
@@ -48,6 +47,7 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 
 	InputComponent->BindAction(InteractBinding, IE_Pressed, ControlledVillager, &AVillager::Interact);
 	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, ControlledVillager, &AVillager::ShowTraitMenu);
+	InputComponent->BindAction(DropItemBinding, IE_Pressed, ControlledVillager, &AVillager::DropItem);
 
 	HUD->BindPlayerToStatWidget(ControlledVillager);
 	ControlledVillager->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);
@@ -55,10 +55,8 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 
 	InPawn->bUseControllerRotationYaw = true;
 
-	InputComponent->BindAction(RightHandPrimaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::RightHandPrimary);
-	InputComponent->BindAction(RightHandSecondaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::RightHandSecondary);
-	InputComponent->BindAction(LeftHandPrimaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::LeftHandPrimary);
-	InputComponent->BindAction(LeftHandSecondaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::LeftHandSecondary);
+	InputComponent->BindAction(ItemPrimaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ItemPrimary);
+	InputComponent->BindAction(ItemSecondaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ItemSecondary);
 }
 
 void AVillageBuilderPlayerController::Tick(float DeltaTime)
@@ -106,22 +104,15 @@ void AVillageBuilderPlayerController::UpdateTurnRotation()
 	
 }
 
-void AVillageBuilderPlayerController::RightHandPrimary()
+void AVillageBuilderPlayerController::ItemPrimary()
 {
-	ControlledVillager->ItemAction(EVillagerItemSlot::RightHand, EHandActionType::Primary);
+	ControlledVillager->ItemAction(EItemActionType::Primary);
 }
-void AVillageBuilderPlayerController::RightHandSecondary()
+void AVillageBuilderPlayerController::ItemSecondary()
 {
-	ControlledVillager->ItemAction(EVillagerItemSlot::RightHand, EHandActionType::Secondary);
+	ControlledVillager->ItemAction(EItemActionType::Secondary);
 }
-void AVillageBuilderPlayerController::LeftHandPrimary()
-{
-	ControlledVillager->ItemAction(EVillagerItemSlot::LeftHand, EHandActionType::Primary);
-}
-void AVillageBuilderPlayerController::LeftHandSecondary()
-{
-	ControlledVillager->ItemAction(EVillagerItemSlot::LeftHand, EHandActionType::Secondary);
-}
+
 
 
 

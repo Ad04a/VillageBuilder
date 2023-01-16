@@ -8,7 +8,7 @@
 #include "InteractableObjects/Items/Item.h"
 #include "Headers/Interactable.h"
 #include "Headers/LoadInfo.h"
-#include "Headers/HandActionEnums.h"
+#include "Headers/ItemActionEnums.h"
 #include "Villager.generated.h"
 
 
@@ -32,6 +32,8 @@ private:
 
 	AActor* FocusedActor;
 
+	AItem* ItemSlot;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -51,9 +53,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	TMap<TEnumAsByte<EStat>, TEnumAsByte<ETrait>> StatTraitRelation;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
-	TMap<TEnumAsByte<EVillagerItemSlot>, AItem*> ItemSlots;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Traits)
 	int TraitsCap = 50;
 
@@ -65,8 +64,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Inventory)
 	float Reach = 1;
-
-	
 
 	FRotator MovementInputRotator;
 
@@ -101,6 +98,9 @@ public:
 
 	int GetTrait(ETrait TraitName);
 
+	UFUNCTION(BlueprintPure)
+	EItemType GetEquipItemType();
+
 	UFUNCTION()
 	void ShowTraitMenu();
 
@@ -114,7 +114,10 @@ public:
 	void Equip(class AActor* ItemToEquip);
 
 	UFUNCTION()
-	void ItemAction(EVillagerItemSlot ItemSlot, EHandActionType ActionType);
+	void DropItem();
+
+	UFUNCTION()
+	void ItemAction(EItemActionType ActionType);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	void InteractRequest(class AActor* InteractingActor);

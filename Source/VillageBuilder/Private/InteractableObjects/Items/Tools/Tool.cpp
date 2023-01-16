@@ -14,7 +14,7 @@ void ATool::BeginPlay()
 	LoadFromDataTable();
 }
 
-void ATool::Use(AVillager* User)
+void ATool::Use(AVillager* User, EItemActionType ActionType)
 {
 	UE_LOG(LogTemp, Error, TEXT("ATool::Use - %s"), *GetClass()->GetName());
 }

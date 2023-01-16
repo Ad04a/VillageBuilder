@@ -33,6 +33,6 @@ protected:
 	int Durability;
 
 public:
-	virtual void Use(class AVillager* User) override;
+	virtual void Use(class AVillager* User, EItemActionType ActionType) override;
 
 };

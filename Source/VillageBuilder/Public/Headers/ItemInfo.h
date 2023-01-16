@@ -5,9 +5,9 @@
 
 UENUM(BlueprintType)
 enum EItemType {
-	OneHanded  UMETA(DisplayName = "OneHanded"),
-	TwoHanded  UMETA(DisplayName = "TwoHanded"),
-	Attachable UMETA(DisplayName = "Attachable"),
+	None       UMETA(DisplayName = "None"),
+	Tool       UMETA(DisplayName = "Tool"),
+	Consumable UMETA(DisplayName = "Consumable")
 
 };
 
@@ -27,9 +27,6 @@ struct FItemData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EItemType> ItemType;
-
-	UPROPERTY(EditAnywhere)
-	UAnimMontage* UseAnimation;
 
 };
 

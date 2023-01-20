@@ -169,7 +169,7 @@ void AVillager::Equip(AActor* ItemToEquip)
 	AItem* NewItem = Cast<AItem>(ItemToEquip);
 	if (IsValid(ItemSlot) == false) {
 		NewItem->SetEnablePhysics(false);
-		ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_r_Socket"));
+		ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));
 		ItemSlot = NewItem;
 		return;
 	}

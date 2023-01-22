@@ -25,6 +25,11 @@ void AItem::BeginPlay()
 	LoadFromDataTable();
 }
 
+void AItem::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
 void AItem::LoadFromDataTable()
 {	
 	if (IsValid(MainDataTable) == false)

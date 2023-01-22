@@ -4,6 +4,7 @@
 
 UENUM(BlueprintType)
 enum EItemActionType {
-	Primary  UMETA(DisplayName = "Primary"),
+	None      UMETA(DisplayName = "None"),
+	Primary   UMETA(DisplayName = "Primary"),
 	Secondary UMETA(DisplayName = "Secondary")
 };

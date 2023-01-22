@@ -20,6 +20,8 @@ void AVillager::BeginPlay()
 	Super::BeginPlay();
 }
 
+
+
 void AVillager::Init(FLoadInfoStruct InLoadInfo)
 {
 	if (InLoadInfo != FLoadInfoStruct())
@@ -128,13 +130,23 @@ void AVillager::Tick(float DeltaTime)
 		StatDepletion = 0;
 	}
 
-	 
+}
 
+float AVillager::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	AddStatValue(EStat::Health, -DamageAmount);
+	FStatInfoStruct* Stat = StatsMap.Find(EStat::Health);
+	if (Stat == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("AVillager::AddStatValue IsValid(Stat) == false"));
+		return 0;
+	}
+	
+	return -DamageAmount;
 }
 
 void AVillager::Die()
 {
-
+	UE_LOG(LogTemp, Error, TEXT("Villager is dead"));
 
 }
 
@@ -193,6 +205,11 @@ void AVillager::ItemAction(EItemActionType ActionType)
 	{
 		return;
 	}
+	OnItemAction.Broadcast(ActionType);
+}
+
+void AVillager::UseItem(EItemActionType ActionType)
+{
 	ItemSlot->Use(this, ActionType);
 }
 
@@ -203,7 +220,6 @@ void AVillager::CheckForInteractables()
 	
 	const FName TraceTag("MyTraceTag");
 
-	
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false)
 	{
@@ -360,7 +376,7 @@ EItemType AVillager::GetEquipItemType()
 {
 	if (ItemSlot == nullptr)
 	{
-		return EItemType::None;
+		return EItemType::Default;
 	}
 	return ItemSlot->GetItemType();
 }

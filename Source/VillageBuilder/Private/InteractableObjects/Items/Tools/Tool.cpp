@@ -5,7 +5,8 @@
 
 ATool::ATool()
 {
-	
+	PrimaryActorTick.bCanEverTick = true;
+
 }
 
 void ATool::BeginPlay()
@@ -14,9 +15,66 @@ void ATool::BeginPlay()
 	LoadFromDataTable();
 }
 
+void ATool::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (UsingVillager == nullptr) {
+		return;
+	}
+	FVector StartTrace = MeshComponent->GetSocketLocation("start");
+	FVector EndTrace = MeshComponent->GetSocketLocation("end");
+	FVector HandleStartTrace = MeshComponent->GetSocketLocation("handle_start");
+	FVector HandleEndTrace = MeshComponent->GetSocketLocation("handle_end");
+
+	const FName TraceTag("MyTraceTag2");
+
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ATool::Tick IsValid(World) == false"));
+		return;
+	}
+	//World->DebugDrawTraceTag = TraceTag;
+
+	FHitResult HitResult = FHitResult();
+	FHitResult HandleHitResult = FHitResult();
+	FCollisionQueryParams CQP;
+	CQP.AddIgnoredActor(this);
+	CQP.AddIgnoredActor(Cast<AActor>(Cast<ACharacter>(UsingVillager)));
+	for (AActor* Damaged : DamagedActors) {
+		CQP.AddIgnoredActor(Damaged);
+	}
+	CQP.TraceTag = TraceTag;
+	World->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldDynamic, CQP);
+	World->LineTraceSingleByChannel(HandleHitResult, HandleStartTrace, HandleEndTrace, ECC_WorldDynamic, CQP);
+	AActor* HitActor = HitResult.GetActor();
+	AActor* HandleHitActor = HandleHitResult.GetActor();
+	if (HitActor == nullptr && HandleHitActor == nullptr)
+	{
+		return;
+	}
+
+	float Damage = BaseDamage;
+	if (HitActor != nullptr )
+	{
+		HitActor->TakeDamage(Damage, FDamageEvent(), GetInstigatorController(), this);
+		DamagedActors.Add(HitActor);
+	}
+	if (HandleHitActor != nullptr)
+	{
+		HandleHitActor->TakeDamage(Damage/3, FDamageEvent(), GetInstigatorController(), this);
+		DamagedActors.Add(HandleHitActor);
+	}
+
+
+}
+
 void ATool::Use(AVillager* User, EItemActionType ActionType)
 {
-	UE_LOG(LogTemp, Error, TEXT("ATool::Use - %s"), *GetClass()->GetName());
+	bIsCurrentlyUsed = !bIsCurrentlyUsed;
+	UsingVillager = bIsCurrentlyUsed ?  User : nullptr;
+	DamagedActors.Empty();
+	
 }
 
 void ATool::LoadFromDataTable()
@@ -37,5 +95,5 @@ void ATool::LoadFromDataTable()
 		return;
 	}
 
-	Durability = ToolData->Durability;
+	BaseDamage = ToolData->BaseDamage;
 }

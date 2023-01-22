@@ -5,7 +5,7 @@
 
 UENUM(BlueprintType)
 enum EItemType {
-	None       UMETA(DisplayName = "None"),
+	Default       UMETA(DisplayName = "Default"),
 	Tool       UMETA(DisplayName = "Tool"),
 	Consumable UMETA(DisplayName = "Consumable")
 

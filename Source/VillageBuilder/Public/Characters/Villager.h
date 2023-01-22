@@ -16,6 +16,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FStatUpdatedSignature, EStat, StatName, float, Current, float, Max);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTraitMenuSignature, AVillager*, Caller);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractingSignature, FText, ActionText);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemActionSignature, EItemActionType, ItemActionType);
 
 
 UCLASS()
@@ -34,9 +35,14 @@ private:
 
 	AItem* ItemSlot;
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	float TakeDamage(float DamageAmount,
+		FDamageEvent const& DamageEvent,
+		AController* EventInstigator,
+		AActor* DamageCauser)override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* CameraComponent;
@@ -74,6 +80,8 @@ public:
 	FStatUpdatedSignature OnStatUpdated;
 	FInteractingSignature OnInteraction;
 	FTraitMenuSignature OnToggleTraitsMenu;
+	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Item Action"))
+	FOnItemActionSignature OnItemAction;
 
 	AVillager();
 	virtual void Tick(float DeltaTime) override;
@@ -96,11 +104,6 @@ public:
 
 	void AddStatValue(EStat StatName, float InValue);
 
-	int GetTrait(ETrait TraitName);
-
-	UFUNCTION(BlueprintPure)
-	EItemType GetEquipItemType();
-
 	UFUNCTION()
 	void ShowTraitMenu();
 
@@ -119,6 +122,9 @@ public:
 	UFUNCTION()
 	void ItemAction(EItemActionType ActionType);
 
+	UFUNCTION()
+	void UseItem(EItemActionType ActionType);
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	void InteractRequest(class AActor* InteractingActor);
 	virtual void InteractRequest_Implementation(class AActor* InteractingActor);
@@ -126,4 +132,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	FText DisplayInteractText();
 	virtual FText DisplayInteractText_Implementation();
+
+	int GetTrait(ETrait TraitName);
+
+	UFUNCTION(BlueprintPure)
+	EItemType GetEquipItemType();
+
 };

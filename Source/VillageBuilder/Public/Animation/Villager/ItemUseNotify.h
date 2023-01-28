@@ -16,11 +16,10 @@ class VILLAGEBUILDER_API UItemUseNotify : public UAnimNotify
 	GENERATED_BODY()
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TEnumAsByte<EItemActionType> ActionType;
+	UPROPERTY(EditAnywhere)
+	bool SetIsActiveTo = false;
 
 public:
-
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 	
 };

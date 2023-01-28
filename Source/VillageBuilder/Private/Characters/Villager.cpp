@@ -199,17 +199,12 @@ void AVillager::DropItem()
 	ItemSlot = nullptr;
 }
 
-void AVillager::ItemAction(EItemActionType ActionType)
-{
-	if (IsValid(ItemSlot) == false) 
-	{
-		return;
-	}
-	OnItemAction.Broadcast(ActionType);
-}
 
 void AVillager::UseItem(EItemActionType ActionType)
 {
+	if (IsValid(ItemSlot) == false) {
+		return;
+	}
 	ItemSlot->Use(this, ActionType);
 }
 
@@ -330,6 +325,32 @@ void AVillager::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate *Energy * World->GetDeltaSeconds());
 	
 }
+
+void AVillager::PlayItemAnimMontage(UAnimMontage* AnimMontage, FName StartSectionName)
+{
+	if (IsValid(AnimMontage) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillager::PlayItemAnimMontage IsValid(AnimMontage) == false"));
+		return;
+	}
+	if (IsValid(GetMesh()) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillager::PlayItemAnimMontage IsValid(GetMesh()) == false"));
+		return;
+	}
+	if (IsValid(GetMesh()->GetAnimInstance()) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillager::PlayItemAnimMontage IsValid(GetMesh()->GetAnimInstance()) == false"));
+		return;
+	}
+	if (GetMesh()->GetAnimInstance()->Montage_IsActive(NULL))
+	{
+		return;
+	}
+	PlayAnimMontage(AnimMontage, 1, StartSectionName);
+}
+
+
 
 void AVillager::AddStatValue(EStat StatName, float InValue)
 {

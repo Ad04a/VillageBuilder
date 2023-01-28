@@ -106,11 +106,11 @@ void AVillageBuilderPlayerController::UpdateTurnRotation()
 
 void AVillageBuilderPlayerController::ItemPrimary()
 {
-	ControlledVillager->ItemAction(EItemActionType::Primary);
+	ControlledVillager->UseItem(EItemActionType::Primary);
 }
 void AVillageBuilderPlayerController::ItemSecondary()
 {
-	ControlledVillager->ItemAction(EItemActionType::Secondary);
+	ControlledVillager->UseItem(EItemActionType::Secondary);
 }
 
 

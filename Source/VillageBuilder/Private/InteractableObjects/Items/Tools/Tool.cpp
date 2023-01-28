@@ -18,7 +18,7 @@ void ATool::BeginPlay()
 void ATool::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (UsingVillager == nullptr) {
+	if (!IsActive) {
 		return;
 	}
 	FVector StartTrace = MeshComponent->GetSocketLocation("start");
@@ -65,16 +65,12 @@ void ATool::Tick(float DeltaTime)
 		HandleHitActor->TakeDamage(Damage/3, FDamageEvent(), GetInstigatorController(), this);
 		DamagedActors.Add(HandleHitActor);
 	}
-
-
 }
 
-void ATool::Use(AVillager* User, EItemActionType ActionType)
+void ATool::Use(class AVillager* User, EItemActionType ActionType)
 {
-	bIsCurrentlyUsed = !bIsCurrentlyUsed;
-	UsingVillager = bIsCurrentlyUsed ?  User : nullptr;
+	Super::Use(User, ActionType);
 	DamagedActors.Empty();
-	
 }
 
 void ATool::LoadFromDataTable()

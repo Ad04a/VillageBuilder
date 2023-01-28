@@ -26,6 +26,9 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void LoadFromDataTable();
 
+	bool IsActive = false;
+	AVillager* UsingVillager = nullptr;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* MeshComponent = nullptr;
 
@@ -47,6 +50,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	TEnumAsByte<EItemType> ItemType;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
+	UAnimMontage* ItemAnimMontage;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	void InteractRequest(class AActor* InteractingActor);
@@ -62,7 +67,10 @@ public:
 	EItemType GetItemType();
 
 	UFUNCTION()
-	virtual void Use(class AVillager* User, EItemActionType ActionType) PURE_VIRTUAL(AItem::Use, );
+	void SetIsActive(bool State) { IsActive = State; }
+
+	UFUNCTION()
+	virtual void Use(class AVillager* User, EItemActionType ActionType);
 
 	UFUNCTION()
 	void SetEnablePhysics(bool State);

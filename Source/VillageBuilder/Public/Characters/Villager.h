@@ -16,7 +16,6 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FStatUpdatedSignature, EStat, StatName, float, Current, float, Max);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTraitMenuSignature, AVillager*, Caller);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractingSignature, FText, ActionText);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemActionSignature, EItemActionType, ItemActionType);
 
 
 UCLASS()
@@ -80,8 +79,6 @@ public:
 	FStatUpdatedSignature OnStatUpdated;
 	FInteractingSignature OnInteraction;
 	FTraitMenuSignature OnToggleTraitsMenu;
-	UPROPERTY(BlueprintAssignable, meta = (DisplayName = "On Item Action"))
-	FOnItemActionSignature OnItemAction;
 
 	AVillager();
 	virtual void Tick(float DeltaTime) override;
@@ -89,6 +86,7 @@ public:
 	void UpdateMovement(float MoveForwardValue, float MoveRightValue);
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
+	void PlayItemAnimMontage(UAnimMontage* AnimMontage, FName StartSectionName);
 
 	bool IsMovementEnabled = true;
 	bool IsRotationEnabled = true;
@@ -120,9 +118,6 @@ public:
 	void DropItem();
 
 	UFUNCTION()
-	void ItemAction(EItemActionType ActionType);
-
-	UFUNCTION()
 	void UseItem(EItemActionType ActionType);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
@@ -134,6 +129,7 @@ public:
 	virtual FText DisplayInteractText_Implementation();
 
 	int GetTrait(ETrait TraitName);
+	AItem* GetItem() { return ItemSlot; }
 
 	UFUNCTION(BlueprintPure)
 	EItemType GetEquipItemType();

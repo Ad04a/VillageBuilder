@@ -5,9 +5,11 @@
 
 UENUM(BlueprintType)
 enum EItemType {
-	Default       UMETA(DisplayName = "Default"),
-	Tool       UMETA(DisplayName = "Tool"),
-	Consumable UMETA(DisplayName = "Consumable")
+	Default     UMETA(DisplayName = "Default"),
+	Axe         UMETA(DisplayName = "Axe"),
+	Pickaxe 	UMETA(DisplayName = "Pickaxe"),
+	Food		UMETA(DisplayName = "Food"),
+	Drink		UMETA(DisplayName = "Drink")
 
 };
 
@@ -27,6 +29,9 @@ struct FItemData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EItemType> ItemType;
+
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* ItemAnimMontage;
 
 };
 

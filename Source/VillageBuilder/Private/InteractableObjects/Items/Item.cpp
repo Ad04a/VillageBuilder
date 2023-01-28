@@ -46,10 +46,11 @@ void AItem::LoadFromDataTable()
 		return;
 	}
 
-	Weight      = ItemData->Weight;
-	DisplayName = ItemData->DisplayName;
-	Description = ItemData->Description;
-	ItemType    = ItemData->ItemType;
+	Weight			= ItemData->Weight;
+	DisplayName		= ItemData->DisplayName;
+	Description		= ItemData->Description;
+	ItemType		= ItemData->ItemType;
+	ItemAnimMontage = ItemData->ItemAnimMontage;
 }
 
 void AItem::InteractRequest_Implementation(class AActor* InteractingActor)
@@ -59,6 +60,15 @@ void AItem::InteractRequest_Implementation(class AActor* InteractingActor)
 	
 	InteractingVillager->Equip(this);
 	
+}
+
+void AItem::Use(AVillager* User, EItemActionType ActionType)
+{
+	UsingVillager = User;
+	FText MyEnumValueText;
+	UEnum::GetDisplayValueAsText(ActionType, MyEnumValueText);
+	User->PlayItemAnimMontage(ItemAnimMontage,FName(MyEnumValueText.ToString()));
+		
 }
 
 FText AItem::DisplayInteractText_Implementation()

@@ -18,6 +18,6 @@ void UItemUseNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase*
 		UE_LOG(LogTemp, Error, TEXT("UItemUseNotifyState::NotifyBegin IsValid(Villager) == false"));
 		return;
 	}
-	Villager->UseItem(ActionType);
+	Villager->GetItem()->SetIsActive(SetIsActiveTo);
 }
 

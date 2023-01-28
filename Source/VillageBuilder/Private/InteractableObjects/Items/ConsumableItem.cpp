@@ -17,6 +17,7 @@ void AConsumableItem::BeginPlay()
 
 void AConsumableItem::Use(AVillager* User, EItemActionType ActionType)
 {
+	Super::Use(User, ActionType);
 	if (ActionType == EItemActionType::Secondary)
 	{
 		User->DropItem();

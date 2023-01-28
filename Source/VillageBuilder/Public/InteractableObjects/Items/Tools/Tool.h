@@ -22,8 +22,6 @@ class VILLAGEBUILDER_API ATool : public AItem
 	GENERATED_BODY()
 	
 private:
-	AVillager* UsingVillager = nullptr;
-	bool bIsCurrentlyUsed = false;
 	TSet<AActor*> DamagedActors;
 
 public:
@@ -33,13 +31,12 @@ protected:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-
+	virtual void Use(class AVillager* User, EItemActionType ActionType) override;
 	virtual void LoadFromDataTable() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Tool )
 	float BaseDamage;
 
 public:
-	virtual void Use(class AVillager* User, EItemActionType ActionType) override;
 
 };

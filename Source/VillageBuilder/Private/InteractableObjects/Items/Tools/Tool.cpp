@@ -2,6 +2,9 @@
 
 
 #include "InteractableObjects/Items/Tools/Tool.h"
+#include "Kismet/GameplayStatics.h"
+#include "Enviroment/HarvestableFoliageComponent.h"
+
 
 ATool::ATool()
 {
@@ -49,6 +52,7 @@ void ATool::Tick(float DeltaTime)
 	World->LineTraceSingleByChannel(HandleHitResult, HandleStartTrace, HandleEndTrace, ECC_WorldDynamic, CQP);
 	AActor* HitActor = HitResult.GetActor();
 	AActor* HandleHitActor = HandleHitResult.GetActor();
+
 	if (HitActor == nullptr && HandleHitActor == nullptr)
 	{
 		return;
@@ -57,13 +61,17 @@ void ATool::Tick(float DeltaTime)
 	float Damage = BaseDamage;
 	if (HitActor != nullptr )
 	{
-		HitActor->TakeDamage(Damage, FDamageEvent(), GetInstigatorController(), this);
 		DamagedActors.Add(HitActor);
+		UGameplayStatics::ApplyPointDamage(HitActor, Damage, HitResult.ImpactNormal, HitResult, nullptr, this, UDamageType::StaticClass());
+	}
+	if (HitActor == HandleHitActor)
+	{
+		return;
 	}
 	if (HandleHitActor != nullptr)
 	{
-		HandleHitActor->TakeDamage(Damage/3, FDamageEvent(), GetInstigatorController(), this);
 		DamagedActors.Add(HandleHitActor);
+		UGameplayStatics::ApplyPointDamage(HandleHitActor, Damage / 3, HandleHitResult.ImpactNormal, HandleHitResult, nullptr, this, UDamageType::StaticClass());
 	}
 }
 

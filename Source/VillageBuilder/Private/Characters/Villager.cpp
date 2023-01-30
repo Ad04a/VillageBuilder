@@ -13,6 +13,8 @@ AVillager::AVillager()
 	CameraComponent->SetupAttachment(GetRootComponent());
 	CameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); 
 	CameraComponent->bUsePawnControlRotation = true;
+
+	OnTakeAnyDamage.AddDynamic(this, &AVillager::RecieveDamage);
 }
 
 void AVillager::BeginPlay()
@@ -132,16 +134,9 @@ void AVillager::Tick(float DeltaTime)
 
 }
 
-float AVillager::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+void AVillager::RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
-	AddStatValue(EStat::Health, -DamageAmount);
-	FStatInfoStruct* Stat = StatsMap.Find(EStat::Health);
-	if (Stat == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("AVillager::AddStatValue IsValid(Stat) == false"));
-		return 0;
-	}
-	
-	return -DamageAmount;
+	AddStatValue(EStat::Health, -Damage);
 }
 
 void AVillager::Die()

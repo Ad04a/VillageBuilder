@@ -3,7 +3,6 @@
 
 #include "InteractableObjects/Items/Tools/Tool.h"
 #include "Kismet/GameplayStatics.h"
-#include "Enviroment/HarvestableFoliageComponent.h"
 
 
 ATool::ATool()

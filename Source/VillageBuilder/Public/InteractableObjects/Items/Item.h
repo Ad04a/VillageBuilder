@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "InteractableObjects/Items/ItemSlotComponent.h"
 #include "Headers/Interactable.h"
 #include "Headers/ItemInfo.h"
 #include "Headers/ItemActionEnums.h"

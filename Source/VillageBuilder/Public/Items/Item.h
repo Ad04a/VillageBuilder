@@ -77,4 +77,7 @@ public:
 	UFUNCTION()
 	virtual FString SerializetemInfo() PURE_VIRTUAL(AItem::SerializetemInfo, return "";);
 
+	UFUNCTION()
+	UMaterialInterface* GetMaterial();
+
 };

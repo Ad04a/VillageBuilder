@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "InteractableObjects/Items/Item.h"
+#include "Items/Item.h"
 #include "Headers/Interactable.h"
 #include "Headers/LoadInfo.h"
 #include "Headers/ItemActionEnums.h"

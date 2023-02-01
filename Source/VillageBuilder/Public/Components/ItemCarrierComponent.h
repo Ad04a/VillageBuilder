@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "InteractableObjects/Items/Item.h"
+#include "Items/Item.h"
 #include "ItemCarrierComponent.generated.h"
 
 

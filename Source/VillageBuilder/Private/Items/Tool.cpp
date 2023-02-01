@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InteractableObjects/Items/Tools/Tool.h"
+#include "Items/Tool.h"
 #include "Kismet/GameplayStatics.h"
 
 

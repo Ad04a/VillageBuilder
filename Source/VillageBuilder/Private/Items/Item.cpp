@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "InteractableObjects/Items/Item.h"
+#include "Items/Item.h"
 
 #include "Characters/Villager.h"
 
@@ -13,8 +13,6 @@ AItem::AItem()
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(MeshComponent);
-
-	
 }
 
 // Called when the game starts or when spawned
@@ -87,4 +85,8 @@ void AItem::SetEnablePhysics(bool State)
 	SetActorEnableCollision(State);
 }
 
+UMaterialInterface* AItem::GetMaterial()
+{
+	return MeshComponent->GetStaticMesh()->GetMaterial(0);
+}
 

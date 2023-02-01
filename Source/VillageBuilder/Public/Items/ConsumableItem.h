@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InteractableObjects/Items/Item.h"
+#include "Items/Item.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "ConsumableItem.generated.h"
 

@@ -16,7 +16,6 @@ void UHarvestableFoliageComponent::BeginPlay()
 	{
 		PerInstanceHealth.Add(InstanceBaseHealth);
 
-		UE_LOG(LogTemp, Error, TEXT(" index %d pochna s health %f"), i, PerInstanceHealth[i]);
 	}
 }
 

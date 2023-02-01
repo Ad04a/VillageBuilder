@@ -33,9 +33,11 @@ AVillager* AGameplayModeBase::SpawnVillager(UWorld* World, bool IsPlayer, FVecto
 	FVector Location = Position;
 	FRotator Rotation = FRotator(0, 0, 0);
 	FActorSpawnParameters Params;
+	TSubclassOf<AVillager> ClassToSpawn = VillagerClass;
 	if (IsPlayer)
 	{
 		Params.Name = FName("Player");
+		ClassToSpawn = PlayerClass;
 	}
 
 	if(LoadInfo != FLoadInfoStruct())
@@ -44,7 +46,7 @@ AVillager* AGameplayModeBase::SpawnVillager(UWorld* World, bool IsPlayer, FVecto
 		Rotation = LoadInfo.Transform.Rotator();
 	}
 		
-	AVillager* Villager = World->SpawnActor<AVillager>(PawnClass, Location, Rotation, Params);
+	AVillager* Villager = World->SpawnActor<AVillager>(ClassToSpawn, Location, Rotation, Params);
 
 	if (IsValid(Villager) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::SpawnVillager IsValid(Player) == false"));

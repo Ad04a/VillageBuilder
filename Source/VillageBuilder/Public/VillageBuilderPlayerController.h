@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "Characters/Villager.h"
+#include "Characters/VillageMayor.h"
 #include "VillageBuilderPlayerController.generated.h"
 
 /**
@@ -17,7 +17,7 @@ class VILLAGEBUILDER_API AVillageBuilderPlayerController : public APlayerControl
 
 private:
 
-	class AVillager* ControlledVillager;
+	class AVillageMayor* ControlledVillageMayorPawn;
 
 protected:
 

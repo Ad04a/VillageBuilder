@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Camera/CameraComponent.h"
 #include "InteractableObjects/Items/Item.h"
 #include "Headers/Interactable.h"
 #include "Headers/LoadInfo.h"
@@ -12,40 +11,50 @@
 #include "Villager.generated.h"
 
 
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FStatUpdatedSignature, EStat, StatName, float, Current, float, Max);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTraitMenuSignature, AVillager*, Caller);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractingSignature, FText, ActionText);
 
+USTRUCT(BlueprintType)
+struct FStatTraitData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Traits)
+	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	TMap<TEnumAsByte<EStat>, FStatInfoStruct> StatsMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	TMap<TEnumAsByte<EStat>, TEnumAsByte<ETrait>> StatTraitRelation;
+};
 
 UCLASS()
 class VILLAGEBUILDER_API AVillager : public ACharacter, public IInteractable
 {
 	GENERATED_BODY()
 
+public:
+	AVillager();
+
 private:
 	float StatDepletion = 0;
 
 	void Die();
 
-	void CheckForInteractables();
-
-	AActor* FocusedActor;
-
 	AItem* ItemSlot;
 
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	UFUNCTION()
-	void RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* CameraComponent;
+	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY()
 	FLoadInfoStruct LoadInfo;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UDataTable* StatTraitDataTable = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName RollToRead = "Default";
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Traits)
 	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
@@ -65,21 +74,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float SaturationForPassiveHealing = 0.5;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Inventory)
-	float Reach = 1;
-
 	FRotator MovementInputRotator;
 
+	UFUNCTION()
+	void RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	//FJobInfoStruct JobInfo
 
 public:	
 
 	FStatUpdatedSignature OnStatUpdated;
-	FInteractingSignature OnInteraction;
-	FTraitMenuSignature OnToggleTraitsMenu;
-
-	AVillager();
-	virtual void Tick(float DeltaTime) override;
 
 	void UpdateMovement(float MoveForwardValue, float MoveRightValue);
 	void TurnAtRate(float Rate);
@@ -88,8 +91,6 @@ public:
 
 	bool IsMovementEnabled = true;
 	bool IsRotationEnabled = true;
-	bool IsInteracting = false;
-	bool CanInteract = true;
 
 	void Init(FLoadInfoStruct InLoadInfo = FLoadInfoStruct()/*InColonyState*/);
 	FLoadInfoStruct GetSaveInfo();
@@ -99,15 +100,6 @@ public:
 	void AcknowledgeWidgetBinding();
 
 	void AddStatValue(EStat StatName, float InValue);
-
-	UFUNCTION()
-	void ShowTraitMenu();
-
-	UFUNCTION()
-	void ToggleTraitsMenu(AVillager* Caller);
-
-	UFUNCTION()
-	void Interact();
 
 	UFUNCTION()
 	void Equip(class AActor* ItemToEquip);

@@ -2,6 +2,7 @@
 
 
 #include "Characters/Villager.h"
+#include "Characters/VillageMayor.h"
 
 
 
@@ -9,23 +10,12 @@
 AVillager::AVillager()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	CameraComponent->SetupAttachment(GetRootComponent());
-	CameraComponent->SetRelativeLocation(FVector(-39.56f, 1.75f, 64.f)); 
-	CameraComponent->bUsePawnControlRotation = true;
-
 	OnTakeAnyDamage.AddDynamic(this, &AVillager::RecieveDamage);
 }
 
-void AVillager::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-
-
 void AVillager::Init(FLoadInfoStruct InLoadInfo)
 {
+	//--------InitWithDataFromSaveFile--------
 	if (InLoadInfo != FLoadInfoStruct())
 	{
 		//ItemSlots = InLoadInfo.ItemSlots;
@@ -34,6 +24,25 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 		SetActorTransform(InLoadInfo.Transform);
 		return;
 	}
+
+	//------------LoadDataForMaps--------------
+	if (IsValid(StatTraitDataTable) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AItem::LoadFromDataTable() IsValid(DataTable) == false from %s"));
+		return;
+	}
+
+	FStatTraitData* StatTraitData = StatTraitDataTable->FindRow<FStatTraitData>(RollToRead, "");
+
+	if (StatTraitData == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AItem::LoadFromDataTable() ItemData == nullptr from %s"));
+		return;
+	}
+
+	TraitsMap		  = StatTraitData->TraitsMap;
+	StatsMap		  = StatTraitData->StatsMap;
+	StatTraitRelation = StatTraitData->StatTraitRelation;
 	
 
 	//------------InitTraits--------------
@@ -92,46 +101,44 @@ void AVillager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckForInteractables();
-
 	FStatInfoStruct* Health = StatsMap.Find(EStat::Health);
 	if (Health->Current == 0) {
 		Die();
 	}
 
-
 	StatDepletion += DeltaTime;
-	if (StatDepletion >= StatDepletionInterval) {
-
-		FStatInfoStruct* Thirst = StatsMap.Find(EStat::Thirst);
-		AddStatValue(EStat::Thirst, Thirst->ChangeValue);
-
-		if (Thirst->Current == 0) {
-			AddStatValue(EStat::Health, Health->Max * -0.05);
-		}
-
-		FStatInfoStruct* Hunger = StatsMap.Find(EStat::Hunger);
-		AddStatValue(EStat::Hunger, Hunger->ChangeValue);
-
-		if (Hunger->Current == 0) {
-			AddStatValue(EStat::Health, Health->Max * -0.02);
-		}
-
-		FStatInfoStruct* Energy = StatsMap.Find(EStat::Energy);
-		AddStatValue(EStat::Energy, Energy->ChangeValue);
-
-		if (Energy->Current == 0) {
-			AddStatValue(EStat::Health, Health->Max * -0.01);
-		}
-
-		if (Hunger->Current > Hunger->Max * SaturationForPassiveHealing && Thirst->Current > Thirst->Max * SaturationForPassiveHealing) {
-
-			AddStatValue(EStat::Health, Health->ChangeValue);
-		}
-
-		StatDepletion = 0;
+	if (StatDepletion < StatDepletionInterval) {
+		return;
 	}
 
+	FStatInfoStruct* Thirst = StatsMap.Find(EStat::Thirst);
+	AddStatValue(EStat::Thirst, Thirst->ChangeValue);
+
+	if (Thirst->Current == 0) {
+		AddStatValue(EStat::Health, Health->Max * -0.05);
+	}
+
+	FStatInfoStruct* Hunger = StatsMap.Find(EStat::Hunger);
+	AddStatValue(EStat::Hunger, Hunger->ChangeValue);
+
+	if (Hunger->Current == 0) {
+		AddStatValue(EStat::Health, Health->Max * -0.02);
+	}
+
+	FStatInfoStruct* Energy = StatsMap.Find(EStat::Energy);
+	AddStatValue(EStat::Energy, Energy->ChangeValue);
+
+	if (Energy->Current == 0) {
+		AddStatValue(EStat::Health, Health->Max * -0.01);
+	}
+
+	if (Hunger->Current > Hunger->Max * SaturationForPassiveHealing && Thirst->Current > Thirst->Max * SaturationForPassiveHealing) {
+
+		AddStatValue(EStat::Health, Health->ChangeValue);
+	}
+
+	StatDepletion = 0;
+	
 }
 
 void AVillager::RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
@@ -143,31 +150,6 @@ void AVillager::Die()
 {
 	UE_LOG(LogTemp, Error, TEXT("Villager is dead"));
 
-}
-
-void AVillager::ShowTraitMenu()
-{
-	if (IsInteracting == false)
-	{
-		ToggleTraitsMenu(this);
-		CanInteract = !CanInteract;
-	}
-	
-}
-
-void AVillager::ToggleTraitsMenu(AVillager* Caller) {
-	
-	OnToggleTraitsMenu.Broadcast(Caller);
-	IsMovementEnabled = !IsMovementEnabled;
-	IsRotationEnabled = !IsRotationEnabled;
-}
-
-void AVillager::Interact()
-{
-	if (FocusedActor != nullptr && CanInteract == true)
-	{
-		Cast<IInteractable>(FocusedActor)->Execute_InteractRequest(FocusedActor, this);
-	}
 }
 
 void AVillager::Equip(AActor* ItemToEquip)
@@ -201,48 +183,6 @@ void AVillager::UseItem(EItemActionType ActionType)
 		return;
 	}
 	ItemSlot->Use(this, ActionType);
-}
-
-void AVillager::CheckForInteractables()
-{
-	FVector StartTrace = CameraComponent->GetComponentLocation();
-	FVector EndTrace = CameraComponent->GetForwardVector() * Reach + StartTrace;
-	
-	const FName TraceTag("MyTraceTag");
-
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("AVillager::CheckForInteractables IsValid(World) == false"));
-		return;
-	}
-	World->DebugDrawTraceTag = TraceTag;
-
-	FHitResult HitResult; 
-	FCollisionQueryParams CQP;
-	CQP.AddIgnoredActor(this);
-	CQP.TraceTag = TraceTag;
-	
-	
-	World->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldDynamic, CQP);
-
-	IInteractable* InteractableObject = Cast<IInteractable>(HitResult.GetActor());
-
-	
-
-	if (InteractableObject == nullptr && FocusedActor != nullptr)
-	{
-		FocusedActor = nullptr;
-		OnInteraction.Broadcast(FText());
-		return;
-	}
-	if (Cast<IInteractable>(FocusedActor) != InteractableObject) 
-	{
-		FocusedActor = HitResult.GetActor();
-		OnInteraction.Broadcast(Cast<IInteractable>(FocusedActor)->Execute_DisplayInteractText(FocusedActor));
-	}
-	
-	
 }
 
 void AVillager::RecieveXP(ETrait, int XPAmount)
@@ -373,14 +313,14 @@ int AVillager::GetTrait(ETrait TraitName)
 
 void AVillager::InteractRequest_Implementation(class AActor* InteractingActor)
 {
-	AVillager* InteractingVillager = Cast<AVillager>(InteractingActor);
-	if (IsValid(InteractingVillager) == false)
+	AVillageMayor* InteractingPlayer = Cast<AVillageMayor>(InteractingActor);
+	if (IsValid(InteractingPlayer) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AVillager::InteractRequest_Implementation IsValid(InteractingVillager) == false"));
 		return;
 	}
-	InteractingVillager->ToggleTraitsMenu(this);
-	InteractingVillager->IsInteracting = !InteractingVillager->IsInteracting;
+	InteractingPlayer->ToggleTraitsMenu(this);
+	InteractingPlayer->IsInteracting = !InteractingPlayer->IsInteracting;
 }
 
 FText AVillager::DisplayInteractText_Implementation()

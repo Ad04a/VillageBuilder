@@ -27,8 +27,8 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 		return;
 	}
 
-	ControlledVillager = Cast<AVillager>(GetCharacter());
-	if (IsValid(ControlledVillager) == false) {
+	ControlledVillageMayorPawn = Cast<AVillageMayor>(GetCharacter());
+	if (IsValid(ControlledVillageMayorPawn) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderPlayerController::OnPossess IsValid(ControlledVillager) == false"));
 		return;
 	}
@@ -45,13 +45,13 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	InputComponent->BindAxis(TurnRightBinding);
 	InputComponent->BindAxis(LookUpBinding);
 
-	InputComponent->BindAction(InteractBinding, IE_Pressed, ControlledVillager, &AVillager::Interact);
-	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, ControlledVillager, &AVillager::ShowTraitMenu);
-	InputComponent->BindAction(DropItemBinding, IE_Pressed, ControlledVillager, &AVillager::DropItem);
+	InputComponent->BindAction(InteractBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::Interact);
+	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::ShowTraitMenu);
+	InputComponent->BindAction(DropItemBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::DropItem);
 
-	HUD->BindPlayerToStatWidget(ControlledVillager);
-	ControlledVillager->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);
-	ControlledVillager->OnToggleTraitsMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowTraitMenu);
+	HUD->BindPlayerToStatWidget(ControlledVillageMayorPawn);
+	ControlledVillageMayorPawn->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);
+	ControlledVillageMayorPawn->OnToggleTraitsMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowTraitMenu);
 
 	InPawn->bUseControllerRotationYaw = true;
 
@@ -77,7 +77,7 @@ void AVillageBuilderPlayerController::UpdateMovement(float DeltaTime)
 	const float MoveRightValue = GetInputAxisValue(MoveRightBinding);
 
 	if (MoveForwardValue!=0 || MoveRightValue!=0) {
-		ControlledVillager->UpdateMovement(MoveForwardValue, MoveRightValue);
+		ControlledVillageMayorPawn->UpdateMovement(MoveForwardValue, MoveRightValue);
 	}
 }
 
@@ -95,22 +95,22 @@ void AVillageBuilderPlayerController::UpdateTurnRotation()
 		Y *= GamepadTurnRate;
 	}*/
 	if (X != 0) {
-		ControlledVillager->TurnAtRate(X);
+		ControlledVillageMayorPawn->TurnAtRate(X);
 	}
 
 	if (Y != 0) {
-		ControlledVillager->LookUpAtRate(Y);
+		ControlledVillageMayorPawn->LookUpAtRate(Y);
 	}
 	
 }
 
 void AVillageBuilderPlayerController::ItemPrimary()
 {
-	ControlledVillager->UseItem(EItemActionType::Primary);
+	ControlledVillageMayorPawn->UseItem(EItemActionType::Primary);
 }
 void AVillageBuilderPlayerController::ItemSecondary()
 {
-	ControlledVillager->UseItem(EItemActionType::Secondary);
+	ControlledVillageMayorPawn->UseItem(EItemActionType::Secondary);
 }
 
 

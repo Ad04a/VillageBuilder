@@ -20,5 +20,6 @@ void UBaseBuildingComponent::Touched(UPrimitiveComponent* OverlappedComponent, A
 	SetMaterial(0, TouchingItem->GetMaterial());
 	bIsPlaced = true;
 	SetCollisionProfileName(TEXT("BlockAll"));
+	SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
 	TouchingItem->Destroy();
 }

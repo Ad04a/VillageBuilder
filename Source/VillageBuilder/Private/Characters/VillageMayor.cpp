@@ -2,6 +2,7 @@
 
 
 #include "Characters/VillageMayor.h"
+#include "Components/BaseBuildingComponent.h"
 
 AVillageMayor::AVillageMayor()
 {
@@ -39,21 +40,35 @@ void AVillageMayor::CheckForInteractables()
 	CQP.TraceTag = TraceTag;
 
 
-	World->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldDynamic, CQP);
+	World->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_GameTraceChannel1, CQP);
 
-	IInteractable* InteractableObject = Cast<IInteractable>(HitResult.GetActor());
+	AActor* HitActor = HitResult.GetActor();
+	UPrimitiveComponent* HitComponent = HitResult.GetComponent();
+	IInteractable* InteractableActor = Cast<IInteractable>(HitActor);
+	IInteractable* InteractableComponent = Cast<IInteractable>(HitComponent);
 
-	if (InteractableObject == nullptr && FocusedActor != nullptr)
+	if (HitActor == nullptr )
 	{
-		FocusedActor = nullptr;
+		FocusedObject = nullptr;
 		OnInteraction.Broadcast(FText());
 		return;
 	}
-	if (Cast<IInteractable>(FocusedActor) != InteractableObject)
+	if (HitComponent->IsA(UBaseBuildingComponent::StaticClass()) == true)
 	{
-		FocusedActor = HitResult.GetActor();
-		OnInteraction.Broadcast(Cast<IInteractable>(FocusedActor)->Execute_DisplayInteractText(FocusedActor));
+		FocusedObject = nullptr;
+		OnInteraction.Broadcast(FText());
+		return;
 	}
+	if (InteractableComponent != nullptr)
+	{
+		FocusedObject = HitComponent;
+		OnInteraction.Broadcast(InteractableComponent->Execute_DisplayInteractText(HitComponent));
+		return;
+	}
+	
+	FocusedObject = HitActor;
+	OnInteraction.Broadcast(InteractableActor->Execute_DisplayInteractText(HitActor));
+	
 
 }
 void AVillageMayor::ShowTraitMenu()
@@ -66,7 +81,8 @@ void AVillageMayor::ShowTraitMenu()
 
 }
 
-void AVillageMayor::ToggleTraitsMenu(AVillager* Caller) {
+void AVillageMayor::ToggleTraitsMenu(AVillager* Caller)
+{
 
 	OnToggleTraitsMenu.Broadcast(Caller);
 	IsMovementEnabled = !IsMovementEnabled;
@@ -75,8 +91,15 @@ void AVillageMayor::ToggleTraitsMenu(AVillager* Caller) {
 
 void AVillageMayor::Interact()
 {
-	if (FocusedActor != nullptr && CanInteract == true)
+	if (FocusedObject != nullptr && CanInteract == true)
 	{
-		Cast<IInteractable>(FocusedActor)->Execute_InteractRequest(FocusedActor, this);
+		Cast<IInteractable>(FocusedObject)->Execute_InteractRequest(FocusedObject, this);
 	}
+}
+
+void AVillageMayor::ToggleEmployeeMenu()
+{
+	OnToggleEmployeeMenu.Broadcast();
+	IsMovementEnabled = !IsMovementEnabled;
+	IsRotationEnabled = !IsRotationEnabled;
 }

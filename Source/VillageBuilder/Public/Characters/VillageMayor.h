@@ -10,7 +10,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTraitMenuSignature, AVillager*, Caller);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractingSignature, FText, ActionText);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEmployeeMenuSignature);
 
 UCLASS()
 class VILLAGEBUILDER_API AVillageMayor : public AVillager
@@ -24,7 +24,7 @@ private:
 
 	void CheckForInteractables();
 
-	AActor* FocusedActor;
+	UObject* FocusedObject;
 
 	bool CanInteract = true;
 
@@ -42,6 +42,7 @@ public:
 
 	FInteractingSignature OnInteraction;
 	FTraitMenuSignature OnToggleTraitsMenu;
+	FEmployeeMenuSignature OnToggleEmployeeMenu;
 
 	bool IsInteracting = false;
 
@@ -53,5 +54,8 @@ public:
 
 	UFUNCTION()
 	void Interact();
+
+	UFUNCTION()
+	void ToggleEmployeeMenu();
 	
 };

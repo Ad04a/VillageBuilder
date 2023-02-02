@@ -37,6 +37,9 @@ public:
 	AVillager();
 
 private:
+
+	AActor* WorkStation;
+
 	float StatDepletion = 0;
 
 	void Die();
@@ -111,8 +114,8 @@ public:
 	void UseItem(EItemActionType ActionType);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	void InteractRequest(class AActor* InteractingActor);
-	virtual void InteractRequest_Implementation(class AActor* InteractingActor);
+	void InteractRequest(class AVillageMayor* InteractingPlayer);
+	virtual void InteractRequest_Implementation(class AVillageMayor* InteractingPlayer);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	FText DisplayInteractText();
@@ -123,5 +126,8 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	EItemType GetEquipItemType();
+
+	bool GetIsUnemployed();
+	FVector GetWorkStationCoordinates();
 
 };

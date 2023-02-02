@@ -3,7 +3,7 @@
 
 #include "Characters/Villager.h"
 #include "Characters/VillageMayor.h"
-
+#include "WorkSystem/BaseWorkStation.h"
 
 
 // Sets default values
@@ -311,14 +311,8 @@ int AVillager::GetTrait(ETrait TraitName)
 	return Trait->Level;
 }
 
-void AVillager::InteractRequest_Implementation(class AActor* InteractingActor)
+void AVillager::InteractRequest_Implementation(class AVillageMayor* InteractingPlayer)
 {
-	AVillageMayor* InteractingPlayer = Cast<AVillageMayor>(InteractingActor);
-	if (IsValid(InteractingPlayer) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("AVillager::InteractRequest_Implementation IsValid(InteractingVillager) == false"));
-		return;
-	}
 	InteractingPlayer->ToggleTraitsMenu(this);
 	InteractingPlayer->IsInteracting = !InteractingPlayer->IsInteracting;
 }
@@ -335,4 +329,14 @@ EItemType AVillager::GetEquipItemType()
 		return EItemType::Default;
 	}
 	return ItemSlot->GetItemType();
+}
+
+bool AVillager::GetIsUnemployed()
+{
+	return WorkStation == nullptr;
+}
+
+FVector AVillager::GetWorkStationCoordinates()
+{
+	return WorkStation->GetActorLocation();
 }

@@ -53,8 +53,8 @@ protected:
 	UAnimMontage* ItemAnimMontage;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	void InteractRequest(class AActor* InteractingActor);
-	virtual void InteractRequest_Implementation(class AActor* InteractingActor);
+	void InteractRequest(class AVillageMayor* InteractingPlayer);
+	virtual void InteractRequest_Implementation(class AVillageMayor* InteractingPlayer);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	FText DisplayInteractText();

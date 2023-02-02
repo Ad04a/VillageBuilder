@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
+#include "Headers/Interactable.h"
 #include "BuildingClusterComponent.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VILLAGEBUILDER_API UBuildingClusterComponent : public UStaticMeshComponent
+class VILLAGEBUILDER_API UBuildingClusterComponent : public UStaticMeshComponent, public IInteractable
 {
 	GENERATED_BODY()
 
@@ -22,4 +23,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInterface* MainMaterial;
 
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
+	void InteractRequest(class AVillageMayor* InteractingPlayer);
+	virtual void InteractRequest_Implementation(class AVillageMayor* InteractingPlayer);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
+	FText DisplayInteractText();
+	virtual FText DisplayInteractText_Implementation();
 };

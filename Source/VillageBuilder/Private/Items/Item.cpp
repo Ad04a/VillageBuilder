@@ -3,7 +3,7 @@
 
 #include "Items/Item.h"
 
-#include "Characters/Villager.h"
+#include "Characters/VillageMayor.h"
 
 // Sets default values
 AItem::AItem()
@@ -51,13 +51,9 @@ void AItem::LoadFromDataTable()
 	ItemAnimMontage = ItemData->ItemAnimMontage;
 }
 
-void AItem::InteractRequest_Implementation(class AActor* InteractingActor)
+void AItem::InteractRequest_Implementation(class AVillageMayor* InteractingPlayer)
 {
-	AVillager* InteractingVillager = Cast<AVillager>(InteractingActor);
-	//GetItemInfo();
-	
-	InteractingVillager->Equip(this);
-	
+	InteractingPlayer->Equip(this);	
 }
 
 void AItem::Use(AVillager* User, EItemActionType ActionType)

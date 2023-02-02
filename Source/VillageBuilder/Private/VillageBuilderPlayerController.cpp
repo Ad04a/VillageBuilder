@@ -52,6 +52,7 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	HUD->BindPlayerToStatWidget(ControlledVillageMayorPawn);
 	ControlledVillageMayorPawn->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);
 	ControlledVillageMayorPawn->OnToggleTraitsMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowTraitMenu);
+	ControlledVillageMayorPawn->OnToggleEmployeeMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowEmployeeMenu);
 
 	InPawn->bUseControllerRotationYaw = true;
 

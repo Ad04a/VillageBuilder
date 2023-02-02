@@ -37,7 +37,13 @@ void AGameplayHUDBase::BeginPlay()
 
 	TraitMenuWidget = Cast<UTraitMenuWidgetBase>(CreateWidget<UUserWidget>(World, TraitMenuWidgetClass));
 	if (IsValid(TraitMenuWidget) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(InteractionWidget) == false"));
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(TraitMenuWidget) == false"));
+		return;
+	}
+
+	EmployeeMenuWidget = Cast<UEmployeeMenuWidgetBase>(CreateWidget<UUserWidget>(World, EmployeeMenuWidgetClass));
+	if (IsValid(EmployeeMenuWidget) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(EmployeeMenuWidget) == false"));
 		return;
 	}
 
@@ -46,15 +52,21 @@ void AGameplayHUDBase::BeginPlay()
 
 void AGameplayHUDBase::ShowStats()
 {
-	if (PlayerOwner && StatWidget) {
-		StatWidget->AddToViewport();
-		PlayerOwner->bShowMouseCursor = false;
-		PlayerOwner->SetInputMode(FInputModeGameOnly());
+	if ((IsValid(PlayerOwner) && IsValid(StatWidget)) == false) {
+		return;
 	}
+	
+	StatWidget->AddToViewport();
+	PlayerOwner->bShowMouseCursor = false;
+	PlayerOwner->SetInputMode(FInputModeGameOnly());
+	
 }
 
 void AGameplayHUDBase::ShowInteraction(FText ActionText)
 {
+	if ((IsValid(PlayerOwner) && IsValid(InteractionWidget)) == false) {
+		return;
+	}
 	
 	if (FText().EqualTo(ActionText)) {
 		InteractionWidget->RemoveFromViewport();
@@ -63,7 +75,7 @@ void AGameplayHUDBase::ShowInteraction(FText ActionText)
 	
 	InteractionWidget->UpdateInteractionText(ActionText);
 
-	if (PlayerOwner && InteractionWidget && InteractionWidget->GetIsVisible()==false) {
+	if (InteractionWidget->GetIsVisible()==false) {
 		InteractionWidget->AddToViewport();
 		PlayerOwner->bShowMouseCursor = false;
 		PlayerOwner->SetInputMode(FInputModeGameOnly());
@@ -93,21 +105,41 @@ void AGameplayHUDBase::BindVillagerToTraitMenuWidget(AVillager* Villager)
 
 void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
 {
-	BindVillagerToTraitMenuWidget(Caller);
 	
-	if (PlayerOwner && TraitMenuWidget) {
-
-		if (TraitMenuWidget->GetIsVisible()) 
-		{
-			TraitMenuWidget->RemoveFromViewport();
-			Caller->OnStatUpdated.RemoveAll(TraitMenuWidget);
-			return;
-		}
-		TraitMenuWidget->AddToViewport();
-		PlayerOwner->bShowMouseCursor = false;
-		PlayerOwner->SetInputMode(FInputModeGameOnly());
+	if ((IsValid(PlayerOwner) && IsValid(TraitMenuWidget)) == false) {
+		return;
 	}
 
+	if (TraitMenuWidget->GetIsVisible()) 
+	{
+		TraitMenuWidget->RemoveFromViewport();
+		Caller->OnStatUpdated.RemoveAll(TraitMenuWidget);
+		return;
+	}
+
+	BindVillagerToTraitMenuWidget(Caller);
+	TraitMenuWidget->AddToViewport();
+	PlayerOwner->bShowMouseCursor = false;
+	PlayerOwner->SetInputMode(FInputModeGameOnly());
+
+}
+
+void AGameplayHUDBase::ShowEmployeeMenu()
+{
+	if ((IsValid(PlayerOwner) && IsValid(EmployeeMenuWidget)) == false) {
+		return;
+	}
+	if (EmployeeMenuWidget->GetIsVisible() == true) {
+		EmployeeMenuWidget->RemoveFromViewport();
+		PlayerOwner->bShowMouseCursor = false;
+		PlayerOwner->SetInputMode(FInputModeGameOnly());
+		return;
+	}
+
+	EmployeeMenuWidget->AddToViewport();
+	PlayerOwner->bShowMouseCursor = true;
+	PlayerOwner->SetInputMode(FInputModeGameAndUI());
+	
 }
 
 void AGameplayHUDBase::Clear()

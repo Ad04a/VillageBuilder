@@ -7,6 +7,7 @@
 #include "UI/Widgets/Gameplay/StatWidgetBase.h"
 #include "UI/Widgets/Gameplay/InteractionWidgetBase.h"
 #include "UI/Widgets/Gameplay/TraitMenuWidgetBase.h"
+#include "UI/Widgets/Gameplay/EmployeeMenuWidgetBase.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "GameplayHUDBase.generated.h"
 
@@ -39,6 +40,12 @@ protected:
 	UPROPERTY()
 	class UTraitMenuWidgetBase* TraitMenuWidget;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UEmployeeMenuWidgetBase> EmployeeMenuWidgetClass;
+
+	UPROPERTY()
+	class UEmployeeMenuWidgetBase* EmployeeMenuWidget;
+
 	virtual void BeginPlay()override;
 
 	void Clear();
@@ -55,4 +62,7 @@ public:
 
 	UFUNCTION()
 	void ShowTraitMenu(AVillager* Caller);
+
+	UFUNCTION()
+	void ShowEmployeeMenu();
 };

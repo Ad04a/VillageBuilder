@@ -2,7 +2,6 @@
 
 
 #include "Items/Item.h"
-
 #include "Characters/VillageMayor.h"
 
 // Sets default values

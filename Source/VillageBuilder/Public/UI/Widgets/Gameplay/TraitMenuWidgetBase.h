@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
-#include "Headers/StatAndTraitEnums.h"
+#include "Characters/Villager.h"
 #include "TraitMenuWidgetBase.generated.h"
 
 /**
@@ -58,6 +58,8 @@ public:
 
 	UFUNCTION()
 	void SetTrait(ETrait TraitName, int Value);
+
+	void Init(AVillager* Villager);
 
 	void NativeOnInitialized() override;
 };

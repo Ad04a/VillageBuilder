@@ -49,10 +49,10 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::ShowTraitMenu);
 	InputComponent->BindAction(DropItemBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::DropItem);
 
-	HUD->BindPlayerToStatWidget(ControlledVillageMayorPawn);
 	ControlledVillageMayorPawn->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);
 	ControlledVillageMayorPawn->OnToggleTraitsMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowTraitMenu);
 	ControlledVillageMayorPawn->OnToggleEmployeeMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowEmployeeMenu);
+	HUD->ShowStats(ControlledVillageMayorPawn);
 
 	InPawn->bUseControllerRotationYaw = true;
 

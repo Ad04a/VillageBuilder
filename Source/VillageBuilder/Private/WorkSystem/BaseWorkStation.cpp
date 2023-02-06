@@ -2,6 +2,7 @@
 
 
 #include "WorkSystem/BaseWorkStation.h"
+#include "Characters/VillageMayor.h"
 
 // Sets default values
 ABaseWorkStation::ABaseWorkStation()
@@ -35,6 +36,7 @@ void ABaseWorkStation::BeginPlay()
 
 	DisplayName    = StationData->DisplayName;
 	TraitModifiers = StationData->TraitModifiers;
+	ProfessionName = StationData->ProfessionName;
 }
 
 void ABaseWorkStation::ReleaseWorker()
@@ -44,7 +46,7 @@ void ABaseWorkStation::ReleaseWorker()
 
 void ABaseWorkStation::InteractRequest_Implementation(AVillageMayor* InteractingPlayer)
 {
-	InteractingPlayer->ToggleEmployeeMenu();
+	InteractingPlayer->ToggleEmployeeMenu(this);
 }
 
 FText ABaseWorkStation::DisplayInteractText_Implementation()
@@ -52,5 +54,12 @@ FText ABaseWorkStation::DisplayInteractText_Implementation()
 	return FText::FromString("Open " + DisplayName.ToString());
 }
 
-
+float ABaseWorkStation::GetModifier(ETrait TraitName) 
+{
+	if (TraitModifiers.Contains(TraitName) == false)
+	{
+		return 0;
+	}
+	return *TraitModifiers.Find(TraitName);
+}
 

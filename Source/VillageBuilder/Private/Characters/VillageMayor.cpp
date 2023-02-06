@@ -47,7 +47,7 @@ void AVillageMayor::CheckForInteractables()
 	IInteractable* InteractableActor = Cast<IInteractable>(HitActor);
 	IInteractable* InteractableComponent = Cast<IInteractable>(HitComponent);
 
-	if (HitActor == nullptr )
+	if (HitActor == nullptr || InteractableActor==nullptr)
 	{
 		FocusedObject = nullptr;
 		OnInteraction.Broadcast(FText());
@@ -73,8 +73,9 @@ void AVillageMayor::CheckForInteractables()
 }
 void AVillageMayor::ShowTraitMenu()
 {
-	if (IsInteracting == false)
+	if (bIsInteracting == false)
 	{
+		bIsInteracting = !bIsInteracting;
 		ToggleTraitsMenu(this);
 		CanInteract = !CanInteract;
 	}
@@ -83,10 +84,8 @@ void AVillageMayor::ShowTraitMenu()
 
 void AVillageMayor::ToggleTraitsMenu(AVillager* Caller)
 {
-
 	OnToggleTraitsMenu.Broadcast(Caller);
-	IsMovementEnabled = !IsMovementEnabled;
-	IsRotationEnabled = !IsRotationEnabled;
+	ToggleStableInteraction();
 }
 
 void AVillageMayor::Interact()
@@ -97,9 +96,16 @@ void AVillageMayor::Interact()
 	}
 }
 
-void AVillageMayor::ToggleEmployeeMenu()
+void AVillageMayor::ToggleEmployeeMenu(ABaseWorkStation* WorkStation)
 {
-	OnToggleEmployeeMenu.Broadcast();
-	IsMovementEnabled = !IsMovementEnabled;
-	IsRotationEnabled = !IsRotationEnabled;
+	OnToggleEmployeeMenu.Broadcast(WorkStation);
+	ToggleStableInteraction();
+}
+
+void AVillageMayor::ToggleStableInteraction()
+{
+	bCanUseItems = !bCanUseItems;
+	bIsInteracting = !bIsInteracting;
+	bIsMovementEnabled = !bIsMovementEnabled;
+	bIsRotationEnabled = !bIsRotationEnabled;
 }

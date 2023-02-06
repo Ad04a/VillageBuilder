@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Characters/VillageMayor.h"
 #include "Headers/Interactable.h"
+#include "Headers/StatAndTraitEnums.h"
+#include "Engine/DataTable.h"
 #include "Components/BuildingClusterComponent.h"
 #include "BaseWorkStation.generated.h"
 
@@ -16,6 +17,9 @@ struct FWorkStationData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere)
 	FText DisplayName;
+
+	UPROPERTY(EditAnywhere)
+	FText ProfessionName;
 
 	UPROPERTY(EditAnywhere)
 	TMap<TEnumAsByte<ETrait>, float> TraitModifiers;
@@ -43,6 +47,9 @@ protected:
 	FText DisplayName;
 
 	UPROPERTY(VisibleAnywhere)
+	FText ProfessionName;
+
+	UPROPERTY(VisibleAnywhere)
 	TMap<TEnumAsByte<ETrait>, float> TraitModifiers;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -61,5 +68,8 @@ protected:
 
 public:	
 	void ReleaseWorker();
+	FText GetName() { return DisplayName; }
+	float GetModifier(ETrait TraitName);
+	FText GetProfessionName() { return ProfessionName; }
 
 };

@@ -2,6 +2,18 @@
 
 
 #include "UI/Widgets/Gameplay/StatWidgetBase.h"
+void UStatWidgetBase::NativeOnInitialized() {
+	StatMap.Add(EStat::Hunger, HungerBar);
+	StatMap.Add(EStat::Energy, EnergyBar);
+	StatMap.Add(EStat::Health, HealthBar);
+	StatMap.Add(EStat::Thirst, ThirstBar);
+}
+
+void UStatWidgetBase::Init(AVillager* Villager)
+{
+	Villager->OnStatUpdated.AddDynamic(this, &UStatWidgetBase::SetStat);
+	Villager->AcknowledgeWidgetBinding();
+}
 
 void UStatWidgetBase::SetStat(EStat StatName, float Current, float Max)
 {
@@ -13,9 +25,5 @@ void UStatWidgetBase::SetStat(EStat StatName, float Current, float Max)
 	(*ProgressBar)->SetPercent(Current/Max);
 }
 
-void UStatWidgetBase::NativeOnInitialized() {
-	StatMap.Add(EStat::Hunger, HungerBar);
-	StatMap.Add(EStat::Energy, EnergyBar);
-	StatMap.Add(EStat::Health, HealthBar);
-	StatMap.Add(EStat::Thirst, ThirstBar);
-}
+
+

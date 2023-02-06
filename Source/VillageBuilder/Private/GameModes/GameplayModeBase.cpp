@@ -24,9 +24,21 @@ void AGameplayModeBase::StartPlay() {
 	}
 	Controller->Possess(Player);
 
-	AVillageManager* VillageManager = World->SpawnActor<AVillageManager>(VillageManagerClass, FVector(0, 0, 100), FRotator(0, 0, 0), Params);
+	ASpawningItem* VillageManager = World->SpawnActor<ASpawningItem>(ColonyFlagClass, FVector(0, 0, 100), FRotator(0, 0, 0), Params);
 
 	Player->Equip(VillageManager);
+
+	ABuilderItem* BuilderItem = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(300, 300, 300), FRotator(0, 0, 0), Params);
+	BuilderItem->Init("BP_BuilderWorkStation_C");
 }
 
+void AGameplayModeBase::SetVillage(AVillageManager* VillageManager)
+{
+	Village = VillageManager;
+}
 
+AVillageManager* AGameplayModeBase::GetCurrentVillage(AActor* Entity)
+{
+	//Logic for find in which village the work station is for multicoloni feature
+	return Village;
+}

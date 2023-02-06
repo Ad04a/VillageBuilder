@@ -12,6 +12,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FStatUpdatedSignature, EStat, StatName, float, Current, float, Max);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVillagerPassingSignature, AVillager*, Villager);
 
 USTRUCT(BlueprintType)
 struct FStatTraitData : public FTableRowBase
@@ -38,17 +39,19 @@ public:
 
 private:
 
-	AActor* WorkStation;
-
 	float StatDepletion = 0;
 
 	void Die();
 
 	AItem* ItemSlot;
 
+	AVillageMayor* InteractingWith = nullptr;
+
 
 protected:
 	virtual void Tick(float DeltaTime) override;
+
+	FString Name = "nqkoi";
 
 	UPROPERTY()
 	FLoadInfoStruct LoadInfo;
@@ -79,6 +82,8 @@ protected:
 
 	FRotator MovementInputRotator;
 
+	bool bCanUseItems = true;
+
 	UFUNCTION()
 	void RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 	//FJobInfoStruct JobInfo
@@ -86,19 +91,19 @@ protected:
 public:	
 
 	FStatUpdatedSignature OnStatUpdated;
+	FVillagerPassingSignature OnDeath;
 
 	void UpdateMovement(float MoveForwardValue, float MoveRightValue);
 	void TurnAtRate(float Rate);
 	void LookUpAtRate(float Rate);
 	void PlayItemAnimMontage(UAnimMontage* AnimMontage, FName StartSectionName);
 
-	bool IsMovementEnabled = true;
-	bool IsRotationEnabled = true;
+	bool bIsMovementEnabled = true;
+	bool bIsRotationEnabled = true;
 
 	void Init(FLoadInfoStruct InLoadInfo = FLoadInfoStruct()/*InColonyState*/);
 	FLoadInfoStruct GetSaveInfo();
 	void RecieveXP(ETrait, int XPAmount);
-	void AssignJob(/*(FJobInfoStruct InJobInfo)/(WorkStation)*/);
 
 	void AcknowledgeWidgetBinding();
 
@@ -121,13 +126,13 @@ public:
 	FText DisplayInteractText();
 	virtual FText DisplayInteractText_Implementation();
 
+	FString GetName() { return Name; }
 	int GetTrait(ETrait TraitName);
 	AItem* GetItem() { return ItemSlot; }
+	class ABaseWorkStation* GetWorkStation();
+	FText GetProfession();
 
 	UFUNCTION(BlueprintPure)
 	EItemType GetEquipItemType();
-
-	bool GetIsUnemployed();
-	FVector GetWorkStationCoordinates();
 
 };

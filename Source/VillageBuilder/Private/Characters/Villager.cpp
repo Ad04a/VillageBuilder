@@ -3,7 +3,8 @@
 
 #include "Characters/Villager.h"
 #include "Characters/VillageMayor.h"
-#include "WorkSystem/BaseWorkStation.h"
+#include "GameModes/GameplayModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -148,8 +149,12 @@ void AVillager::RecieveDamage(AActor* DamagedActor, float Damage, const class UD
 
 void AVillager::Die()
 {
-	UE_LOG(LogTemp, Error, TEXT("Villager is dead"));
-
+	OnDeath.Broadcast(this);
+	if (InteractingWith == nullptr)
+	{
+		return;
+	}
+	InteractRequest_Implementation(InteractingWith);
 }
 
 void AVillager::Equip(AActor* ItemToEquip)
@@ -173,12 +178,17 @@ void AVillager::DropItem()
 	}
 	ItemSlot->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	ItemSlot->SetEnablePhysics(true);
+	ItemSlot->OnDrop();
 	ItemSlot = nullptr;
 }
 
 
 void AVillager::UseItem(EItemActionType ActionType)
 {
+	if (bCanUseItems == false)
+	{
+		return;
+	}
 	if (IsValid(ItemSlot) == false) {
 		return;
 	}
@@ -189,10 +199,6 @@ void AVillager::RecieveXP(ETrait, int XPAmount)
 {
 
 
-}
-
-void AVillager::AssignJob()
-{
 }
 
 void AVillager::AcknowledgeWidgetBinding()
@@ -206,7 +212,7 @@ void AVillager::AcknowledgeWidgetBinding()
 
 void AVillager::UpdateMovement(float MoveForwardValue, float MoveRightValue)
 {
-	if ( InputEnabled() == false || IsMovementEnabled == false)
+	if ( InputEnabled() == false || bIsMovementEnabled == false)
 	{
 		return;
 	}
@@ -223,7 +229,7 @@ void AVillager::UpdateMovement(float MoveForwardValue, float MoveRightValue)
 
 void AVillager::TurnAtRate(float Rate)
 {
-	if (InputEnabled() == false || IsRotationEnabled == false)
+	if (InputEnabled() == false || bIsRotationEnabled == false)
 	{
 		return;
 	}
@@ -242,7 +248,7 @@ void AVillager::TurnAtRate(float Rate)
 
 void AVillager::LookUpAtRate(float Rate)
 {
-	if (InputEnabled() == false || IsRotationEnabled == false)
+	if (InputEnabled() == false || bIsRotationEnabled == false)
 	{
 		return;
 	}
@@ -314,7 +320,12 @@ int AVillager::GetTrait(ETrait TraitName)
 void AVillager::InteractRequest_Implementation(class AVillageMayor* InteractingPlayer)
 {
 	InteractingPlayer->ToggleTraitsMenu(this);
-	InteractingPlayer->IsInteracting = !InteractingPlayer->IsInteracting;
+	if (InteractingWith == nullptr)
+	{
+		InteractingWith = InteractingPlayer;
+		return;
+	}
+	InteractingWith = nullptr;
 }
 
 FText AVillager::DisplayInteractText_Implementation()
@@ -331,12 +342,34 @@ EItemType AVillager::GetEquipItemType()
 	return ItemSlot->GetItemType();
 }
 
-bool AVillager::GetIsUnemployed()
+ABaseWorkStation* AVillager::GetWorkStation()
 {
-	return WorkStation == nullptr;
-}
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillager::GetWorkStation() IsValid(World) == false"));
+		return nullptr;
+	}
 
-FVector AVillager::GetWorkStationCoordinates()
+	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AVillager::GetWorkStation() IsValid(GameMode) == false"));
+		return nullptr;
+	}
+
+	AVillageManager* Village = GameMode->GetCurrentVillage(this);
+	if (IsValid(Village) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AVillager::GetWorkStation() IsValid(Village) == false"));
+		return nullptr;
+	}
+
+	return Village->GetWorkPlaceFor(this);
+}
+FText AVillager::GetProfession()
 {
-	return WorkStation->GetActorLocation();
+	if (GetWorkStation() == nullptr)
+	{
+		return FText::FromString("Unemployeed");
+	} 
+	return GetWorkStation()->GetProfessionName();
 }

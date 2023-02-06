@@ -16,12 +16,25 @@ void UTraitMenuWidgetBase::SetStat(EStat StatName, float Current, float Max)
 
 void UTraitMenuWidgetBase::SetTrait(ETrait TraitName, int Value)
 {
-	UTextBlock** TextBlock = TraitMap.Find(TraitName);
+	UTextBlock* TextBlock = *TraitMap.Find(TraitName);
 	if (TextBlock == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("UTraitMenuWidgetBase::SetTrait IsValid(Trait) == false"));
 		return;
 	}
-	(*TextBlock)->SetText(FText::FromString(FString::FromInt(Value)));
+	TextBlock->SetText(FText::FromString(FString::FromInt(Value)));
+}
+
+void UTraitMenuWidgetBase::Init(AVillager* Villager)
+{
+	Name->SetText(FText::FromString(Villager->GetName()));
+
+	Villager->OnStatUpdated.AddDynamic(this, &UTraitMenuWidgetBase::SetStat);
+	Villager->AcknowledgeWidgetBinding();
+
+	for (ETrait Trait : TEnumRange<ETrait>())
+	{
+		SetTrait(Trait, Villager->GetTrait(Trait));
+	}
 }
 
 void UTraitMenuWidgetBase::NativeOnInitialized()

@@ -46,16 +46,15 @@ void AGameplayHUDBase::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(EmployeeMenuWidget) == false"));
 		return;
 	}
-
-	ShowStats();
 }
 
-void AGameplayHUDBase::ShowStats()
+void AGameplayHUDBase::ShowStats(AVillager* Villager)
 {
 	if ((IsValid(PlayerOwner) && IsValid(StatWidget)) == false) {
 		return;
 	}
 	
+	StatWidget->Init(Villager);
 	StatWidget->AddToViewport();
 	PlayerOwner->bShowMouseCursor = false;
 	PlayerOwner->SetInputMode(FInputModeGameOnly());
@@ -82,27 +81,6 @@ void AGameplayHUDBase::ShowInteraction(FText ActionText)
 	}
 }
 
-void AGameplayHUDBase::BindPlayerToStatWidget(AVillager* Player)
-{
-	Player->OnStatUpdated.AddDynamic(StatWidget, &UStatWidgetBase::SetStat);
-
-	Player->AcknowledgeWidgetBinding();
-}
-
-void AGameplayHUDBase::BindVillagerToTraitMenuWidget(AVillager* Villager)
-{
-
-	Villager->OnStatUpdated.AddDynamic(TraitMenuWidget, &UTraitMenuWidgetBase::SetStat);
-	Villager->AcknowledgeWidgetBinding();
-
-	for (ETrait Trait : TEnumRange<ETrait>()) 
-	{
-		TraitMenuWidget->SetTrait(Trait, Villager->GetTrait(Trait));
-	}
-
-	
-}
-
 void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
 {
 	
@@ -117,25 +95,47 @@ void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
 		return;
 	}
 
-	BindVillagerToTraitMenuWidget(Caller);
+	TraitMenuWidget->Init(Caller);
 	TraitMenuWidget->AddToViewport();
 	PlayerOwner->bShowMouseCursor = false;
 	PlayerOwner->SetInputMode(FInputModeGameOnly());
 
 }
 
-void AGameplayHUDBase::ShowEmployeeMenu()
+void AGameplayHUDBase::ShowEmployeeMenu(ABaseWorkStation* WorkStation)
 {
 	if ((IsValid(PlayerOwner) && IsValid(EmployeeMenuWidget)) == false) {
 		return;
 	}
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(World) == false"));
+		return;
+	}
+
+	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(GameMode) == false"));
+		return;
+	}
+	AVillageManager* CurrentVillage = GameMode->GetCurrentVillage(WorkStation);
+	if (IsValid(CurrentVillage) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(CurrentVillage) == false"));
+		return;
+	}
 	if (EmployeeMenuWidget->GetIsVisible() == true) {
+		CurrentVillage->OnVillagersUpdated.Unbind();
+		EmployeeMenuWidget->OnVillagerEmployed.Unbind();
 		EmployeeMenuWidget->RemoveFromViewport();
 		PlayerOwner->bShowMouseCursor = false;
 		PlayerOwner->SetInputMode(FInputModeGameOnly());
 		return;
 	}
-
+	EmployeeMenuWidget->Init(WorkStation);
+	EmployeeMenuWidget->OnVillagerEmployed.BindDynamic(CurrentVillage, &AVillageManager::ManageEmployment);
+	CurrentVillage->OnVillagersUpdated.BindDynamic(EmployeeMenuWidget, &UEmployeeMenuWidgetBase::LoadVillagerWidgets);
+	EmployeeMenuWidget->LoadVillagerWidgets(CurrentVillage->GetAllVillagers());
 	EmployeeMenuWidget->AddToViewport();
 	PlayerOwner->bShowMouseCursor = true;
 	PlayerOwner->SetInputMode(FInputModeGameAndUI());

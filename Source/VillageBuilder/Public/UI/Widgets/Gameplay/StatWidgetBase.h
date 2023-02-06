@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ProgressBar.h"
-#include "Headers/StatAndTraitEnums.h"
+#include "Characters/Villager.h"
 #include "StatWidgetBase.generated.h"
 
 /**
@@ -34,6 +34,8 @@ protected:
 public:
 	UFUNCTION()
 	void SetStat(EStat StatName, float Current, float Max);
+
+	void Init(AVillager* Villager);
 
 	void NativeOnInitialized();
 };

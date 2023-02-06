@@ -18,8 +18,6 @@ class VILLAGEBUILDER_API AGameplayHUDBase : public AHUD
 	GENERATED_BODY()
 
 private:
-	UFUNCTION()
-	void BindVillagerToTraitMenuWidget(AVillager* Villager);
 
 protected:
 	UPROPERTY(EditAnywhere)
@@ -52,17 +50,14 @@ protected:
 
 public:
 	UFUNCTION()
-	void ShowStats();
+	void ShowStats(AVillager* Villager);
 
 	UFUNCTION()
 	void ShowInteraction(FText Action);
 
 	UFUNCTION()
-	void BindPlayerToStatWidget(AVillager* Player);
-
-	UFUNCTION()
 	void ShowTraitMenu(AVillager* Caller);
 
 	UFUNCTION()
-	void ShowEmployeeMenu();
+	void ShowEmployeeMenu(ABaseWorkStation* WorkStation);
 };

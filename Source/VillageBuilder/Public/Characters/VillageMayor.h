@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "Characters/Villager.h"
 #include "Camera/CameraComponent.h"
+#include "WorkSystem/BaseWorkStation.h"
 #include "VillageMayor.generated.h"
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTraitMenuSignature, AVillager*, Caller);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractingSignature, FText, ActionText);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FEmployeeMenuSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEmployeeMenuSignature, ABaseWorkStation*, WorkStation);
 
 UCLASS()
 class VILLAGEBUILDER_API AVillageMayor : public AVillager
@@ -38,13 +39,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Inventory)
 	float Reach = 1;
 
+	UFUNCTION()
+	void ToggleStableInteraction();
+
 public:
 
 	FInteractingSignature OnInteraction;
 	FTraitMenuSignature OnToggleTraitsMenu;
 	FEmployeeMenuSignature OnToggleEmployeeMenu;
 
-	bool IsInteracting = false;
+	bool bIsInteracting = false;
 
 	UFUNCTION()
 	void ShowTraitMenu();
@@ -56,6 +60,6 @@ public:
 	void Interact();
 
 	UFUNCTION()
-	void ToggleEmployeeMenu();
+	void ToggleEmployeeMenu(ABaseWorkStation* WorkStation);
 	
 };

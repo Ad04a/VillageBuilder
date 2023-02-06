@@ -66,7 +66,7 @@ public:
 	EItemType GetItemType();
 
 	UFUNCTION()
-	void SetIsActive(bool State) { IsActive = State; }
+	virtual void SetIsActive(bool State) { IsActive = State; }
 
 	UFUNCTION()
 	virtual void Use(class AVillager* User, EItemActionType ActionType);
@@ -76,6 +76,9 @@ public:
 
 	UFUNCTION()
 	virtual FString SerializetemInfo() PURE_VIRTUAL(AItem::SerializetemInfo, return "";);
+
+	UFUNCTION()
+	virtual void OnDrop() { UsingVillager = nullptr; }
 
 	UFUNCTION()
 	UMaterialInterface* GetMaterial();

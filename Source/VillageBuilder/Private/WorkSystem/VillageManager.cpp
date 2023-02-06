@@ -118,3 +118,8 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, AVillager*
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	
 }
+
+void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
+{
+	WorkStations.Add(WorkStation, nullptr);
+}

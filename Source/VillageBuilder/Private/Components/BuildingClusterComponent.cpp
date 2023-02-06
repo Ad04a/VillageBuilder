@@ -11,7 +11,6 @@ void UBuildingClusterComponent::BeginPlay()
 	GetChildrenComponents(true,Children);
 	for (USceneComponent* Child : Children)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Component: %s"), *Child->GetName());
 		UBaseBuildingComponent* BuildingComp = Cast<UBaseBuildingComponent>(Child);
 		if (IsValid(BuildingComp) == false) {
 			continue;

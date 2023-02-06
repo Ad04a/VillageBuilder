@@ -9,7 +9,8 @@ enum EItemType {
 	Axe         UMETA(DisplayName = "Axe"),
 	Pickaxe 	UMETA(DisplayName = "Pickaxe"),
 	Food		UMETA(DisplayName = "Food"),
-	Drink		UMETA(DisplayName = "Drink")
+	Drink		UMETA(DisplayName = "Drink"),
+	BuilderItem UMETA(DisplayName = "BuilderItem")
 
 };
 

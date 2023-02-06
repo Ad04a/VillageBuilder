@@ -54,6 +54,7 @@ public:
 	FVilligersUpdatedSignature OnVillagersUpdated;
 
 	void AddVillagerToColony(AVillager* Villager);
+	void AddWorkStationToColony(ABaseWorkStation* WorkStation);
 
 	TArray<AVillager*> GetAllVillagers() { return Villagers; }
 	AVillager* GetWorkerAt(ABaseWorkStation* WorkStation);

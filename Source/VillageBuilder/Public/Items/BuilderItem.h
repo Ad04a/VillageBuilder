@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Items/SpawningItem.h"
+#include "WorkSystem/BuildProjection.h"
+#include "WorkSystem/BaseWorkStation.h"
 #include "BuilderItem.generated.h"
 
 USTRUCT(BlueprintType)
@@ -12,15 +14,22 @@ struct FBuilderData : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<AActor> ActorToSpawn;
+	TSubclassOf<ABaseWorkStation> ActorToSpawn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<ABuildProjection> BuildProjectionClass;
+	
 };
 
 UCLASS()
 class VILLAGEBUILDER_API ABuilderItem : public ASpawningItem
 {
 	GENERATED_BODY()
+
+public:
+	ABuilderItem();
 private:
-	bool bIsProjecting = false;
+	ABuildProjection* CurrentProjection = nullptr;
 
 protected:
 	virtual void Use(class AVillager* User, EItemActionType ActionType) override;
@@ -31,8 +40,16 @@ protected:
 	virtual FVector GetSpawnLocation() override;
 	virtual FRotator GetSpawnRotation() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TSubclassOf<ABuildProjection> BuildProjectionClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Reach;
+
 	UPROPERTY(VisibleAnywhere)
 	FName CurrentStationName = "";
+
+	void SpawnProjection();
 
 public:
 	UFUNCTION()

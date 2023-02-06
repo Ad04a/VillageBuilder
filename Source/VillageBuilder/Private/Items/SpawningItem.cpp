@@ -27,7 +27,7 @@ AActor* ASpawningItem::SpawnActor()
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ASpawningItem::SetIsActive IsValid(World) == false"));
+		UE_LOG(LogTemp, Error, TEXT("ASpawningItem::SpawnActor IsValid(World) == false"));
 		return nullptr;
 	}
 	FVector Location = GetSpawnLocation();
@@ -37,7 +37,7 @@ AActor* ASpawningItem::SpawnActor()
 	AActor* SpawnedActor = World->SpawnActor<AActor>(ActorToSpawn, Location, Rotation, Params);
 	if (IsValid(SpawnedActor) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("ASpawningItem::SetIsActive IsValid(SpawnedActor) == false"));
+		UE_LOG(LogTemp, Error, TEXT("ASpawningItem::SpawnActor IsValid(SpawnedActor) == false"));
 		return nullptr; 
 	}
 	return SpawnedActor;

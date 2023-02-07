@@ -4,6 +4,8 @@
 #include "WorkSystem/VillageManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameModes/GameplayModeBase.h"
+#include "AI/Villager/VillagerAIController.h"
+
 
 // Sets default values
 AVillageManager::AVillageManager()
@@ -44,7 +46,7 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FLoadInfoStruct Load
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(World) == false"));
+		UE_LOG(LogTemp, Error, TEXT("AVillageManager::SpawnVillager IsValid(World) == false"));
 		return nullptr;
 	}
 
@@ -61,7 +63,7 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FLoadInfoStruct Load
 	AVillager* Villager = World->SpawnActor<AVillager>(VillagerClass, Location, Rotation, Params);
 
 	if (IsValid(Villager) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::SpawnVillager IsValid(Player) == false"));
+		UE_LOG(LogTemp, Error, TEXT("AVillageManager::SpawnVillager IsValid(Player) == false"));
 		return nullptr;
 	}
 
@@ -115,6 +117,31 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, AVillager*
 	}
 	
 	WorkStations.Add(WorkStation, Worker);
+	AVillagerAIController* WorkerController = Cast<AVillagerAIController>(Worker->GetController());
+	if (IsValid(WorkerController) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(WorkerController) == false"));
+		return;
+	}
+	if (WorkerBehaviors.Contains(WorkStation->GetClass()->GetFName()) == false)
+	{
+		if (IsValid(BehaviorDataTable) == false)
+		{
+			UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(DataTable)==false"));
+			return;
+		}
+
+		FWorkStationData* BehaviorData = BehaviorDataTable->FindRow<FWorkStationData>(WorkStation->GetClass()->GetFName(), "");
+
+		if (BehaviorData == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment BehaviorData == nullptr "));
+			return;
+		}
+
+		WorkerBehaviors.Add(WorkStation->GetClass()->GetFName(),BehaviorData->BehaviorTree);
+	}
+	WorkerController->SetBehavior(*WorkerBehaviors.Find(WorkStation->GetClass()->GetFName()));
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	
 }

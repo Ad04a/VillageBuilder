@@ -4,22 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Items/SpawningItem.h"
-#include "WorkSystem/BuildProjection.h"
 #include "WorkSystem/BaseWorkStation.h"
 #include "BuilderItem.generated.h"
 
-USTRUCT(BlueprintType)
-struct FBuilderData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<ABaseWorkStation> ActorToSpawn;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<ABuildProjection> BuildProjectionClass;
-	
-};
 
 UCLASS()
 class VILLAGEBUILDER_API ABuilderItem : public ASpawningItem

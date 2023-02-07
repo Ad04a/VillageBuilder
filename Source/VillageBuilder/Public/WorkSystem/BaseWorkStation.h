@@ -7,7 +7,9 @@
 #include "Headers/Interactable.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "Engine/DataTable.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "Components/BuildingClusterComponent.h"
+#include "WorkSystem/BuildProjection.h"
 #include "BaseWorkStation.generated.h"
 
 USTRUCT(BlueprintType)
@@ -24,6 +26,14 @@ struct FWorkStationData : public FTableRowBase
 	UPROPERTY(EditAnywhere)
 	TMap<TEnumAsByte<ETrait>, float> TraitModifiers;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<ABaseWorkStation> ActorToSpawn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<ABuildProjection> BuildProjectionClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UBehaviorTree* BehaviorTree;
 };
 
 UCLASS()

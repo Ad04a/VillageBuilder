@@ -26,12 +26,14 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	class UBehaviorTreeComponent* BTree_component;
+	class UBehaviorTreeComponent* BehaviorTreeComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	class UBehaviorTree* BTree;
+	class UBehaviorTree* BehaviorTree;
 
 	class UBlackboardComponent* Blackboard;
+public:
+	void SetBehavior(UBehaviorTree* InBehaviorTree);
 
 
 };

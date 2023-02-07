@@ -5,32 +5,39 @@
 #include "Headers/VillagerBBKeys.h"
 
 
-AVillagerAIController::AVillagerAIController() {
-	static ConstructorHelpers::FObjectFinder<UBehaviorTree>TempBTree(TEXT("BehaviorTree'/Game/Blueprints/AI/Villager/Villager_BT.Villager_BT'"));
-	if (TempBTree.Succeeded() == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillagerAIController::TempBTree.Succeeded() == false"));	
-	}
-	BTree = TempBTree.Object;
-	BTree_component = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BTComponent"));
+AVillagerAIController::AVillagerAIController() 
+{
+	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BTComponent"));
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
-	
 }
 
-void AVillagerAIController::BeginPlay() {
+void AVillagerAIController::BeginPlay()
+{
 	Super::BeginPlay();
-	RunBehaviorTree(BTree);
-	BTree_component->StartTree(*BTree);
+	SetBehavior(BehaviorTree);
 }
 
-void AVillagerAIController::OnPossess(APawn* const InPawn) {
+void AVillagerAIController::SetBehavior(UBehaviorTree* InBehaviorTree)
+{
+	if (IsValid(InBehaviorTree) == false) {
+		return;
+	}
+	BehaviorTree = InBehaviorTree;
+	RunBehaviorTree(BehaviorTree);
+	BehaviorTreeComponent->StartTree(*BehaviorTree);
+}
+
+void AVillagerAIController::OnPossess(APawn* const InPawn) 
+{
 	Super::OnPossess(InPawn);
 	if (IsValid(Blackboard) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AVillagerAIController::OnPossess IsValid(Blackboard) == false"));
 	}
-	Blackboard->InitializeBlackboard(*BTree->BlackboardAsset);
+	Blackboard->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	InPawn->bUseControllerRotationYaw = false;
 }
 
-UBlackboardComponent* AVillagerAIController::GetBlackboard()const {
+UBlackboardComponent* AVillagerAIController::GetBlackboard()const
+{
 	return Blackboard;
 }

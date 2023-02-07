@@ -33,7 +33,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TMap<ABaseWorkStation*, AVillager*> WorkStations; //(WorkStation, HiredVillager)
 	/*UPROPERTY()
-	TMap<AVillager*, int VillagerId> Beds;*/
+	TMap<AVillager*, int VillagerId> Beds;  **/
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* BehaviorDataTable;
+
+	UPROPERTY(VisibleAnywhere)
+	TMap<FName, UBehaviorTree*> WorkerBehaviors;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* MeshComponent = nullptr;

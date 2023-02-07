@@ -96,7 +96,7 @@ void ABuilderItem::LoadFromDataTable()
 		return;
 	}
 
-	FBuilderData* BuilderData = SecondaryDataTable->FindRow<FBuilderData>(CurrentStationName, "");
+	FWorkStationData* BuilderData = SecondaryDataTable->FindRow<FWorkStationData>(CurrentStationName, "");
 
 	if (BuilderData == nullptr)
 	{

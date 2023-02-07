@@ -29,7 +29,7 @@ void AGameplayModeBase::StartPlay() {
 	Player->Equip(VillageManager);
 
 	ABuilderItem* BuilderItem = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(300, 300, 300), FRotator(0, 0, 0), Params);
-	BuilderItem->Init("BP_BuilderWorkStation_C", Player);
+	BuilderItem->Init("BP_ForesterHut_C", Player);
 }
 
 void AGameplayModeBase::SetVillage(AVillageManager* VillageManager)

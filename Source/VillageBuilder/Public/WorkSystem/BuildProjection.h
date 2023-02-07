@@ -19,7 +19,12 @@ public:
 private:
 	bool bIsValid = true;
 protected:
+
+	virtual void Tick(float DeltaTime) override;
+
 	void SetMaterial(UMaterialInterface* Material);
+
+	bool GetIsInVillage();
 
 	UFUNCTION()
 	void SetValid(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
@@ -40,6 +45,6 @@ protected:
 	UMaterialInterface* InvalidMaterial;
 
 public:	
-	bool GetIsValid() { return bIsValid; }
+	bool GetIsValid() { return bIsValid && GetIsInVillage(); }
 
 };

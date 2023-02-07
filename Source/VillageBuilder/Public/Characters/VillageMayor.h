@@ -61,5 +61,7 @@ public:
 
 	UFUNCTION()
 	void ToggleEmployeeMenu(ABaseWorkStation* WorkStation);
+
+	UCameraComponent* GetCameraComponent()const { return CameraComponent; };
 	
 };

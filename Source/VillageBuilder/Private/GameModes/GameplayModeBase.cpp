@@ -16,7 +16,7 @@ void AGameplayModeBase::StartPlay() {
 		return;
 	}
 	FActorSpawnParameters Params;
-	AVillager* Player = World->SpawnActor<AVillager>(PlayerClass, FVector(0,0,0), FRotator(0,0,0), Params);
+	AVillageMayor* Player = World->SpawnActor<AVillageMayor>(PlayerClass, FVector(0,0,0), FRotator(0,0,0), Params);
 	Player->Init();
 	APlayerController* Controller = UGameplayStatics::GetPlayerController(World, 0);
 	if (IsValid(Controller) == false) {
@@ -29,7 +29,7 @@ void AGameplayModeBase::StartPlay() {
 	Player->Equip(VillageManager);
 
 	ABuilderItem* BuilderItem = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(300, 300, 300), FRotator(0, 0, 0), Params);
-	BuilderItem->Init("BP_BuilderWorkStation_C");
+	BuilderItem->Init("BP_BuilderWorkStation_C", Player);
 }
 
 void AGameplayModeBase::SetVillage(AVillageManager* VillageManager)

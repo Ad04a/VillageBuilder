@@ -53,6 +53,6 @@ protected:
 
 public:
 	UFUNCTION()
-	void Init(FName StationName);
+	void Init(FName StationName, AVillageMayor* Villager);
 
 };

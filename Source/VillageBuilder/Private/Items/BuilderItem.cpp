@@ -2,21 +2,20 @@
 
 
 #include "Items/BuilderItem.h"
-#include "Characters/Villager.h"
 #include "GameModes/GameplayModeBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "WorkSystem/BaseWorkStation.h"
 
 ABuilderItem::ABuilderItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ABuilderItem::Init(FName StationName)
+void ABuilderItem::Init(FName StationName, AVillageMayor* Villager)
 {
 	CurrentStationName = StationName;
 	LoadFromDataTable();
-	Use(nullptr, EItemActionType::Primary);
+	UsingVillager = Villager;
+	Use(UsingVillager, EItemActionType::Primary);
 }
 
 void ABuilderItem::Use(class AVillager* User, EItemActionType ActionType)
@@ -26,7 +25,10 @@ void ABuilderItem::Use(class AVillager* User, EItemActionType ActionType)
 		SpawnProjection();
 		return;
 	}
-
+	if (CurrentProjection->GetIsValid() == false && EItemActionType::Primary)
+	{
+		return;
+	}
 	Super::Use(User, ActionType);
 	
 }
@@ -38,8 +40,9 @@ void ABuilderItem::Tick(float DeltaTime)
 	{
 		return;
 	}
-	FVector StartTrace = MeshComponent->GetComponentLocation();
-	FVector EndTrace = MeshComponent->GetForwardVector() * Reach + StartTrace;
+	AVillageMayor* Mayor = Cast<AVillageMayor>(UsingVillager);
+	FVector StartTrace = Mayor->GetCameraComponent()->GetComponentLocation();
+	FVector EndTrace = Mayor->GetCameraComponent()->GetForwardVector() * Reach + StartTrace;
 	FVector NewLocation = FVector(EndTrace.X, EndTrace.Y, 0);
 	
 	CurrentProjection->SetActorLocation(NewLocation);
@@ -75,7 +78,6 @@ void ABuilderItem::SetIsActive(bool State)
 			return;
 		}
 		Village->AddWorkStationToColony(WorkStation);
-		CurrentProjection->Destroy();
 	}
 	UsingVillager->DropItem();
 }
@@ -130,6 +132,7 @@ void ABuilderItem::SpawnProjection()
 void ABuilderItem::OnDrop()
 {
 	Super::OnDrop();
+	CurrentProjection->Destroy();
 	Destroy();
 }
 

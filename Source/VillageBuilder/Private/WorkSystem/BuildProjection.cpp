@@ -2,6 +2,8 @@
 
 
 #include "WorkSystem/BuildProjection.h"
+#include "GameModes/GameplayModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABuildProjection::ABuildProjection()
@@ -14,6 +16,18 @@ ABuildProjection::ABuildProjection()
 	CollisionBox->SetupAttachment(RootComponent);
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ABuildProjection::SetInvalid);
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &ABuildProjection::SetValid);
+}
+
+void ABuildProjection::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (GetIsValid() == true)
+	{
+		SetMaterial(ValidMaterial);
+		return;
+	}
+
+	SetMaterial(InvalidMaterial);
 }
 
 void ABuildProjection::SetMaterial(UMaterialInterface* Material)
@@ -31,15 +45,37 @@ void ABuildProjection::SetMaterial(UMaterialInterface* Material)
 	}
 }
 
+bool ABuildProjection::GetIsInVillage()
+{
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(World) == false"));
+		return false;
+	}
+
+	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(GameMode) == false"));
+		return false;
+	}
+
+	AVillageManager* Village = GameMode->GetCurrentVillage(this);
+	if (IsValid(Village) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(Village) == false"));
+		return false;
+	}
+
+	return true;
+}
+
 void ABuildProjection::SetValid(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	bIsValid = true;
-	SetMaterial(ValidMaterial);
 }
 
 void ABuildProjection::SetInvalid(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	bIsValid = false;
-	SetMaterial(InvalidMaterial);
 }
 

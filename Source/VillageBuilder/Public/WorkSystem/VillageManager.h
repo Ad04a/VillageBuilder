@@ -22,6 +22,7 @@ public:
 	AVillageManager();
 
 private:
+	void ApplyJobBehavior(FName StationName, AVillager* Worker);
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,14 +31,14 @@ protected:
 	TArray<AVillager*> PassingVillagers;
 	UPROPERTY(VisibleAnywhere)
 	TArray<AVillager*> Villagers;
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	TMap<ABaseWorkStation*, AVillager*> WorkStations; //(WorkStation, HiredVillager)
 	/*UPROPERTY()
 	TMap<AVillager*, int VillagerId> Beds;  **/
 	UPROPERTY(EditDefaultsOnly)
 	UDataTable* BehaviorDataTable;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditDefaultsOnly)
 	TMap<FName, UBehaviorTree*> WorkerBehaviors;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

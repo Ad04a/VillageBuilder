@@ -111,37 +111,24 @@ ABaseWorkStation* AVillageManager::GetWorkPlaceFor(AVillager* Worker)
 
 void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, AVillager* Worker)
 {
+	if (IsValid(WorkStation) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(WorkStation) == false"));
+		return;
+	}
+
+	ApplyJobBehavior("Unemployed", GetWorkerAt(WorkStation));
+
 	if (GetWorkPlaceFor(Worker) != nullptr)
 	{
 		WorkStations.Add(GetWorkPlaceFor(Worker), nullptr);
 	}
-	
+
 	WorkStations.Add(WorkStation, Worker);
-	AVillagerAIController* WorkerController = Cast<AVillagerAIController>(Worker->GetController());
-	if (IsValid(WorkerController) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(WorkerController) == false"));
-		return;
-	}
-	if (WorkerBehaviors.Contains(WorkStation->GetClass()->GetFName()) == false)
-	{
-		if (IsValid(BehaviorDataTable) == false)
-		{
-			UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(DataTable)==false"));
-			return;
-		}
 
-		FWorkStationData* BehaviorData = BehaviorDataTable->FindRow<FWorkStationData>(WorkStation->GetClass()->GetFName(), "");
-
-		if (BehaviorData == nullptr)
-		{
-			UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment BehaviorData == nullptr "));
-			return;
-		}
-
-		WorkerBehaviors.Add(WorkStation->GetClass()->GetFName(),BehaviorData->BehaviorTree);
-	}
-	WorkerController->SetBehavior(*WorkerBehaviors.Find(WorkStation->GetClass()->GetFName()));
+	ApplyJobBehavior(WorkStation->GetClass()->GetFName(), Worker);
+	
+	
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	
 }
@@ -149,4 +136,37 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, AVillager*
 void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
 {
 	WorkStations.Add(WorkStation, nullptr);
+}
+
+void AVillageManager::ApplyJobBehavior(FName StationName, AVillager* Worker)
+{
+	if (IsValid(Worker) == false)
+	{
+		return;
+	}
+	AVillagerAIController* WorkerController = Cast<AVillagerAIController>(Worker->GetController());
+	if (IsValid(WorkerController) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(WorkerController) == false"));
+		return;
+	}
+	if (WorkerBehaviors.Contains(StationName) == false)
+	{
+		if (IsValid(BehaviorDataTable) == false)
+		{
+			UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(DataTable)==false"));
+			return;
+		}
+
+		FWorkStationData* BehaviorData = BehaviorDataTable->FindRow<FWorkStationData>(StationName, "");
+
+		if (BehaviorData == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment BehaviorData == nullptr "));
+			return;
+		}
+
+		WorkerBehaviors.Add(StationName, BehaviorData->BehaviorTree);
+	}
+	WorkerController->SetBehavior(*WorkerBehaviors.Find(StationName));
 }

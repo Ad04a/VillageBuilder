@@ -159,15 +159,20 @@ void AVillager::Die()
 
 void AVillager::Equip(AActor* ItemToEquip)
 {
-	//
+	
 	AItem* NewItem = Cast<AItem>(ItemToEquip);
-	if (IsValid(ItemSlot) == false) {
-		NewItem->SetEnablePhysics(false);
-		ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));
-		ItemSlot = NewItem;
+	if (IsValid(NewItem) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillager::Equip IsValid(NewItem) == false"));
 		return;
 	}
-
+	if (IsValid(ItemSlot) == true) {
+		UE_LOG(LogTemp, Error, TEXT("AIMA ITEM"));
+		return;
+	}
+	NewItem->SetEnablePhysics(false);
+	ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));
+	ItemSlot = NewItem;
 }
 
 void AVillager::DropItem()

@@ -62,7 +62,6 @@ bool ABuildProjection::GetIsInVillage()
 
 	AVillageManager* Village = GameMode->GetCurrentVillage(this);
 	if (IsValid(Village) == false) {
-		UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(Village) == false"));
 		return false;
 	}
 

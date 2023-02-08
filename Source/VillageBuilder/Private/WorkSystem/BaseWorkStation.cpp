@@ -2,6 +2,9 @@
 
 
 #include "WorkSystem/BaseWorkStation.h"
+#include "Components/BuildingClusterComponent.h"
+#include "Components/StorageComponent.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "Characters/VillageMayor.h"
 
 // Sets default values
@@ -61,5 +64,22 @@ float ABaseWorkStation::GetModifier(ETrait TraitName)
 		return 0;
 	}
 	return *TraitModifiers.Find(TraitName);
+}
+
+TArray<UStorageComponent*> ABaseWorkStation::GetStorages() 
+{
+	TArray<UStorageComponent*>TempArray;
+
+	TArray<USceneComponent*>ChildrenComponents;
+	MeshComponent->GetChildrenComponents(true, ChildrenComponents);
+	for (USceneComponent* Child : ChildrenComponents)
+	{
+		UStorageComponent* StorageComponent = Cast<UStorageComponent>(Child);
+		if (IsValid(StorageComponent) == false) {
+			continue;
+		}
+		TempArray.Add(StorageComponent);
+	}
+	return TempArray;
 }
 

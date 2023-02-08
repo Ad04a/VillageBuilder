@@ -128,7 +128,7 @@ public:
 
 	FString GetName() { return Name; }
 	int GetTrait(ETrait TraitName);
-	AItem* GetItem() { return ItemSlot; }
+	AItem* GetItem()const { return ItemSlot; }
 	class ABaseWorkStation* GetWorkStation();
 	FText GetProfession();
 

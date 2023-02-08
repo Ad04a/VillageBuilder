@@ -32,32 +32,62 @@ void UItemCarrierComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 	// ...
 }
 
-void UItemCarrierComponent::DropItem(TSubclassOf<AItem> ItemClass)
+void UItemCarrierComponent::AddItem(AItem* Item)
+{
+	TSubclassOf<AItem> ItemClass = Item->GetClass();
+	if (Content.Contains(ItemClass) == true)
+	{
+		Content.Add(ItemClass, *Content.Find(ItemClass) + 1);
+		return;
+	}
+	Content.Add(ItemClass, 1);
+}
+
+AItem* UItemCarrierComponent::DropItem(TSubclassOf<AItem> ItemClass)
 {
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UItemCarrierComponent::DropItem IsValid(World) == false"));
-		return;
+		return nullptr;
 	}
 	AActor* Owner = GetOwner();
 	if (IsValid(Owner) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UItemCarrierComponent::DropItem IsValid(Owner) == false"));
-		return;
+		return nullptr;
 	}
 	FVector  SpawnLocation = Owner->GetActorLocation();
 	FRotator SpawnRotation = Owner->GetActorRotation();
-	World->SpawnActor<AItem>(ItemClass, SpawnLocation, SpawnRotation);
+	if (Content.Contains(ItemClass) == false)
+	{
+		return nullptr;
+	}
+	Content.Emplace(ItemClass, *Content.Find(ItemClass)-1);
+	if (*Content.Find(ItemClass) <= 0)
+	{
+		Content.FindAndRemoveChecked(ItemClass);
+	}
+	return World->SpawnActor<AItem>(ItemClass, SpawnLocation, SpawnRotation);
 }
 
 void UItemCarrierComponent::DropAllItems()
 {
-	for (TPair<TSubclassOf<AItem>,int> ItemType : Content)
+	TArray<TSubclassOf<AItem>> ArrayOfClasses;
+	Content.GenerateKeyArray(ArrayOfClasses);
+	for (TSubclassOf<AItem> ItemType : ArrayOfClasses)
 	{
-		for (int i = 0; i < ItemType.Value; i++) {
-			DropItem(ItemType.Key);
+		int Times = *Content.Find(ItemType);
+		for (int i = 0; i < Times; i++) {
+			DropItem(ItemType);
 		}
 	}
+}
+
+TArray<TSubclassOf<AItem>> UItemCarrierComponent::GetItemTypes()
+{
+	TArray<TSubclassOf<AItem>> TempArray;
+	Content.GenerateKeyArray(TempArray);
+	return TempArray;
 }
 

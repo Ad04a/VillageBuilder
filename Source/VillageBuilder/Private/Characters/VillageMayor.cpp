@@ -47,7 +47,7 @@ void AVillageMayor::CheckForInteractables()
 	IInteractable* InteractableActor = Cast<IInteractable>(HitActor);
 	IInteractable* InteractableComponent = Cast<IInteractable>(HitComponent);
 
-	if (HitActor == nullptr || InteractableActor==nullptr)
+	if (HitActor == nullptr)
 	{
 		FocusedObject = nullptr;
 		OnInteraction.Broadcast(FText());
@@ -65,7 +65,12 @@ void AVillageMayor::CheckForInteractables()
 		OnInteraction.Broadcast(InteractableComponent->Execute_DisplayInteractText(HitComponent));
 		return;
 	}
-	
+	if(InteractableActor == nullptr)
+	{
+		FocusedObject = nullptr;
+		OnInteraction.Broadcast(FText());
+		return;
+	}
 	FocusedObject = HitActor;
 	OnInteraction.Broadcast(InteractableActor->Execute_DisplayInteractText(HitActor));
 	

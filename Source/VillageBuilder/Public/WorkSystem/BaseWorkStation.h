@@ -7,8 +7,6 @@
 #include "Headers/Interactable.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "Engine/DataTable.h"
-#include "BehaviorTree/BehaviorTree.h"
-#include "Components/BuildingClusterComponent.h"
 #include "WorkSystem/BuildProjection.h"
 #include "BaseWorkStation.generated.h"
 
@@ -33,7 +31,7 @@ struct FWorkStationData : public FTableRowBase
 	TSubclassOf<ABuildProjection> BuildProjectionClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UBehaviorTree* BehaviorTree;
+	class UBehaviorTree* BehaviorTree;
 };
 
 UCLASS()
@@ -81,5 +79,7 @@ public:
 	FText GetName() { return DisplayName; }
 	float GetModifier(ETrait TraitName);
 	FText GetProfessionName() { return ProfessionName; }
+	TArray<class UStorageComponent*> GetStorages();
+
 
 };

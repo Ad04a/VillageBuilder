@@ -47,8 +47,13 @@ void ABaseWorkStation::ReleaseWorker()
 	HiredVillager = nullptr;
 }
 
-void ABaseWorkStation::InteractRequest_Implementation(AVillageMayor* InteractingPlayer)
+void ABaseWorkStation::InteractRequest_Implementation(AVillager* InteractingVillager)
 {
+	AVillageMayor* InteractingPlayer = Cast<AVillageMayor>(InteractingVillager);
+	if (IsValid(InteractingPlayer) == false)
+	{
+		return;
+	}
 	InteractingPlayer->ToggleEmployeeMenu(this);
 }
 

@@ -322,8 +322,13 @@ int AVillager::GetTrait(ETrait TraitName)
 	return Trait->Level;
 }
 
-void AVillager::InteractRequest_Implementation(class AVillageMayor* InteractingPlayer)
+void AVillager::InteractRequest_Implementation(class AVillager* InteractingVillager)
 {
+	AVillageMayor* InteractingPlayer = Cast<AVillageMayor>(InteractingVillager);
+	if (IsValid(InteractingPlayer) == false)
+	{
+		return;
+	}
 	InteractingPlayer->ToggleTraitsMenu(this);
 	if (InteractingWith == nullptr)
 	{

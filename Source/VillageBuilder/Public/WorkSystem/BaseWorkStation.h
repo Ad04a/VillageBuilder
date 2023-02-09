@@ -67,8 +67,8 @@ protected:
 	class UBuildingClusterComponent* BuildingComponent = nullptr;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	void InteractRequest(class AVillageMayor* InteractingPlayer);
-	virtual void InteractRequest_Implementation(class AVillageMayor* InteractingPlayer);
+	void InteractRequest(class AVillager* InteractingVillager);
+	virtual void InteractRequest_Implementation(class AVillager* InteractingVillager);
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	FText DisplayInteractText();

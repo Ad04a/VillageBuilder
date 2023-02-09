@@ -5,24 +5,24 @@
 #include "Characters/VillageMayor.h"
 
 
-void UStorageComponent::InteractRequest_Implementation(class AVillageMayor* InteractingPlayer)
+void UStorageComponent::InteractRequest_Implementation(class AVillager* InteractingVillager)
 {
-	if (InteractingPlayer->GetEquipItemType() == EItemType::Default)
+	if (InteractingVillager->GetEquipItemType() == EItemType::Default)
 	{
 		AItem* TempItem = DropItem(GetItemClass());
-		InteractingPlayer->Equip(TempItem);
+		InteractingVillager->Equip(TempItem);
 		return;
 	}
-	if (InteractingPlayer->GetEquipItemType()!= ExplicitItemType)
+	if (InteractingVillager->GetEquipItemType()!= ExplicitItemType)
 	{
 		return;
 	}
-	AItem* TempItem = InteractingPlayer->GetItem();
+	AItem* TempItem = InteractingVillager->GetItem();
 	if (PlaceItem(TempItem) == false)
 	{
 		return;
 	}
-	InteractingPlayer->DropItem();
+	InteractingVillager->DropItem();
 	TempItem->Destroy();
 }
 

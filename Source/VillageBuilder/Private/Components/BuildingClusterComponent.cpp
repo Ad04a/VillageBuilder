@@ -19,7 +19,7 @@ void UBuildingClusterComponent::BeginPlay()
 	}
 }
 
-void UBuildingClusterComponent::InteractRequest_Implementation(class AVillageMayor* InteractingPlayer)
+void UBuildingClusterComponent::InteractRequest_Implementation(class AVillager* InteractingVillager)
 {
 	return;
 }

@@ -50,9 +50,9 @@ void AItem::LoadFromDataTable()
 	ItemAnimMontage = ItemData->ItemAnimMontage;
 }
 
-void AItem::InteractRequest_Implementation(class AVillageMayor* InteractingPlayer)
+void AItem::InteractRequest_Implementation(class AVillager* InteractingVillager)
 {
-	InteractingPlayer->Equip(this);	
+	InteractingVillager->Equip(this);
 }
 
 void AItem::Use(AVillager* User, EItemActionType ActionType)

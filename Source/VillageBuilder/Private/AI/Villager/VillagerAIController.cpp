@@ -41,3 +41,8 @@ UBlackboardComponent* AVillagerAIController::GetBlackboard()const
 {
 	return Blackboard;
 }
+
+AVillager* AVillagerAIController::GetControlledVillager()const 
+{
+	return Cast<AVillager>(GetPawn()); 
+}

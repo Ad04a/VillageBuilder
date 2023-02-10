@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Characters/Villager.h" 
 #include "BehaviorTree/BehaviorTreeComponent.h" 
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -25,6 +26,9 @@ public:
 	class UBlackboardComponent* GetBlackboard()const;
 
 private:
+
+	AVillager* ControlledVillager = nullptr;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	class UBehaviorTreeComponent* BehaviorTreeComponent;
 
@@ -34,6 +38,5 @@ private:
 	class UBlackboardComponent* Blackboard;
 public:
 	void SetBehavior(UBehaviorTree* InBehaviorTree);
-
-
+	AVillager* GetControlledVillager()const;
 };

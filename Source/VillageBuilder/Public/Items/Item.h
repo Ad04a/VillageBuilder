@@ -18,7 +18,9 @@ class VILLAGEBUILDER_API AItem : public AActor, public IInteractable
 public:	
 	// Sets default values for this actor's properties
 	AItem();
+private:
 
+	void SetupStimuliComponent();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,6 +38,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UDataTable* SecondaryDataTable = nullptr;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UAIPerceptionStimuliSourceComponent* StimuliComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	float Weight;

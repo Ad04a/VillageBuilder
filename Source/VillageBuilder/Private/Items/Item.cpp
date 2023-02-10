@@ -3,6 +3,8 @@
 
 #include "Items/Item.h"
 #include "Characters/VillageMayor.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 
 // Sets default values
 AItem::AItem()
@@ -12,6 +14,7 @@ AItem::AItem()
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(MeshComponent);
+	SetupStimuliComponent();
 }
 
 // Called when the game starts or when spawned
@@ -25,6 +28,13 @@ void AItem::BeginPlay()
 void AItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void AItem::SetupStimuliComponent()
+{
+	StimuliComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimuliComponent"));
+	StimuliComponent->RegisterForSense(TSubclassOf<UAISense_Sight>());
+	StimuliComponent->RegisterWithPerceptionSystem();
 }
 
 void AItem::LoadFromDataTable()

@@ -9,6 +9,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "VillagerAIController.generated.h"
 
 /**
@@ -36,7 +37,19 @@ private:
 	class UBehaviorTree* BehaviorTree;
 
 	class UBlackboardComponent* Blackboard;
+
+	class UAISenseConfig_Sight* SightConfig;
+
+	void SetupPerceptionSystem();
+
+	UPROPERTY(VisibleAnywhere)
+	TSet<UObject*> RememberedItems;
+
+	UFUNCTION()
+	void ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus);
+
 public:
 	void SetBehavior(UBehaviorTree* InBehaviorTree);
 	AVillager* GetControlledVillager()const;
+	UObject* GetFirstRemembered();
 };

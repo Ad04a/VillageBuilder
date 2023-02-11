@@ -19,6 +19,7 @@ public:
 
 private:
 	bool bIsPlaced = false;
+	bool bIsActive = false;
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

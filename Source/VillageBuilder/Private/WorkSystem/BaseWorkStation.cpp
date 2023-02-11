@@ -67,7 +67,7 @@ FText ABaseWorkStation::DisplayInteractText_Implementation()
 {
 	if (GetIsBuilt() == false)
 	{
-		return FText::FromString(DisplayName.ToString() + "is not ready yet");
+		return FText::FromString(DisplayName.ToString() + " is not ready yet");
 	}
 	return FText::FromString("Open " + DisplayName.ToString());
 }

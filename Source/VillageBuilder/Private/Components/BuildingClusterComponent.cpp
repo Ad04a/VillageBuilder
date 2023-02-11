@@ -36,7 +36,11 @@ FText UBuildingClusterComponent::DisplayInteractText_Implementation()
 	{
 		return FText::FromString("Start building");
 	}
-	return FText::FromString(FString::FromInt(PlacedComponents) + " / " + FString::FromInt(AllComponents));
+	if (PlacedComponents == AllComponents)
+	{
+		return FText::FromString("Repair: " + FString::FromInt(PlacedComponents) + " / " + FString::FromInt(AllComponents));
+	}
+	return FText::FromString("Building: " + FString::FromInt(PlacedComponents) + " / " + FString::FromInt(AllComponents));
 }
 
 void UBuildingClusterComponent::OnComponentPlaced(bool State)

@@ -12,7 +12,7 @@ UBaseBuildingComponent::UBaseBuildingComponent()
 
 void UBaseBuildingComponent::Touched(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->IsA(NeededItem) == false || bIsPlaced == true) {
+	if (OtherActor->IsA(NeededItem) == false || bIsPlaced == true || bIsActive == false) {
 		return;
 	}
 
@@ -23,15 +23,16 @@ void UBaseBuildingComponent::Touched(UPrimitiveComponent* OverlappedComponent, A
 	SetCollisionProfileName(TEXT("BlockAll"));
 	TouchingItem->Destroy();
 	OnComponentStateChange.ExecuteIfBound(true);
+	UStaticMeshComponent* NewMesh = NewObject<UStaticMeshComponent>(GetAttachParent());
+	NewMesh->RegisterComponent();
+	NewMesh->AttachToComponent(GetAttachParent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	NewMesh->SetStaticMesh(GetStaticMesh());
+	NewMesh->SetRelativeLocationAndRotation(GetRelativeLocation(),GetRelativeRotation());
+	DestroyComponent();
 }
 
 void UBaseBuildingComponent::SetIsActive(bool State)
 {
 	SetVisibility(State);
-	if (State == false)
-	{
-		SetCollisionProfileName(TEXT("NoCollision"));
-		return;
-	}
-	SetCollisionProfileName(TEXT("OverlapAll"));
+	bIsActive = State;
 }

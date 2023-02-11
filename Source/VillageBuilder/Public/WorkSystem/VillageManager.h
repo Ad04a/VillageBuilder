@@ -29,10 +29,15 @@ protected:
 	virtual void BeginPlay() override;
 	UPROPERTY(VisibleAnywhere)
 	TArray<AVillager*> PassingVillagers;
+
 	UPROPERTY(VisibleAnywhere)
 	TArray<AVillager*> Villagers;
+
 	UPROPERTY(VisibleAnywhere)
 	TMap<ABaseWorkStation*, AVillager*> WorkStations; //(WorkStation, HiredVillager)
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<ABaseWorkStation*> UnderConstruction;
 	/*UPROPERTY()
 	TMap<AVillager*, int VillagerId> Beds;  **/
 	UPROPERTY(EditDefaultsOnly)
@@ -52,6 +57,9 @@ protected:
 
 	UFUNCTION()
 	void OnVillagerDeath(AVillager* Villager);
+
+	UFUNCTION()
+	void AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation);
 
 public:	
 	// Called every frame

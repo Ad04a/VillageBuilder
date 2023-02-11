@@ -49,6 +49,8 @@ private:
 	void ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus);
 
 public:
+	UPROPERTY(EditAnywhere)
+	class USphereComponent* RememberCollision;
 	void SetBehavior(UBehaviorTree* InBehaviorTree);
 	AVillager* GetControlledVillager()const;
 	UObject* GetFirstRemembered();

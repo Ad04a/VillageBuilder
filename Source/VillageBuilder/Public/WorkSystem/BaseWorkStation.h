@@ -10,6 +10,8 @@
 #include "WorkSystem/BuildProjection.h"
 #include "BaseWorkStation.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE_OneParam(FBuildingStateSignature, ABaseWorkStation*, WorkStation);
+
 USTRUCT(BlueprintType)
 struct FWorkStationData : public FTableRowBase
 {
@@ -74,12 +76,22 @@ protected:
 	FText DisplayInteractText();
 	virtual FText DisplayInteractText_Implementation();
 
+	bool IsBuilt = false;
+	UFUNCTION()
+	void SetIsBuilt(bool State);
+
 public:	
+
+	FBuildingStateSignature OnBuildingReady;
+
 	void ReleaseWorker();
 	FText GetName() { return DisplayName; }
 	float GetModifier(ETrait TraitName);
 	FText GetProfessionName() { return ProfessionName; }
 	TArray<class UStorageComponent*> GetStorages();
+	UStorageComponent* GetRightStorage(TSubclassOf<class AItem> ItemClass);
+	bool GetIsBuilt() { return IsBuilt; }
+	
 
 
 };

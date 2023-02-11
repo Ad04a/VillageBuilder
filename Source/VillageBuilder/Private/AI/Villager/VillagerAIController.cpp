@@ -5,6 +5,7 @@
 #include "Perception/AIPerceptionTypes.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Components/SphereComponent.h"
 #include "Headers/VillagerBBKeys.h"
 
 
@@ -12,6 +13,7 @@ AVillagerAIController::AVillagerAIController()
 {
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BTComponent"));
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
+	RememberCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RememberCollision"));
 	SetupPerceptionSystem();
 }
 
@@ -43,7 +45,6 @@ void AVillagerAIController::OnPossess(APawn* const InPawn)
 
 void AVillagerAIController::ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus)
 {
-	UE_LOG(LogTemp, Error, TEXT("Vidqh"));
 	if (Stimulus.WasSuccessfullySensed() == false)
 	{
 		return;
@@ -53,19 +54,16 @@ void AVillagerAIController::ActorDetected(AActor* Actor, struct FAIStimulus cons
 		UE_LOG(LogTemp, Error, TEXT("AVillagerAIController::ActorDetected IsValid(BlackBoard) == false"));
 		return;
 	}
-	UE_LOG(LogTemp, Error, TEXT("maika ti"));
-	AItem* PercievedItem = Cast<AItem>(Actor);
+	/*AItem* PercievedItem = Cast<AItem>(Actor);
 	if (IsValid(PercievedItem) == false)
 	{
 		return;
 	}
-	UE_LOG(LogTemp, Error, TEXT("sredna"));
 	if (PercievedItem->GetItemType() != Blackboard->GetValueAsEnum(VillagerBBKeys::TargetItemType))
 	{
 		return;
 	}
-	UE_LOG(LogTemp, Error, TEXT("dolna"));
-	RememberedItems.Add(Actor);
+	RememberedItems.Add(Actor);*/
 }
 
 UObject* AVillagerAIController::GetFirstRemembered()
@@ -95,7 +93,7 @@ void AVillagerAIController::SetupPerceptionSystem()
 	SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
 	SightConfig->SightRadius = 500.0f;
 	SightConfig->LoseSightRadius = SightConfig->SightRadius + 50.0f;
-	SightConfig->PeripheralVisionAngleDegrees = 135.0f;
+	SightConfig->PeripheralVisionAngleDegrees = 70.0;
 	SightConfig->SetMaxAge(5.0f);
 	SightConfig->AutoSuccessRangeFromLastSeenLocation = 10.0f;
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;

@@ -5,6 +5,7 @@
 #include "Components/BuildingClusterComponent.h"
 #include "Components/StorageComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "Items/Item.h"
 #include "Characters/VillageMayor.h"
 
 // Sets default values
@@ -16,6 +17,7 @@ ABaseWorkStation::ABaseWorkStation()
 	SetRootComponent(MeshComponent);
 	BuildingComponent = CreateDefaultSubobject<UBuildingClusterComponent>(TEXT("BuildingComponent"));
 	BuildingComponent->SetupAttachment(MeshComponent);
+	BuildingComponent->OnBuildingFinisehd.BindDynamic(this, &ABaseWorkStation::SetIsBuilt);
 }
 
 // Called when the game starts or when spawned
@@ -49,6 +51,10 @@ void ABaseWorkStation::ReleaseWorker()
 
 void ABaseWorkStation::InteractRequest_Implementation(AVillager* InteractingVillager)
 {
+	if (GetIsBuilt() == false)
+	{
+		return;
+	}
 	AVillageMayor* InteractingPlayer = Cast<AVillageMayor>(InteractingVillager);
 	if (IsValid(InteractingPlayer) == false)
 	{
@@ -59,6 +65,10 @@ void ABaseWorkStation::InteractRequest_Implementation(AVillager* InteractingVill
 
 FText ABaseWorkStation::DisplayInteractText_Implementation()
 {
+	if (GetIsBuilt() == false)
+	{
+		return FText::FromString(DisplayName.ToString() + "is not ready yet");
+	}
 	return FText::FromString("Open " + DisplayName.ToString());
 }
 
@@ -86,5 +96,30 @@ TArray<UStorageComponent*> ABaseWorkStation::GetStorages()
 		TempArray.Add(StorageComponent);
 	}
 	return TempArray;
+}
+
+UStorageComponent* ABaseWorkStation::GetRightStorage(TSubclassOf<class AItem> ItemClass)
+{
+	TArray<UStorageComponent*>Storages = GetStorages();
+	for (UStorageComponent* Storage : Storages)
+	{
+		if (Storage->GetExplicitItemClass() != ItemClass)
+		{
+			continue;
+		}
+		return Storage;
+	}
+	return nullptr;
+}
+
+void ABaseWorkStation::SetIsBuilt(bool State)
+{
+	IsBuilt = State;
+	if (State == false)
+	{
+		return;
+	}
+	OnBuildingReady.ExecuteIfBound(this);
+	//Enable All Storages
 }
 

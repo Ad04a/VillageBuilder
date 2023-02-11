@@ -7,16 +7,17 @@
 #include "Headers/Interactable.h"
 #include "BuildingClusterComponent.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_DELEGATE_OneParam(FBuildingClusterStateSignature, bool, State);
+
 UCLASS()
 class VILLAGEBUILDER_API UBuildingClusterComponent : public UStaticMeshComponent, public IInteractable
 {
 	GENERATED_BODY()
 
-public:
-
+private:
+	int PlacedComponents = 0;
+	int AllComponents = 0;
+	bool bIsStarted = false;
 protected:
 	virtual void BeginPlay() override;
 
@@ -30,4 +31,12 @@ protected:
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	FText DisplayInteractText();
 	virtual FText DisplayInteractText_Implementation();
+
+	UFUNCTION()
+	void OnComponentPlaced(bool State);
+public:
+	FBuildingClusterStateSignature OnBuildingFinisehd;
+	FBuildingClusterStateSignature OnBuildStarted;
+	TArray<class UBaseBuildingComponent*> GetBuildingComponents();
+	
 };

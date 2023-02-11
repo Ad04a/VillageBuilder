@@ -23,7 +23,7 @@ protected:
 	int MaxNumberOfItems;
 
 	UPROPERTY(EditDefaultsOnly, Category = Content)
-	TEnumAsByte<EItemType> ExplicitItemType;
+	TSubclassOf<AItem> ExplicitItemClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = Content)
 	TArray<FTransform> ItemTransforms;
@@ -40,6 +40,7 @@ protected:
 
 	TSubclassOf<AItem> GetItemClass();
 public:
-	TEnumAsByte<EItemType> GetExplicitItemType()const {return ExplicitItemType;}
+	TSubclassOf<AItem> GetExplicitItemClass()const {return ExplicitItemClass;}
+	bool GetIsFull();
 
 };

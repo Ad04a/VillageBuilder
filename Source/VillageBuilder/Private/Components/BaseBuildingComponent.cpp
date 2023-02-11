@@ -5,6 +5,7 @@
 
 UBaseBuildingComponent::UBaseBuildingComponent()
 {
+	PrimaryComponentTick.bCanEverTick = false;
 	OnComponentBeginOverlap.AddDynamic(this, &UBaseBuildingComponent::Touched);
 }
 
@@ -20,6 +21,17 @@ void UBaseBuildingComponent::Touched(UPrimitiveComponent* OverlappedComponent, A
 	SetMaterial(0, TouchingItem->GetMaterial());
 	bIsPlaced = true;
 	SetCollisionProfileName(TEXT("BlockAll"));
-	SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
 	TouchingItem->Destroy();
+	OnComponentStateChange.ExecuteIfBound(true);
+}
+
+void UBaseBuildingComponent::SetIsActive(bool State)
+{
+	SetVisibility(State);
+	if (State == false)
+	{
+		SetCollisionProfileName(TEXT("NoCollision"));
+		return;
+	}
+	SetCollisionProfileName(TEXT("OverlapAll"));
 }

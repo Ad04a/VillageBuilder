@@ -13,7 +13,7 @@ void UStorageComponent::InteractRequest_Implementation(class AVillager* Interact
 		InteractingVillager->Equip(TempItem);
 		return;
 	}
-	if (InteractingVillager->GetEquipItemType()!= ExplicitItemType)
+	if (InteractingVillager->GetItem()->IsA(GetExplicitItemClass()) == false)
 	{
 		return;
 	}
@@ -33,14 +33,7 @@ bool UStorageComponent::PlaceItem(AItem* InItem)
 		UE_LOG(LogTemp, Warning, TEXT("UStorageComponent::PlaceItem IsValid(InItem) == false"));
 		return false;
 	}
-	TArray<int> NumItems;
-	Content.GenerateValueArray(NumItems);
-	int CurrentItems = 0;
-	for (int i = 0; i < NumItems.Num(); i++)
-	{
-		CurrentItems += NumItems[i];
-	}
-	if (CurrentItems >= MaxNumberOfItems)
+	if (GetIsFull() == true)
 	{
 		return false;
 	}
@@ -61,4 +54,20 @@ TSubclassOf<AItem> UStorageComponent::GetItemClass()
 FText UStorageComponent::DisplayInteractText_Implementation()
 {
 	return InteractionText;
+}
+
+bool UStorageComponent::GetIsFull()
+{
+	TArray<int> NumItems;
+	Content.GenerateValueArray(NumItems);
+	int CurrentItems = 0;
+	for (int i = 0; i < NumItems.Num(); i++)
+	{
+		CurrentItems += NumItems[i];
+	}
+	if (CurrentItems >= MaxNumberOfItems)
+	{
+		return true;
+	}
+	return false;
 }

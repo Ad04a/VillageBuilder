@@ -135,6 +135,13 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, AVillager*
 
 void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
 {
+	UnderConstruction.Add(WorkStation);
+	WorkStation->OnBuildingReady.BindDynamic(this, &AVillageManager::AknowedgeFinishedBuilding);
+}
+
+void AVillageManager::AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation)
+{
+	UnderConstruction.Remove(WorkStation);
 	WorkStations.Add(WorkStation, nullptr);
 }
 

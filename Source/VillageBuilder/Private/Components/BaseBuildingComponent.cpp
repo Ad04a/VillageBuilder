@@ -2,32 +2,57 @@
 
 
 #include "Components/BaseBuildingComponent.h"
+#include "Characters/Villager.h"
+#include "Engine/StaticMeshActor.h"
 
 UBaseBuildingComponent::UBaseBuildingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	OnComponentBeginOverlap.AddDynamic(this, &UBaseBuildingComponent::Touched);
 }
 
-
-void UBaseBuildingComponent::Touched(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void UBaseBuildingComponent::InteractRequest_Implementation(class AVillager* InteractingVillager)
 {
-	if (OtherActor->IsA(NeededItem) == false || bIsPlaced == true || bIsActive == false) {
+	if (bIsActive == false)
+	{
+		return;
+	}
+	AItem* UsingItem = InteractingVillager->GetItem();
+	if (IsValid(UsingItem) == false)
+	{
+		return;
+	}
+	if (UsingItem->IsA(NeededItem) == false)
+	{
 		return;
 	}
 
-	AItem* TouchingItem = Cast<AItem>(OtherActor);
-	
-	SetMaterial(0, TouchingItem->GetMaterial());
+	InteractingVillager->DropItem();
+	UsingItem->Destroy();
+	Build();
+}
+
+void UBaseBuildingComponent::Build()
+{
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UBaseBuildingComponent::Build IsValid(World) == false"));
+		return;
+	}
+
 	bIsPlaced = true;
-	SetCollisionProfileName(TEXT("BlockAll"));
-	TouchingItem->Destroy();
+	
 	OnComponentStateChange.ExecuteIfBound(true);
-	UStaticMeshComponent* NewMesh = NewObject<UStaticMeshComponent>(GetAttachParent());
-	NewMesh->RegisterComponent();
-	NewMesh->AttachToComponent(GetAttachParent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	NewMesh->SetStaticMesh(GetStaticMesh());
-	NewMesh->SetRelativeLocationAndRotation(GetRelativeLocation(),GetRelativeRotation());
+	FActorSpawnParameters SpawnParams;
+	AStaticMeshActor* NewMesh = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), GetComponentLocation(), GetComponentRotation(), SpawnParams);
+	//NewMesh->RegisterComponent();
+	//NewMesh->AttachToComponent(GetAttachParent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	NewMesh->SetMobility(EComponentMobility::Movable);
+	NewMesh->GetStaticMeshComponent()->SetStaticMesh(GetStaticMesh());
+	//NewMesh->SetRelativeLocationAndRotation(GetRelativeLocation(), GetRelativeRotation());
+	//NewMesh->SetWorldLocationAndRotation(GetComponentLocation(), GetComponentRotation());
+	NewMesh->GetStaticMeshComponent()->SetMaterial(0, PlacedMaterial);
+	NewMesh->SetMobility(EComponentMobility::Static);
 	DestroyComponent();
 }
 
@@ -35,4 +60,17 @@ void UBaseBuildingComponent::SetIsActive(bool State)
 {
 	SetVisibility(State);
 	bIsActive = State;
+	if (State == false)
+	{
+		SetCollisionProfileName(TEXT("OverlapAll"));
+		SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Ignore);
+		return;
+	}
+	SetCollisionProfileName(TEXT("Custom"));
+	SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Block);
+}
+
+FText UBaseBuildingComponent::DisplayInteractText_Implementation()
+{
+	return InteractionText;
 }

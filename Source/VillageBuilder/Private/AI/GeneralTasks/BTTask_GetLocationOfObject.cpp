@@ -25,14 +25,26 @@ EBTNodeResult::Type UBTTask_GetLocationOfObject::ExecuteTask(UBehaviorTreeCompon
 		return EBTNodeResult::Failed;
 	}
 	AActor* TargetActor = Cast<AActor>(BlackBoard->GetValueAsObject(GetSelectedBlackboardKey()));
-	if (IsValid(TargetActor) == false)
+	if (IsValid(TargetActor) == true)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTTask_GetLocationOfObject::ExecuteTask IsValid(TargetActor) == false"));
-		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
-		return EBTNodeResult::Failed;
-	}
-	BlackBoard->SetValueAsVector(WriteInto.SelectedKeyName, TargetActor->GetActorLocation());
-	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
 
-	return EBTNodeResult::Succeeded;
+		BlackBoard->SetValueAsVector(WriteInto.SelectedKeyName, TargetActor->GetActorLocation());
+		FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
+		return EBTNodeResult::Succeeded;
+		
+	}
+
+	USceneComponent* TargetComponent = Cast<USceneComponent>(BlackBoard->GetValueAsObject(GetSelectedBlackboardKey()));
+	if (IsValid(TargetComponent) == true)
+	{
+
+		BlackBoard->SetValueAsVector(WriteInto.SelectedKeyName, TargetComponent->GetComponentLocation());
+		FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
+		return EBTNodeResult::Succeeded;
+
+	}
+	BlackBoard->ClearValue(WriteInto.SelectedKeyName);
+	FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
+	return EBTNodeResult::Failed;
+	
 }

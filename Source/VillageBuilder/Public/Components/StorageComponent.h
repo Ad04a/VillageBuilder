@@ -17,9 +17,6 @@ class VILLAGEBUILDER_API UStorageComponent : public UItemCarrierComponent, publi
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Content)
-	FText InteractionText;
-
-	UPROPERTY(EditDefaultsOnly, Category = Content)
 	int MaxNumberOfItems;
 
 	UPROPERTY(EditDefaultsOnly, Category = Content)
@@ -27,6 +24,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Content)
 	TArray<FTransform> ItemTransforms;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Interact")
+	FText InteractionText;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	void InteractRequest(class AVillager* InteractingVillager);

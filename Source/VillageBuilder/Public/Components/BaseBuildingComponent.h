@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
 #include "Items/Item.h"
+#include "Headers/Interactable.h"
 #include "BaseBuildingComponent.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FComponentStateSignature, bool, State);
 
 UCLASS()
-class VILLAGEBUILDER_API UBaseBuildingComponent : public UStaticMeshComponent
+class VILLAGEBUILDER_API UBaseBuildingComponent : public UStaticMeshComponent, public IInteractable
 {
 	GENERATED_BODY()
 
@@ -21,13 +22,28 @@ private:
 	bool bIsPlaced = false;
 	bool bIsActive = false;
 
+	void Build();
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AItem> NeededItem;
 
-	UFUNCTION()
-	void Touched(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* PlacedMaterial;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Interact")
+	FText InteractionText;
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
+	void InteractRequest(class AVillager* InteractingVillager);
+	virtual void InteractRequest_Implementation(class AVillager* InteractingVillager);
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
+	FText DisplayInteractText();
+	virtual FText DisplayInteractText_Implementation();
+
 public:
 	FComponentStateSignature OnComponentStateChange;
 	void SetIsActive(bool State);
+	TSubclassOf<AItem> GetNeededClass(){return NeededItem;}
 };

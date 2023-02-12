@@ -38,5 +38,5 @@ public:
 	FBuildingClusterStateSignature OnBuildingFinisehd;
 	FBuildingClusterStateSignature OnBuildStarted;
 	TArray<class UBaseBuildingComponent*> GetBuildingComponents();
-	
+	class UBaseBuildingComponent* GetFirstBuildingComponent();
 };

@@ -2,7 +2,6 @@
 
 
 #include "Characters/VillageMayor.h"
-#include "Components/BaseBuildingComponent.h"
 
 AVillageMayor::AVillageMayor()
 {
@@ -48,12 +47,6 @@ void AVillageMayor::CheckForInteractables()
 	IInteractable* InteractableComponent = Cast<IInteractable>(HitComponent);
 
 	if (HitActor == nullptr)
-	{
-		FocusedObject = nullptr;
-		OnInteraction.Broadcast(FText());
-		return;
-	}
-	if (HitComponent->IsA(UBaseBuildingComponent::StaticClass()) == true)
 	{
 		FocusedObject = nullptr;
 		OnInteraction.Broadcast(FText());

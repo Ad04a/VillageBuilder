@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/GeneralDecorator/BTD_CheckBoolValue.h"
+#include "AI/GeneralDecorator/BTD_ConditionalLoopForClassCompare.h"
 
-UBTD_CheckBoolValue::UBTD_CheckBoolValue()
+UBTD_ConditionalLoopForClassCompare::UBTD_ConditionalLoopForClassCompare()
 {
-	NodeName = "CheckBoolValue";
+	NodeName = "ConditionalLoopForClassCompare()";
 }
 
-bool UBTD_CheckBoolValue::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) const
+bool UBTD_ConditionalLoopForClassCompare::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) const
 {
 	bool bSuccess = Super::CalculateRawConditionValue(OwnerComponent, NodeMemory);
 	if (bSuccess == false)
@@ -27,6 +27,8 @@ bool UBTD_CheckBoolValue::CalculateRawConditionValue(UBehaviorTreeComponent& Own
 		UE_LOG(LogTemp, Error, TEXT("UBTTask_GetLocationOfObject::CalculateRawConditionValue IsValid(BlackBoard) == false"));
 		return false;
 	}
-	bool bChecker = BlackBoard->GetValueAsBool(GetSelectedBlackboardKey());
-	return bChecker == CheckValue;
+	if (InverseCondition) {
+		return BlackBoard->GetValueAsClass(CompareWith.SelectedKeyName) != BlackBoard->GetValueAsClass(GetSelectedBlackboardKey());
+	}
+	return BlackBoard->GetValueAsClass(CompareWith.SelectedKeyName) == BlackBoard->GetValueAsClass(GetSelectedBlackboardKey());
 }

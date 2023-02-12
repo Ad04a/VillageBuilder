@@ -135,6 +135,14 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, AVillager*
 
 void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
 {
+	PlacedBuildings.Add(WorkStation);
+	WorkStation->OnStartedConstruction.BindDynamic(this, &AVillageManager::AknowedgeStartedConstruction);
+}
+
+void AVillageManager::AknowedgeStartedConstruction(ABaseWorkStation* WorkStation)
+{
+	PlacedBuildings.Remove(WorkStation);
+	WorkStation->OnStartedConstruction.Unbind();
 	UnderConstruction.Add(WorkStation);
 	WorkStation->OnBuildingReady.BindDynamic(this, &AVillageManager::AknowedgeFinishedBuilding);
 }
@@ -142,6 +150,7 @@ void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
 void AVillageManager::AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation)
 {
 	UnderConstruction.Remove(WorkStation);
+	WorkStation->OnBuildingReady.Unbind();
 	WorkStations.Add(WorkStation, nullptr);
 }
 
@@ -176,4 +185,13 @@ void AVillageManager::ApplyJobBehavior(FName StationName, AVillager* Worker)
 		WorkerBehaviors.Add(StationName, BehaviorData->BehaviorTree);
 	}
 	WorkerController->SetBehavior(*WorkerBehaviors.Find(StationName));
+}
+
+ABaseWorkStation* AVillageManager::GetFirstForConstructing()
+{
+	if (UnderConstruction.IsEmpty() == true)
+	{
+		return nullptr;
+	}
+	return UnderConstruction[0];
 }

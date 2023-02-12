@@ -20,10 +20,10 @@ void UBuildingClusterComponent::InteractRequest_Implementation(class AVillager* 
 {
 	if (bIsStarted == true)
 	{
-		OnBuildStarted.ExecuteIfBound(true);
 		return;
 	}
 	bIsStarted = true;
+	OnBuildStarted.ExecuteIfBound(true);
 	for (UBaseBuildingComponent* Child : GetBuildingComponents())
 	{
 		Child->SetIsActive(true);
@@ -71,4 +71,14 @@ TArray<class UBaseBuildingComponent*> UBuildingClusterComponent::GetBuildingComp
 		BuildingComponents.Add(BuildingComp);
 	}
 	return BuildingComponents;
+}
+
+class UBaseBuildingComponent* UBuildingClusterComponent::GetFirstBuildingComponent()
+{
+	TArray<UBaseBuildingComponent*> BuildingComponents = GetBuildingComponents();
+	if (BuildingComponents.IsEmpty() == true)
+	{
+		return nullptr;
+	}
+	return BuildingComponents[0];
 }

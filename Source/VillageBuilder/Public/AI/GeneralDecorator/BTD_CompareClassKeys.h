@@ -9,20 +9,19 @@
 
 #include "AI/Villager/VillagerAIController.h"
 
-#include "BTD_CheckBoolValue.generated.h"
+#include "BTD_CompareClassKeys.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VILLAGEBUILDER_API UBTD_CheckBoolValue : public UBTDecorator_BlackboardBase
+class VILLAGEBUILDER_API UBTD_CompareClassKeys : public UBTDecorator_BlackboardBase
 {
 	GENERATED_BODY()
-public:
-	UBTD_CheckBoolValue();
 protected:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	bool CheckValue = false;
-
+	struct FBlackboardKeySelector CompareWith;
+public:
+	UBTD_CompareClassKeys();
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) const override;
 };

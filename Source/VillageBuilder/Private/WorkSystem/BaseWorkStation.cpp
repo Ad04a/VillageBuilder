@@ -18,6 +18,7 @@ ABaseWorkStation::ABaseWorkStation()
 	BuildingComponent = CreateDefaultSubobject<UBuildingClusterComponent>(TEXT("BuildingComponent"));
 	BuildingComponent->SetupAttachment(MeshComponent);
 	BuildingComponent->OnBuildingFinisehd.BindDynamic(this, &ABaseWorkStation::SetIsBuilt);
+	BuildingComponent->OnBuildStarted.BindDynamic(this, &ABaseWorkStation::SetIsConstructing);
 }
 
 // Called when the game starts or when spawned
@@ -123,3 +124,16 @@ void ABaseWorkStation::SetIsBuilt(bool State)
 	//Enable All Storages
 }
 
+void ABaseWorkStation::SetIsConstructing(bool State)
+{
+	if (State == false)
+	{
+		return;
+	}
+	OnStartedConstruction.ExecuteIfBound(this);
+}
+
+class UBaseBuildingComponent* ABaseWorkStation::GetFirstBuildingComponent()
+{
+	return BuildingComponent->GetFirstBuildingComponent();
+}

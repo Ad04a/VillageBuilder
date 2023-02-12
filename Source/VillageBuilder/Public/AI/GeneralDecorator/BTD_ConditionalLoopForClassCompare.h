@@ -9,20 +9,23 @@
 
 #include "AI/Villager/VillagerAIController.h"
 
-#include "BTD_ConditionalLoopForKey.generated.h"
+#include "BTD_ConditionalLoopForClassCompare.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VILLAGEBUILDER_API UBTD_ConditionalLoopForKey : public UBTDecorator_ConditionalLoop
+class VILLAGEBUILDER_API UBTD_ConditionalLoopForClassCompare : public UBTDecorator_ConditionalLoop
 {
 	GENERATED_BODY()
 public:
-	UBTD_ConditionalLoopForKey();
+	UBTD_ConditionalLoopForClassCompare();
 protected:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	bool CheckValue = false;
+	struct FBlackboardKeySelector CompareWith;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	bool InverseCondition;
 
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) const override;
 };

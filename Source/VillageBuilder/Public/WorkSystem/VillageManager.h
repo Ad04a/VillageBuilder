@@ -38,6 +38,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<ABaseWorkStation*> UnderConstruction;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<ABaseWorkStation*> PlacedBuildings;
 	/*UPROPERTY()
 	TMap<AVillager*, int VillagerId> Beds;  **/
 	UPROPERTY(EditDefaultsOnly)
@@ -61,6 +64,9 @@ protected:
 	UFUNCTION()
 	void AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation);
 
+	UFUNCTION()
+	void AknowedgeStartedConstruction(ABaseWorkStation* WorkStation);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -75,4 +81,5 @@ public:
 	ABaseWorkStation* GetWorkPlaceFor(AVillager* Worker);
 	UFUNCTION()
 	void ManageEmployment(ABaseWorkStation* WorkStation, AVillager* Worker);
+	ABaseWorkStation* GetFirstForConstructing();
 };

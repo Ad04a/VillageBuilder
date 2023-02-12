@@ -79,9 +79,11 @@ protected:
 	bool IsBuilt = false;
 	UFUNCTION()
 	void SetIsBuilt(bool State);
+	UFUNCTION()
+	void SetIsConstructing(bool State);
 
 public:	
-
+	FBuildingStateSignature OnStartedConstruction;
 	FBuildingStateSignature OnBuildingReady;
 
 	void ReleaseWorker();
@@ -91,7 +93,7 @@ public:
 	TArray<class UStorageComponent*> GetStorages();
 	UStorageComponent* GetRightStorage(TSubclassOf<class AItem> ItemClass);
 	bool GetIsBuilt() { return IsBuilt; }
-	
+	class UBaseBuildingComponent* GetFirstBuildingComponent(); 
 
 
 };

@@ -42,5 +42,6 @@ protected:
 public:
 	TSubclassOf<AItem> GetExplicitItemClass()const {return ExplicitItemClass;}
 	bool GetIsFull();
+	void SetIsActive(bool State);
 
 };

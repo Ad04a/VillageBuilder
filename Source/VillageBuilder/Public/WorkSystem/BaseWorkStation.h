@@ -81,6 +81,7 @@ protected:
 	void SetIsBuilt(bool State);
 	UFUNCTION()
 	void SetIsConstructing(bool State);
+	void ToggleStarges(bool State);
 
 public:	
 	FBuildingStateSignature OnStartedConstruction;

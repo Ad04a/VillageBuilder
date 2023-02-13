@@ -43,6 +43,8 @@ void ABaseWorkStation::BeginPlay()
 	DisplayName    = StationData->DisplayName;
 	TraitModifiers = StationData->TraitModifiers;
 	ProfessionName = StationData->ProfessionName;
+
+	ToggleStarges(false);
 }
 
 void ABaseWorkStation::ReleaseWorker()
@@ -113,6 +115,15 @@ UStorageComponent* ABaseWorkStation::GetRightStorage(TSubclassOf<class AItem> It
 	return nullptr;
 }
 
+void ABaseWorkStation::ToggleStarges(bool State)
+{
+	TArray<UStorageComponent*>Storages = GetStorages();
+	for (UStorageComponent* Storage : Storages)
+	{
+		Storage->SetIsActive(State);
+	}
+}
+
 void ABaseWorkStation::SetIsBuilt(bool State)
 {
 	IsBuilt = State;
@@ -121,7 +132,7 @@ void ABaseWorkStation::SetIsBuilt(bool State)
 		return;
 	}
 	OnBuildingReady.ExecuteIfBound(this);
-	//Enable All Storages
+	ToggleStarges(State);
 }
 
 void ABaseWorkStation::SetIsConstructing(bool State)

@@ -28,7 +28,6 @@ void UHarvestableFoliageComponent::TakeDamage(int32 InstanceIndex, float Damage,
 	{
 		return;
 	}
-
 	FTransform InstanceTransform;
 	GetInstanceTransform(InstanceIndex, InstanceTransform, true);
 	UWorld* World = GetWorld();

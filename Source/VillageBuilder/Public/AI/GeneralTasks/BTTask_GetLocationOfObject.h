@@ -21,6 +21,10 @@ class VILLAGEBUILDER_API UBTTask_GetLocationOfObject : public UBTTask_Blackboard
 protected:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	struct FBlackboardKeySelector WriteInto;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	float SearchRadius;
+
 public:
 	UBTTask_GetLocationOfObject();
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) override;

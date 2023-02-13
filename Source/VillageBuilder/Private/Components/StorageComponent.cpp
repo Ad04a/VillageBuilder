@@ -71,3 +71,15 @@ bool UStorageComponent::GetIsFull()
 	}
 	return false;
 }
+
+void UStorageComponent::SetIsActive(bool State)
+{
+	SetCanEverAffectNavigation(State);
+	if (State == false)
+	{
+		SetCollisionProfileName(TEXT("NoCollision"));
+		return;
+	}
+	SetCollisionProfileName(TEXT("BlockAll"));
+}
+

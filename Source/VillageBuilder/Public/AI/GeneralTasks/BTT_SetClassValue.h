@@ -9,19 +9,19 @@
 
 #include "AI/Villager/VillagerAIController.h"
 
-#include "BTT_SetBoolValue.generated.h"
+#include "BTT_SetClassValue.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VILLAGEBUILDER_API UBTT_SetBoolValue : public UBTTask_BlackboardBase
+class VILLAGEBUILDER_API UBTT_SetClassValue : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 protected:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	bool  SetToValue;
+	TSubclassOf<UObject>  SelectedClass;
 public:
-	UBTT_SetBoolValue();
+	UBTT_SetClassValue();
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) override;
 };

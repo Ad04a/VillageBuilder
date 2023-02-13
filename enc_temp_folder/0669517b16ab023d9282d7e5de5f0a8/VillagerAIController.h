@@ -42,6 +42,9 @@ private:
 
 	void SetupPerceptionSystem();
 
+	UPROPERTY(VisibleAnywhere)
+	TSet<UObject*> RememberedItems;
+
 	UFUNCTION()
 	void ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus);
 
@@ -50,4 +53,5 @@ public:
 	class USphereComponent* RememberCollision;
 	void SetBehavior(UBehaviorTree* InBehaviorTree);
 	AVillager* GetControlledVillager()const;
+	UObject* GetFirstRemembered();
 };

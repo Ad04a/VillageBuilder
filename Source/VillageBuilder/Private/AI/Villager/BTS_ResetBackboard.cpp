@@ -11,7 +11,7 @@ UBTS_ResetBackboard::UBTS_ResetBackboard()
 
 void UBTS_ResetBackboard::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory)
 {
-	UE_LOG(LogTemp, Warning, TEXT("STANA"));
+	//UE_LOG(LogTemp, Warning, TEXT("STANA"));
 	AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
 	if (IsValid(Controller) == false)
 	{

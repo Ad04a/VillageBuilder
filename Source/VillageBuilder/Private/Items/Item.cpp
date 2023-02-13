@@ -12,6 +12,8 @@ AItem::AItem()
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(MeshComponent);
+	MeshComponent->SetCollisionProfileName("BlockAll");
+	
 }
 
 // Called when the game starts or when spawned
@@ -78,6 +80,12 @@ void AItem::SetEnablePhysics(bool State)
 {
 	MeshComponent->SetSimulatePhysics(State);
 	SetActorEnableCollision(State);
+	if (State == true)
+	{
+		MeshComponent->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Block);
+		return;
+	}
+	MeshComponent->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Ignore);
 }
 
 UMaterialInterface* AItem::GetMaterial()

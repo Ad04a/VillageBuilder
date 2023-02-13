@@ -66,17 +66,6 @@ void AVillagerAIController::ActorDetected(AActor* Actor, struct FAIStimulus cons
 	RememberedItems.Add(Actor);*/
 }
 
-UObject* AVillagerAIController::GetFirstRemembered()
-{
-	if (RememberedItems.IsEmpty() == true)
-	{
-		return nullptr;
-	}
-	UObject* FirstItem = *RememberedItems.Find(0);
-	RememberedItems.Remove(0);
-	return FirstItem;
-}
-
 UBlackboardComponent* AVillagerAIController::GetBlackboard()const
 {
 	return Blackboard;

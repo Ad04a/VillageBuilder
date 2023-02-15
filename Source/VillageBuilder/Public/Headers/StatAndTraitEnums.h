@@ -14,7 +14,6 @@ ENUM_RANGE_BY_FIRST_AND_LAST(ETrait, ETrait::Vitality, ETrait::Dexterity);
 
 UENUM(BlueprintType)
 enum EStat {
-	//Default UMETA(Displayname = "Default")
 	Health  UMETA(DisplayName = "Health"),
 	Energy  UMETA(DisplayName = "Energy"),
 	Hunger  UMETA(DisplayName = "Hunger"),

@@ -54,16 +54,6 @@ void AVillagerAIController::ActorDetected(AActor* Actor, struct FAIStimulus cons
 		UE_LOG(LogTemp, Error, TEXT("AVillagerAIController::ActorDetected IsValid(BlackBoard) == false"));
 		return;
 	}
-	/*AItem* PercievedItem = Cast<AItem>(Actor);
-	if (IsValid(PercievedItem) == false)
-	{
-		return;
-	}
-	if (PercievedItem->GetItemType() != Blackboard->GetValueAsEnum(VillagerBBKeys::TargetItemType))
-	{
-		return;
-	}
-	RememberedItems.Add(Actor);*/
 }
 
 UBlackboardComponent* AVillagerAIController::GetBlackboard()const

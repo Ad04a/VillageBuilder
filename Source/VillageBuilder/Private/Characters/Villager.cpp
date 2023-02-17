@@ -19,7 +19,6 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 	//--------InitWithDataFromSaveFile--------
 	if (InLoadInfo != FLoadInfoStruct())
 	{
-		//ItemSlots = InLoadInfo.ItemSlots;
 		TraitsMap = InLoadInfo.TraitsMap;
 		StatsMap = InLoadInfo.StatsMap;
 		SetActorTransform(InLoadInfo.Transform);
@@ -90,7 +89,6 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 FLoadInfoStruct AVillager::GetSaveInfo()
 {
 	FLoadInfoStruct SaveInfo;
-	//SaveInfo.ItemSlots = ItemSlots;
 	SaveInfo.TraitsMap = TraitsMap;
 	SaveInfo.StatsMap     = StatsMap;
 	SaveInfo.Transform     = GetActorTransform();
@@ -340,7 +338,7 @@ void AVillager::InteractRequest_Implementation(class AVillager* InteractingVilla
 
 FText AVillager::DisplayInteractText_Implementation()
 {
-	return FText::FromString( "Talk with Villager" );//Add name variable
+	return FText::FromString( "Talk with " + Name);//Add name variable
 }
 
 EItemType AVillager::GetEquipItemType()

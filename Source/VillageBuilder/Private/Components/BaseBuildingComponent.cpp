@@ -45,12 +45,8 @@ void UBaseBuildingComponent::Build()
 	OnComponentStateChange.ExecuteIfBound(true);
 	FActorSpawnParameters SpawnParams;
 	AStaticMeshActor* NewMesh = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), GetComponentLocation(), GetComponentRotation(), SpawnParams);
-	//NewMesh->RegisterComponent();
-	//NewMesh->AttachToComponent(GetAttachParent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	NewMesh->SetMobility(EComponentMobility::Movable);
 	NewMesh->GetStaticMeshComponent()->SetStaticMesh(GetStaticMesh());
-	//NewMesh->SetRelativeLocationAndRotation(GetRelativeLocation(), GetRelativeRotation());
-	//NewMesh->SetWorldLocationAndRotation(GetComponentLocation(), GetComponentRotation());
 	NewMesh->GetStaticMeshComponent()->SetMaterial(0, PlacedMaterial);
 	NewMesh->SetMobility(EComponentMobility::Static);
 	DestroyComponent();

@@ -86,7 +86,6 @@ protected:
 
 	UFUNCTION()
 	void RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
-	//FJobInfoStruct JobInfo
 
 public:	
 
@@ -101,7 +100,7 @@ public:
 	bool bIsMovementEnabled = true;
 	bool bIsRotationEnabled = true;
 
-	void Init(FLoadInfoStruct InLoadInfo = FLoadInfoStruct()/*InColonyState*/);
+	void Init(FLoadInfoStruct InLoadInfo = FLoadInfoStruct());
 	FLoadInfoStruct GetSaveInfo();
 	void RecieveXP(ETrait, int XPAmount);
 

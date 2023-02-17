@@ -13,7 +13,6 @@ AVillagerAIController::AVillagerAIController()
 {
 	BehaviorTreeComponent = CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BTComponent"));
 	Blackboard = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
-	RememberCollision = CreateDefaultSubobject<USphereComponent>(TEXT("RememberCollision"));
 	SetupPerceptionSystem();
 }
 
@@ -66,6 +65,24 @@ AVillager* AVillagerAIController::GetControlledVillager()const
 	return Cast<AVillager>(GetPawn()); 
 }
 
+void AVillagerAIController::AddRememberdActor(AActor* InActor)
+{
+	RememberedActors.Add(InActor);
+}
+
+AActor* AVillagerAIController::GetFirstRememebred()
+{
+	
+	if (RememberedActors.IsEmpty() == true)
+	{
+		
+		return nullptr;
+	}
+	AActor* TempActor = RememberedActors[0];
+	RememberedActors.Remove(TempActor);
+	return TempActor;
+}
+
 void AVillagerAIController::SetupPerceptionSystem()
 {
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
@@ -83,3 +100,4 @@ void AVillagerAIController::SetupPerceptionSystem()
 	GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this, &AVillagerAIController::ActorDetected);
 	GetPerceptionComponent()->ConfigureSense(*SightConfig);
 }
+

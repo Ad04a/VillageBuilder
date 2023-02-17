@@ -51,34 +51,37 @@ void ABuilderItem::Tick(float DeltaTime)
 void ABuilderItem::SetIsActive(bool State)
 {
 	IsActive = State;
-	if (State == true)
+	if (State == false)
 	{
-		UWorld* World = GetWorld();
-		if (IsValid(World) == false)
-		{
-			UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(World) == false"));
-			return;
-		}
-
-		AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
-		if (IsValid(GameMode) == false) {
-			UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(GameMode) == false"));
-			return;
-		}
-
-		AVillageManager* Village = GameMode->GetCurrentVillage(this);
-		if (IsValid(Village) == false) {
-			UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(Village) == false"));
-			return;
-		}
-
-		ABaseWorkStation* WorkStation = Cast<ABaseWorkStation>(SpawnActor());
-		if (IsValid(WorkStation) == false) {
-			UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(WorkStation) == false"));
-			return;
-		}
-		Village->AddWorkStationToColony(WorkStation);
+		UsingVillager->DropItem();
+		return;
 	}
+
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(World) == false"));
+		return;
+	}
+
+	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(GameMode) == false"));
+		return;
+	}
+
+	AVillageManager* Village = GameMode->GetCurrentVillage(this);
+	if (IsValid(Village) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(Village) == false"));
+		return;
+	}
+
+	ABaseWorkStation* WorkStation = Cast<ABaseWorkStation>(SpawnActor());
+	if (IsValid(WorkStation) == false) {
+		UE_LOG(LogTemp, Error, TEXT("ABuilderItem::SetIsActive IsValid(WorkStation) == false"));
+		return;
+	}
+	Village->AddWorkStationToColony(WorkStation);
 	UsingVillager->DropItem();
 }
 

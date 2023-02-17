@@ -22,6 +22,7 @@ public:
 	UBTS_LookForItems();
 private:
 	UWorld* World;
+	AVillagerAIController* Controller;
 	UBlackboardComponent* BlackBoard;
 	AVillager* Villager;
 protected:
@@ -34,9 +35,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	float SearchRadius;
-
-	UPROPERTY(VisibleAnywhere, Category = Blackboard)
-	TArray<AActor*> RememberedActors;
 
 	void OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory)override;
 	void TickNode(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory,float DeltaSeconds)override;

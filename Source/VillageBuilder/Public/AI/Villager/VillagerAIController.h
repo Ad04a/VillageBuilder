@@ -45,9 +45,13 @@ private:
 	UFUNCTION()
 	void ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus);
 
+	UPROPERTY(VisibleAnywhere, Category = Blackboard)
+	TArray<AActor*> RememberedActors;
+
 public:
-	UPROPERTY(EditAnywhere)
-	class USphereComponent* RememberCollision;
 	void SetBehavior(UBehaviorTree* InBehaviorTree);
 	AVillager* GetControlledVillager()const;
+	void AddRememberdActor(AActor* InActor);
+	AActor* GetFirstRememebred();
+	TArray<AActor*> GetRememberdActors() const{ return RememberedActors; }
 };

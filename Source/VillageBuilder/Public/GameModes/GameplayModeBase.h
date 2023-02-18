@@ -12,9 +12,8 @@
 
 #include "GameplayModeBase.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FErrorSignature);
+
 UCLASS()
 class VILLAGEBUILDER_API AGameplayModeBase : public AGameModeBase
 {
@@ -35,10 +34,16 @@ protected:
 	UPROPERTY()
 	AVillageManager* Village; //TArray Villages for multicolony feature
 
+	AVillageMayor* Player;
+
 public:
+
+	FErrorSignature OnErrorLoadingData;
+
 	UFUNCTION()
 	void SetVillage(AVillageManager* VillageManager); //AddVillage for multicolony feature
 
 	UFUNCTION()
 	AVillageManager* GetCurrentVillage(AActor* Entity);
+
 };

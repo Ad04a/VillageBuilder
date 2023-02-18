@@ -16,14 +16,6 @@ AVillager::AVillager()
 
 void AVillager::Init(FLoadInfoStruct InLoadInfo)
 {
-	//--------InitWithDataFromSaveFile--------
-	if (InLoadInfo != FLoadInfoStruct())
-	{
-		TraitsMap = InLoadInfo.TraitsMap;
-		StatsMap = InLoadInfo.StatsMap;
-		SetActorTransform(InLoadInfo.Transform);
-		return;
-	}
 
 	//------------LoadDataForMaps--------------
 	if (IsValid(StatTraitDataTable) == false)
@@ -43,6 +35,16 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 	TraitsMap		  = StatTraitData->TraitsMap;
 	StatsMap		  = StatTraitData->StatsMap;
 	StatTraitRelation = StatTraitData->StatTraitRelation;
+
+	//--------InitWithDataFromSaveFile--------
+	if (InLoadInfo != FLoadInfoStruct())
+	{
+		Name = InLoadInfo.Name;
+		TraitsMap = InLoadInfo.TraitsMap;
+		StatsMap = InLoadInfo.StatsMap;
+		SetActorTransform(InLoadInfo.Transform);
+		return;
+	}
 	
 
 	//------------InitTraits--------------
@@ -60,6 +62,10 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 		Trait->Level = FMath::RandRange(1, PossibleLevel);
 	}
 
+}
+
+void AVillager::CalculateStats()
+{
 	//------------InitStats--------------
 
 	TArray<TEnumAsByte<EStat>> StatList;
@@ -82,8 +88,6 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 		Stat->Max = Stat->Default + Trait->Level * Stat->PerLevel;
 		Stat->Current = Stat->Max;
 	}
-
-
 }
 
 FLoadInfoStruct AVillager::GetSaveInfo()

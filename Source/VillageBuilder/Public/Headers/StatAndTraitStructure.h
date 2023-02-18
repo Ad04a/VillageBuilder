@@ -48,3 +48,18 @@ struct FTraitInfoStruct
 	int NeededXpPerLevel = 10;
 };
 
+USTRUCT(BlueprintType)
+struct FStatTraitData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Traits)
+		TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		TMap<TEnumAsByte<EStat>, FStatInfoStruct> StatsMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+		TMap<TEnumAsByte<EStat>, TEnumAsByte<ETrait>> StatTraitRelation;
+};
+

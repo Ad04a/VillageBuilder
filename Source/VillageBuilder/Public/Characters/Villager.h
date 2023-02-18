@@ -14,21 +14,6 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FStatUpdatedSignature, EStat, StatName, float, Current, float, Max);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVillagerPassingSignature, AVillager*, Villager);
 
-USTRUCT(BlueprintType)
-struct FStatTraitData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Traits)
-	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-	TMap<TEnumAsByte<EStat>, FStatInfoStruct> StatsMap;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stats)
-	TMap<TEnumAsByte<EStat>, TEnumAsByte<ETrait>> StatTraitRelation;
-};
-
 UCLASS()
 class VILLAGEBUILDER_API AVillager : public ACharacter, public IInteractable
 {
@@ -83,6 +68,8 @@ protected:
 	FRotator MovementInputRotator;
 
 	bool bCanUseItems = true;
+
+	void CalculateStats();
 
 	UFUNCTION()
 	void RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);

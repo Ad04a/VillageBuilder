@@ -14,9 +14,8 @@ void UStartingWidgetBase::OnQuitClicked()
 	QuitClicked.Broadcast();
 }
 
-void UStartingWidgetBase::NativeConstruct()
+void UStartingWidgetBase::NativeOnInitialized()
 {
-	Super::NativeConstruct();
 	Quit->OnClicked.AddDynamic(this, &UStartingWidgetBase::OnQuitClicked);
 	Play->OnClicked.AddDynamic(this, &UStartingWidgetBase::OnPlayClicked);
 }

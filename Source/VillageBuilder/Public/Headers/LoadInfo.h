@@ -11,7 +11,7 @@ struct FLoadInfoStruct
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FName Name;
+	FString Name;
 
 	UPROPERTY()
 	TMap<TEnumAsByte<EStat>, FStatInfoStruct> StatsMap;
@@ -19,12 +19,8 @@ struct FLoadInfoStruct
 	UPROPERTY()
 	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
 
-	//UPROPERTY()
-	//TMap<TEnumAsByte<EVillagerItemSlot>, FItemInfoStruct> ItemSlots;
-
 	UPROPERTY()
 	FTransform Transform;
-	/*, InWorkPlace*/
 
 	inline bool operator==(const FLoadInfoStruct& other) const
 	{

@@ -6,9 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "MainMenuModeBase.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_DELEGATE_OneParam(FSaveSlotsFoundSignature, TArray<FString>, SaveSlots);
+
 UCLASS()
 class VILLAGEBUILDER_API AMainMenuModeBase : public AGameModeBase
 {
@@ -16,9 +15,17 @@ class VILLAGEBUILDER_API AMainMenuModeBase : public AGameModeBase
 
 public:
 
+	FSaveSlotsFoundSignature OnSaveSlotsFound;
+
 	UFUNCTION()
-	void StartGame();
+	void StartGame(FString SlotName);
 
 	UFUNCTION()
 	void QuitGame();
+
+	UFUNCTION()
+	void GetAllSlots();
+
+	UFUNCTION()
+	void AddSave(FString SaveName);
 };

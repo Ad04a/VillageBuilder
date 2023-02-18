@@ -35,7 +35,7 @@ protected:
 	class UButton* Quit;
 
 
-	virtual void NativeConstruct() override;
+	void NativeOnInitialized() override;
 
 public:
 	FButtonClicked PlayClicked;

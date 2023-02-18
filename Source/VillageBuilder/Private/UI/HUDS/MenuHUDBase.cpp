@@ -62,39 +62,47 @@ void AMenuHUDBase::BeginPlay()
 
 void AMenuHUDBase::ShowMenu()
 {
+	if ((IsValid(PlayerOwner) && IsValid(MainMenuWidget)) == false) {
+		return;
+	}
+
 	Clear();
 
-	if (PlayerOwner && MainMenuWidget) 
-	{
-		MainMenuWidget->AddToViewport();
-	}
+	MainMenuWidget->AddToViewport();
+
 }
 
 void AMenuHUDBase::ShowChooseSaveGame(TArray<FString> SaveSlots)
 {
+	if ((IsValid(PlayerOwner) && IsValid(ChooseSaveGameWidget)) == false) {
+		return;
+	}
+
 	Clear();
 	ChooseSaveGameWidget->Init(SaveSlots);
-
-	if (PlayerOwner && ChooseSaveGameWidget) 
-	{
-		ChooseSaveGameWidget->AddToViewport();
-	}
+	ChooseSaveGameWidget->AddToViewport();
+	
 }
 
 void AMenuHUDBase::ShowNewSave()
 {
+	if ((IsValid(PlayerOwner) && IsValid(NewSaveWidget)) == false) {
+		return;
+	}
 	if (NewSaveWidget->IsInViewport() == true)
 	{
 		return;
 	}
-	if (PlayerOwner && NewSaveWidget)
-	{
-		NewSaveWidget->AddToViewport();
-	}
+	
+	NewSaveWidget->AddToViewport();
+	
 }
 
 void AMenuHUDBase::RemoveNewSave()
 {
+	if ((IsValid(PlayerOwner) && IsValid(NewSaveWidget)) == false) {
+		return;
+	}
 	if (NewSaveWidget->IsInViewport() == true)
 	{
 		NewSaveWidget->RemoveFromViewport();

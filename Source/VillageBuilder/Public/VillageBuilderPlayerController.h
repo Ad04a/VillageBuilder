@@ -21,8 +21,6 @@ private:
 
 protected:
 
-	virtual void BeginPlay() override;
-
 	virtual void OnPossess(APawn* InPawn) override;
 
 	void UpdateMovement(float DeltaTime);
@@ -37,6 +35,7 @@ protected:
 	static const FName ItemPrimaryBinding;
 	static const FName ItemSecondaryBinding;
 	static const FName DropItemBinding;
+	static const FName InGameOptionsBinding;
 	
 	
 	void ItemPrimary();

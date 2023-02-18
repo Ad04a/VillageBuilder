@@ -12,11 +12,7 @@ const FName AVillageBuilderPlayerController::TraitsMenuBinding("TraitsMenu");
 const FName AVillageBuilderPlayerController::ItemPrimaryBinding("ItemPrimary");
 const FName AVillageBuilderPlayerController::ItemSecondaryBinding("ItemSecondary");
 const FName AVillageBuilderPlayerController::DropItemBinding("DropItem");
-
-void AVillageBuilderPlayerController::BeginPlay()
-{
-	
-}
+const FName AVillageBuilderPlayerController::InGameOptionsBinding("InGameOptions");
 
 void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	Super::OnPossess(InPawn);
@@ -48,6 +44,8 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	InputComponent->BindAction(InteractBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::Interact);
 	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::ShowTraitMenu);
 	InputComponent->BindAction(DropItemBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::DropItem);
+
+	InputComponent->BindAction(InGameOptionsBinding, IE_Pressed, HUD, &AGameplayHUDBase::ToggleOptions);
 
 	ControlledVillageMayorPawn->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);
 	ControlledVillageMayorPawn->OnToggleTraitsMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowTraitMenu);

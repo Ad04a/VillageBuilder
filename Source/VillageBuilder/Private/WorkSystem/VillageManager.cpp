@@ -41,7 +41,7 @@ void AVillageManager::Tick(float DeltaTime)
 
 
 
-AVillager* AVillageManager::SpawnVillager(FVector Position, FLoadInfoStruct LoadInfo)
+AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStruct LoadInfo)
 {
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false)
@@ -54,7 +54,7 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FLoadInfoStruct Load
 	FRotator Rotation = FRotator(0, 0, 0);
 	FActorSpawnParameters Params;
 
-	if (LoadInfo != FLoadInfoStruct())
+	if (LoadInfo != FVillagerLoadInfoStruct())
 	{
 		Location = LoadInfo.Transform.GetLocation();
 		Rotation = LoadInfo.Transform.Rotator();

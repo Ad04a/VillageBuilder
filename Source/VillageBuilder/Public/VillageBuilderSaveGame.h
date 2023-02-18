@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "Headers/LoadInfo.h"
 #include "VillageBuilderSaveGame.generated.h"
 
 /**
@@ -15,5 +16,9 @@ class VILLAGEBUILDER_API UVillageBuilderSaveGame : public USaveGame
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(VisibleAnywhere, Category = Basic)
 	bool bIsFirstLoad = true;
+
+	UPROPERTY(VisibleAnywhere, Category = Basic)
+	FVillagerLoadInfoStruct PlayerInfo = FVillagerLoadInfoStruct();
 };

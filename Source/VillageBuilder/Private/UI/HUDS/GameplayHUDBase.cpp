@@ -46,6 +46,15 @@ void AGameplayHUDBase::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(EmployeeMenuWidget) == false"));
 		return;
 	}
+
+	UInGameOptionsWidget = Cast<UInGameOptionsWidgetBase>(CreateWidget<UUserWidget>(World, InGameOptionsWidgetClass));
+	if (IsValid(UInGameOptionsWidget) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(UInGameOptionsWidget) == false"));
+		return;
+	}
+	UInGameOptionsWidget->OnExitClicked.BindDynamic(GameMode, &AGameplayModeBase::EndGame);
+	UInGameOptionsWidget->OnContinueClicked.BindDynamic(this, &AGameplayHUDBase::ToggleOptions);
+	
 }
 
 void AGameplayHUDBase::ShowStats(AVillager* Villager)
@@ -74,11 +83,12 @@ void AGameplayHUDBase::ShowInteraction(FText ActionText)
 	
 	InteractionWidget->UpdateInteractionText(ActionText);
 
-	if (InteractionWidget->GetIsVisible()==false) {
-		InteractionWidget->AddToViewport();
-		PlayerOwner->bShowMouseCursor = false;
-		PlayerOwner->SetInputMode(FInputModeGameOnly());
+	if (InteractionWidget->IsInViewport()==true) {
+		return;
 	}
+	InteractionWidget->AddToViewport();
+	PlayerOwner->bShowMouseCursor = false;
+	PlayerOwner->SetInputMode(FInputModeGameOnly());
 }
 
 void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
@@ -88,7 +98,7 @@ void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
 		return;
 	}
 
-	if (TraitMenuWidget->GetIsVisible()) 
+	if (TraitMenuWidget->IsInViewport() == true) 
 	{
 		TraitMenuWidget->RemoveFromViewport();
 		Caller->OnStatUpdated.RemoveAll(TraitMenuWidget);
@@ -100,6 +110,24 @@ void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
 	PlayerOwner->bShowMouseCursor = false;
 	PlayerOwner->SetInputMode(FInputModeGameOnly());
 
+}
+
+void AGameplayHUDBase::ToggleOptions()
+{
+	if ((IsValid(PlayerOwner) && IsValid(InteractionWidget)) == false) {
+		return;
+	}
+	if (UInGameOptionsWidget->IsInViewport() == true)
+	{
+		UInGameOptionsWidget->RemoveFromViewport();
+		PlayerOwner->bShowMouseCursor = false;
+		PlayerOwner->SetInputMode(FInputModeGameOnly());
+	}
+
+	UInGameOptionsWidget->AddToViewport();
+	PlayerOwner->bShowMouseCursor = true;
+	PlayerOwner->SetInputMode(FInputModeUIOnly());
+	
 }
 
 void AGameplayHUDBase::ShowEmployeeMenu(ABaseWorkStation* WorkStation)

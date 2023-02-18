@@ -14,9 +14,22 @@ AVillager::AVillager()
 	OnTakeAnyDamage.AddDynamic(this, &AVillager::RecieveDamage);
 }
 
-void AVillager::Init(FLoadInfoStruct InLoadInfo)
+void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
 {
-
+	bool bIsLoadingFromFile = false;
+	//--------InitWithDataFromSaveFile--------
+	if (InLoadInfo != FVillagerLoadInfoStruct())
+	{
+		Name      = InLoadInfo.Name;
+		TraitsMap = InLoadInfo.TraitsMap;
+		StatsMap  = InLoadInfo.StatsMap;
+		SetActorTransform(InLoadInfo.Transform);
+		bIsLoadingFromFile = true;
+	}
+	if (InName != "")
+	{
+		Name = InName;
+	}
 	//------------LoadDataForMaps--------------
 	if (IsValid(StatTraitDataTable) == false)
 	{
@@ -32,20 +45,13 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 		return;
 	}
 
-	TraitsMap		  = StatTraitData->TraitsMap;
-	StatsMap		  = StatTraitData->StatsMap;
 	StatTraitRelation = StatTraitData->StatTraitRelation;
-
-	//--------InitWithDataFromSaveFile--------
-	if (InLoadInfo != FLoadInfoStruct())
+	if (bIsLoadingFromFile == true)
 	{
-		Name = InLoadInfo.Name;
-		TraitsMap = InLoadInfo.TraitsMap;
-		StatsMap = InLoadInfo.StatsMap;
-		SetActorTransform(InLoadInfo.Transform);
 		return;
 	}
-	
+	TraitsMap		  = StatTraitData->TraitsMap;
+	StatsMap		  = StatTraitData->StatsMap;
 
 	//------------InitTraits--------------
 
@@ -67,7 +73,7 @@ void AVillager::Init(FLoadInfoStruct InLoadInfo)
 void AVillager::CalculateStats()
 {
 	//------------InitStats--------------
-
+	TArray<TEnumAsByte<ETrait>> TraitList;
 	TArray<TEnumAsByte<EStat>> StatList;
 
 	StatTraitRelation.GetKeys(StatList);
@@ -90,13 +96,13 @@ void AVillager::CalculateStats()
 	}
 }
 
-FLoadInfoStruct AVillager::GetSaveInfo()
+FVillagerLoadInfoStruct AVillager::GetSaveInfo()
 {
-	FLoadInfoStruct SaveInfo;
+	FVillagerLoadInfoStruct SaveInfo;
+	SaveInfo.Name	   = Name;
 	SaveInfo.TraitsMap = TraitsMap;
-	SaveInfo.StatsMap     = StatsMap;
-	SaveInfo.Transform     = GetActorTransform();
-
+	SaveInfo.StatsMap  = StatsMap;
+	SaveInfo.Transform = GetActorTransform();
 	return SaveInfo;
 }
 

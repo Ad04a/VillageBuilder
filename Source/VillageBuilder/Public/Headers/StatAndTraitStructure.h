@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Headers/StatAndTraitEnums.h"
+#include "Engine/DataTable.h"
 #include "StatAndTraitStructure.generated.h"
 
 

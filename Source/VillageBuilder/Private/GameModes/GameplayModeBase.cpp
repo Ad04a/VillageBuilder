@@ -21,22 +21,20 @@ void AGameplayModeBase::StartPlay() {
 	if (IsValid(GameInstane) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AMainMenuModeBase::StartGame() IsValid(GameInstane) == false"));
-		OnErrorLoadingData.BroadCast();
+		OnErrorLoadingData.Broadcast();
 		return;
 	}
-
-	UVillageBuilderSaveGame* LoadedGame;
-	if (UGameplayStatics::DoesSaveGameExist(GameInstane->SaveSlotName, 0) == false)
+	SaveSlotName = GameInstane->SaveSlotName;
+	if (UGameplayStatics::DoesSaveGameExist(SaveSlotName, 0) == false)
 	{
-		OnErrorLoadingData.BroadCast();
+		OnErrorLoadingData.Broadcast();
 		return;
 	}
-	LoadedGame = Cast<UVillageBuilderSaveGame>(UGameplayStatics::LoadGameFromSlot(GameInstane->SaveSlotName, 0));
-
+	LoadedGame = Cast<UVillageBuilderSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
 
 	FActorSpawnParameters Params;
 	Player = World->SpawnActor<AVillageMayor>(PlayerClass, FVector(0,0,0), FRotator(0,0,0), Params);
-	Player->Init();
+	Player->Init(LoadedGame->PlayerInfo, SaveSlotName);
 	APlayerController* Controller = UGameplayStatics::GetPlayerController(World, 0);
 	if (IsValid(Controller) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(Controller) == false"));
@@ -53,9 +51,31 @@ void AGameplayModeBase::StartPlay() {
 
 		ABuilderItem* BuilderItem2 = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(500, 500, 300), FRotator(0, 0, 0), Params);
 		BuilderItem2->Init("BP_BuilderWorkStation_C", Player);
+
+		LoadedGame->bIsFirstLoad = false;
+		SaveGame();
 		return;
 	}
 	
+}
+
+void AGameplayModeBase::SaveGame(bool bIsAsync)
+{
+	LoadedGame->PlayerInfo = Player->GetSaveInfo();
+	UGameplayStatics::SaveGameToSlot(LoadedGame, SaveSlotName, 0);
+}
+
+void AGameplayModeBase::EndGame()
+{
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(World) == false"));
+		return;
+	}
+
+	SaveGame();
+	UGameplayStatics::OpenLevel(World, "MainMenu");
 }
 
 void AGameplayModeBase::SetVillage(AVillageManager* VillageManager)

@@ -19,6 +19,9 @@ class VILLAGEBUILDER_API AGameplayModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+private:
+	FString SaveSlotName = "";
+	class UVillageBuilderSaveGame* LoadedGame;
 protected:
 	virtual void StartPlay() override;
 
@@ -41,9 +44,15 @@ public:
 	FErrorSignature OnErrorLoadingData;
 
 	UFUNCTION()
+	void SaveGame(bool bIsAsync = false);
+
+	UFUNCTION()
 	void SetVillage(AVillageManager* VillageManager); //AddVillage for multicolony feature
 
 	UFUNCTION()
 	AVillageManager* GetCurrentVillage(AActor* Entity);
+
+	UFUNCTION()
+	void EndGame();
 
 };

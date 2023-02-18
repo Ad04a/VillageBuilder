@@ -6,7 +6,7 @@
 #include "LoadInfo.generated.h"
 
 USTRUCT(BlueprintType)
-struct FLoadInfoStruct
+struct FVillagerLoadInfoStruct
 {
 	GENERATED_BODY()
 
@@ -14,19 +14,19 @@ struct FLoadInfoStruct
 	FString Name;
 
 	UPROPERTY()
-	TMap<TEnumAsByte<EStat>, FStatInfoStruct> StatsMap;
+	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
 
 	UPROPERTY()
-	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
+	TMap<TEnumAsByte<EStat>, FStatInfoStruct> StatsMap;
 
 	UPROPERTY()
 	FTransform Transform;
 
-	inline bool operator==(const FLoadInfoStruct& other) const
+	inline bool operator==(const FVillagerLoadInfoStruct& other) const
 	{
 		return other.Name == Name && other.Transform.GetLocation() == Transform.GetLocation();
 	}
-	inline bool operator != (const FLoadInfoStruct& other) const
+	inline bool operator != (const FVillagerLoadInfoStruct& other) const
 	{
 		return !(other.Name == Name && other.Transform.GetLocation() == Transform.GetLocation());
 	}

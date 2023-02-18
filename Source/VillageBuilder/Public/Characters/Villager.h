@@ -38,9 +38,6 @@ protected:
 
 	FString Name = "nqkoi";
 
-	UPROPERTY()
-	FLoadInfoStruct LoadInfo;
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UDataTable* StatTraitDataTable = nullptr;
 
@@ -87,8 +84,8 @@ public:
 	bool bIsMovementEnabled = true;
 	bool bIsRotationEnabled = true;
 
-	void Init(FLoadInfoStruct InLoadInfo = FLoadInfoStruct());
-	FLoadInfoStruct GetSaveInfo();
+	void Init(FVillagerLoadInfoStruct InLoadInfo = FVillagerLoadInfoStruct(), FString InName="");
+	FVillagerLoadInfoStruct GetSaveInfo();
 	void RecieveXP(ETrait, int XPAmount);
 
 	void AcknowledgeWidgetBinding();

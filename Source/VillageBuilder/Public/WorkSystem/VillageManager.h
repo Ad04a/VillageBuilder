@@ -56,7 +56,7 @@ protected:
 	TSubclassOf<AVillager> VillagerClass;
 
 	UFUNCTION()
-	AVillager* SpawnVillager(FVector Position = FVector(0, 0, 0), FLoadInfoStruct LoadInfo = FLoadInfoStruct());
+	AVillager* SpawnVillager(FVector Position = FVector(0, 0, 0), FVillagerLoadInfoStruct LoadInfo = FVillagerLoadInfoStruct());
 
 	UFUNCTION()
 	void OnVillagerDeath(AVillager* Villager);

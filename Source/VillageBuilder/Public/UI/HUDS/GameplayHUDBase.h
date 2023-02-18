@@ -8,6 +8,7 @@
 #include "UI/Widgets/Gameplay/InteractionWidgetBase.h"
 #include "UI/Widgets/Gameplay/TraitMenuWidgetBase.h"
 #include "UI/Widgets/Gameplay/EmployeeMenuWidgetBase.h"
+#include "UI/Widgets/Gameplay/InGameOptionsWidgetBase.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "GameplayHUDBase.generated.h"
 
@@ -44,6 +45,13 @@ protected:
 	UPROPERTY()
 	class UEmployeeMenuWidgetBase* EmployeeMenuWidget;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UInGameOptionsWidgetBase> InGameOptionsWidgetClass;
+
+	UPROPERTY()
+	class UInGameOptionsWidgetBase* UInGameOptionsWidget;
+
+	
 	virtual void BeginPlay()override;
 
 	void Clear();
@@ -60,4 +68,7 @@ public:
 
 	UFUNCTION()
 	void ShowEmployeeMenu(ABaseWorkStation* WorkStation);
+
+	UFUNCTION()
+	void ToggleOptions();
 };

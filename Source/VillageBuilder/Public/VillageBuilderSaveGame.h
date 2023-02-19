@@ -21,8 +21,11 @@ public:
 	bool bIsFirstLoad = true;
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
+	TArray<FItemInfoStruct> UnequipedItems;
+
+	UPROPERTY(VisibleAnywhere, Category = Basic)
 	FVillagerLoadInfoStruct PlayerInfo = FVillagerLoadInfoStruct();
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
-	FVillageManagerLoadInfoStruct VillageInfo;
+	FVillageManagerLoadInfoStruct VillageInfo = FVillageManagerLoadInfoStruct();
 };

@@ -116,6 +116,7 @@ EItemType AItem::GetItemType()
 
 void AItem::SetEnablePhysics(bool State)
 {
+	bSaveAlone = State;
 	MeshComponent->SetSimulatePhysics(State);
 	SetActorEnableCollision(State);
 	if (State == true)
@@ -125,6 +126,12 @@ void AItem::SetEnablePhysics(bool State)
 	}
 	MeshComponent->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Ignore);
 }
+
+bool AItem::GetSaveAlone()
+{
+	return bSaveAlone;
+}
+
 
 UMaterialInterface* AItem::GetMaterial()
 {

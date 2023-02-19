@@ -56,23 +56,51 @@ void AGameplayModeBase::StartPlay() {
 		SaveGame();
 		return;
 	}
+	for (FItemInfoStruct ItemInfo : LoadedGame->UnequipedItems)
+	{
+		AItem::CreateInstance(this, ItemInfo);
+	}
+	LoadedGame->UnequipedItems.Empty();
+
+	if (LoadedGame->VillageInfo == FVillageManagerLoadInfoStruct())
+	{
+		return;
+	}
 	Village = World->SpawnActor<AVillageManager>(VillageClass, FVector(0, 0, 500), FRotator(0, 0, 0), Params);
 	if (IsValid(Village) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(Village) == false"));
 	}
 	Village->Init(LoadedGame->VillageInfo);
+	SaveGame();
 }
 
 void AGameplayModeBase::SaveGame()
 {
 	OnSaveStarted.Broadcast();
+
 	LoadedGame->PlayerInfo  = Player->GetSaveInfo();
+	TArray<AActor*> FoundItems;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AItem::StaticClass(), FoundItems);
+	for (AActor* Actor : FoundItems)
+	{
+		AItem* Item = Cast<AItem>(Actor);
+		if (IsValid(Item) == false)
+		{
+			continue;
+		}
+		if (Item->GetSaveAlone() == false)
+		{
+			continue;
+		}
+		LoadedGame->UnequipedItems.Add(Item->GetSaveInfo());
+	}
 	if (IsValid(Village) == true)
 	{
 		LoadedGame->VillageInfo = Village->GetSaveInfo();
 	}
+
 	UGameplayStatics::SaveGameToSlot(LoadedGame, SaveSlotName, 0);
-	UE_LOG(LogTemp, Error, TEXT("SAVE OK"));
+	LoadedGame->UnequipedItems.Empty();
 	OnSaveEnded.Broadcast();
 }
 

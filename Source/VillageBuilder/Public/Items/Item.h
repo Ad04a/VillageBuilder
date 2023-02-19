@@ -19,7 +19,7 @@ public:
 	// Sets default values for this actor's properties
 	AItem();
 private:
-
+	bool bSaveAlone = true;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -86,6 +86,8 @@ public:
 	UFUNCTION()
 	void SetEnablePhysics(bool State);
 
+	UFUNCTION()
+	bool GetSaveAlone();
 
 	UFUNCTION()
 	virtual void OnDrop() { UsingVillager = nullptr; }

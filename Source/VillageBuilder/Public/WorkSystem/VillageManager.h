@@ -10,6 +10,7 @@
 #include "VillageManager.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FVilligersUpdatedSignature, TArray<AVillager*>, Villagers);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStateUpdatedSignature);
 
 USTRUCT(BlueprintType)
 struct FVillageManagerLoadInfoStruct
@@ -100,8 +101,16 @@ protected:
 	void TimedSpawn();
 
 public:	
+
+	UFUNCTION()
+	void PauseTimedSpawn();
+
+	UFUNCTION()
+	void UnPauseTimedSpawn();
+
 	void Init(FVillageManagerLoadInfoStruct InLoadInfo);
 
+	FStateUpdatedSignature OnStateUpdated;
 	FVilligersUpdatedSignature OnVillagersUpdated;
 
 	void AddVillagerToColony(AVillager* Villager);

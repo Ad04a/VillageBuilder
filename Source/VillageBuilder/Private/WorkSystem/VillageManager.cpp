@@ -29,7 +29,7 @@ void AVillageManager::BeginPlay()
 	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
 	GameMode->SetVillage(this);
 	float SpawnTime = FMath::RandRange(MinTimeBetweenSpawn, MaxTimeBetweenSpawn);
-	GetWorldTimerManager().SetTimer(SpawnHandle, this, &AVillageManager::TimedSpawn, SpawnTime, true, MinTimeBetweenSpawn);
+	GetWorldTimerManager().SetTimer(SpawnHandle, this, &AVillageManager::TimedSpawn, SpawnTime, false, MinTimeBetweenSpawn);
 }
 
 void AVillageManager::Init(FVillageManagerLoadInfoStruct InLoadInfo)
@@ -51,13 +51,15 @@ void AVillageManager::Init(FVillageManagerLoadInfoStruct InLoadInfo)
 FVillageManagerLoadInfoStruct AVillageManager::GetSaveInfo()
 {
 	FVillageManagerLoadInfoStruct SaveInfo;
+	TArray<AVillager*> PassingVillagersCopy = PassingVillagers;
+	TArray<AVillager*> VillagersCopy = Villagers;
 	TArray<FVillagerLoadInfoStruct> PassingVillagerInfos;
 	TArray<FVillagerLoadInfoStruct> VillagerInfos;
-	for (AVillager* Villager : PassingVillagers)
+	for (AVillager* Villager : PassingVillagersCopy)
 	{
 		PassingVillagerInfos.Add(Villager->GetSaveInfo());
 	}
-	for (AVillager* Villager : Villagers)
+	for (AVillager* Villager : VillagersCopy)
 	{
 		VillagerInfos.Add(Villager->GetSaveInfo());
 	}
@@ -95,12 +97,25 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 
 	Villager->Init(LoadInfo);
 	PassingVillagers.Add(Villager);
+	OnStateUpdated.Broadcast();
 	return Villager;
 }
 
 void AVillageManager::TimedSpawn()
 {
 	AddVillagerToColony(SpawnVillager(FVector(FMath::RandRange(-500,500), FMath::RandRange(-500, 500), 100)));
+	float SpawnTime = FMath::RandRange(MinTimeBetweenSpawn, MaxTimeBetweenSpawn);
+	GetWorldTimerManager().SetTimer(SpawnHandle, this, &AVillageManager::TimedSpawn, SpawnTime, false);
+}
+
+void AVillageManager::PauseTimedSpawn()
+{
+	GetWorldTimerManager().PauseTimer(SpawnHandle);
+}
+
+void AVillageManager::UnPauseTimedSpawn()
+{
+	GetWorldTimerManager().UnPauseTimer(SpawnHandle);
 }
 
 void AVillageManager::OnVillagerDeath(AVillager* Villager)
@@ -118,6 +133,7 @@ void AVillageManager::AddVillagerToColony(AVillager* Villager)
 {
 	PassingVillagers.Remove(Villager);
 	Villagers.Add(Villager);
+	OnStateUpdated.Broadcast();
 
 	Villager->OnDeath.AddDynamic(this, &AVillageManager::OnVillagerDeath);
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
@@ -159,7 +175,7 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, AVillager*
 
 	ApplyJobBehavior(WorkStation->GetClass()->GetFName(), Worker);
 	
-	
+	OnStateUpdated.Broadcast();
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	
 }
@@ -167,6 +183,7 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, AVillager*
 void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
 {
 	PlacedBuildings.Add(WorkStation);
+	OnStateUpdated.Broadcast();
 	WorkStation->OnStartedConstruction.BindDynamic(this, &AVillageManager::AknowedgeStartedConstruction);
 }
 
@@ -175,6 +192,7 @@ void AVillageManager::AknowedgeStartedConstruction(ABaseWorkStation* WorkStation
 	PlacedBuildings.Remove(WorkStation);
 	WorkStation->OnStartedConstruction.Unbind();
 	UnderConstruction.Add(WorkStation);
+	OnStateUpdated.Broadcast();
 	WorkStation->OnBuildingReady.BindDynamic(this, &AVillageManager::AknowedgeFinishedBuilding);
 }
 
@@ -183,6 +201,7 @@ void AVillageManager::AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation)
 	UnderConstruction.Remove(WorkStation);
 	WorkStation->OnBuildingReady.Unbind();
 	WorkStations.Add(WorkStation, nullptr);
+	OnStateUpdated.Broadcast();
 }
 
 void AVillageManager::ApplyJobBehavior(FName StationName, AVillager* Worker)

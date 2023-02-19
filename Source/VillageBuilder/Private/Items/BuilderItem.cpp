@@ -10,7 +10,7 @@ ABuilderItem::ABuilderItem()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ABuilderItem::Init(FName StationName, AVillageMayor* Villager)
+void ABuilderItem::BindToPlayer(FName StationName, AVillageMayor* Villager)
 {
 	CurrentStationName = StationName;
 	LoadFromDataTable();

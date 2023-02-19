@@ -22,6 +22,9 @@ struct FVillagerLoadInfoStruct
 	UPROPERTY()
 	FTransform Transform;
 
+	UPROPERTY()
+	FItemInfoStruct HoldingItem = FItemInfoStruct();
+
 	inline bool operator==(const FVillagerLoadInfoStruct& other) const
 	{
 		return other.Name == Name && other.Transform.GetLocation() == Transform.GetLocation();

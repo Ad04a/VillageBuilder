@@ -47,10 +47,10 @@ void AGameplayModeBase::StartPlay() {
 		Player->Equip(VillageManager);
 
 		ABuilderItem* BuilderItem = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(300, 300, 300), FRotator(0, 0, 0), Params);
-		BuilderItem->Init("BP_ForesterHut_C", Player);
+		BuilderItem->BindToPlayer("BP_ForesterHut_C", Player);
 
 		ABuilderItem* BuilderItem2 = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(500, 500, 300), FRotator(0, 0, 0), Params);
-		BuilderItem2->Init("BP_BuilderWorkStation_C", Player);
+		BuilderItem2->BindToPlayer("BP_BuilderWorkStation_C", Player);
 
 		LoadedGame->bIsFirstLoad = false;
 		SaveGame();
@@ -63,14 +63,17 @@ void AGameplayModeBase::StartPlay() {
 	Village->Init(LoadedGame->VillageInfo);
 }
 
-void AGameplayModeBase::SaveGame(bool bIsAsync)
+void AGameplayModeBase::SaveGame()
 {
+	OnSaveStarted.Broadcast();
 	LoadedGame->PlayerInfo  = Player->GetSaveInfo();
 	if (IsValid(Village) == true)
 	{
 		LoadedGame->VillageInfo = Village->GetSaveInfo();
 	}
 	UGameplayStatics::SaveGameToSlot(LoadedGame, SaveSlotName, 0);
+	UE_LOG(LogTemp, Error, TEXT("SAVE OK"));
+	OnSaveEnded.Broadcast();
 }
 
 void AGameplayModeBase::EndGame()
@@ -81,7 +84,7 @@ void AGameplayModeBase::EndGame()
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(World) == false"));
 		return;
 	}
-
+	OnGameEnd.Broadcast();
 	SaveGame();
 	UGameplayStatics::OpenLevel(World, "MainMenu");
 }
@@ -89,6 +92,9 @@ void AGameplayModeBase::EndGame()
 void AGameplayModeBase::SetVillage(AVillageManager* VillageManager)
 {
 	Village = VillageManager;
+	OnSaveStarted.AddDynamic(Village, &AVillageManager::PauseTimedSpawn);
+	OnSaveEnded.AddDynamic(Village, &AVillageManager::UnPauseTimedSpawn);
+	Village->OnStateUpdated.AddDynamic(this, &AGameplayModeBase::SaveGame);
 }
 
 AVillageManager* AGameplayModeBase::GetCurrentVillage(AActor* Entity)

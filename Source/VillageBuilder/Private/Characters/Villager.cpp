@@ -24,6 +24,11 @@ void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
 		TraitsMap = InLoadInfo.TraitsMap;
 		StatsMap  = InLoadInfo.StatsMap;
 		SetActorTransform(InLoadInfo.Transform);
+		AItem* Item = AItem::CreateInstance(this, InLoadInfo.HoldingItem);
+		if (IsValid(Item) == true)
+		{
+			Equip(Item);
+		}
 		bIsLoadingFromFile = true;
 	}
 	if (InName != "")
@@ -103,6 +108,10 @@ FVillagerLoadInfoStruct AVillager::GetSaveInfo()
 	SaveInfo.TraitsMap = TraitsMap;
 	SaveInfo.StatsMap  = StatsMap;
 	SaveInfo.Transform = GetActorTransform();
+	if (ItemSlot != nullptr)
+	{
+		SaveInfo.HoldingItem = ItemSlot->GetSaveInfo();
+	}
 	return SaveInfo;
 }
 
@@ -175,7 +184,7 @@ void AVillager::Equip(AActor* ItemToEquip)
 		return;
 	}
 	if (IsValid(ItemSlot) == true) {
-		UE_LOG(LogTemp, Error, TEXT("AIMA ITEM"));
+		UE_LOG(LogTemp, Warning, TEXT("AVillager::Equip ItemAlreadyEquiped"));
 		return;
 	}
 	NewItem->SetEnablePhysics(false);

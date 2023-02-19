@@ -48,6 +48,9 @@ struct FItemInfoStruct
 	UPROPERTY()
 	FString SerializedItem = "";
 
+	UPROPERTY()
+	FTransform Transform;
+
 	inline bool operator==(const FItemInfoStruct& other) const
 	{
 		return other.ItemClass == ItemClass;

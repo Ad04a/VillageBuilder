@@ -40,6 +40,6 @@ protected:
 
 public:
 	UFUNCTION()
-	void Init(FName StationName, AVillageMayor* Villager);
+	void BindToPlayer(FName StationName, AVillageMayor* Villager);
 
 };

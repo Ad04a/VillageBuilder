@@ -4,7 +4,24 @@
 #include "Items/Item.h"
 #include "Characters/VillageMayor.h"
 
-// Sets default values
+AItem* AItem::CreateInstance(UObject* WorldContext, FItemInfoStruct InLoadInfo)
+{
+	UWorld* World = WorldContext->GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AItem::CreateInstance IsValid(World) == false"));
+		return nullptr;
+	}
+	if (InLoadInfo == FItemInfoStruct())
+	{
+		return nullptr;
+	}
+	FActorSpawnParameters Params;
+	AItem* Item = World->SpawnActor<AItem>(InLoadInfo.ItemClass, FVector(0, 0, 300), FRotator(0, 0, 0), Params);
+	Item->Init(InLoadInfo);
+	return Item;
+}
+
 AItem::AItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -16,6 +33,16 @@ AItem::AItem()
 	
 }
 
+FString AItem::Init(FItemInfoStruct InLoadInfo)
+{
+	if (InLoadInfo == FItemInfoStruct())
+	{
+		return "";
+	}
+	SetActorTransform(InLoadInfo.Transform);
+	return InLoadInfo.SerializedItem;
+}
+
 // Called when the game starts or when spawned
 void AItem::BeginPlay()
 {
@@ -24,9 +51,18 @@ void AItem::BeginPlay()
 	LoadFromDataTable();
 }
 
-void AItem::Tick(float DeltaTime)
+FString AItem::SerializetemInfo()
 {
-	Super::Tick(DeltaTime);
+	return "";
+}
+
+FItemInfoStruct AItem::GetSaveInfo()
+{
+	FItemInfoStruct SaveInfo;
+	SaveInfo.ItemClass      = GetClass();
+	SaveInfo.SerializedItem = SerializetemInfo();
+	SaveInfo.Transform		= GetActorTransform();
+	return SaveInfo;
 }
 
 void AItem::LoadFromDataTable()
@@ -70,6 +106,8 @@ FText AItem::DisplayInteractText_Implementation()
 {
 	return FText::FromString( "Pick up " + DisplayName.ToString());
 }
+
+
 
 EItemType AItem::GetItemType()
 {

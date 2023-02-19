@@ -23,7 +23,6 @@ private:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
 	virtual void LoadFromDataTable();
 
 	bool IsActive = false;
@@ -64,6 +63,18 @@ protected:
 public:
 
 	UFUNCTION()
+	static AItem* CreateInstance(UObject* WorldContext, FItemInfoStruct InLoadInfo = FItemInfoStruct());
+
+	UFUNCTION()
+	virtual FString Init(FItemInfoStruct InLoadInfo = FItemInfoStruct());
+
+	UFUNCTION()
+	FItemInfoStruct GetSaveInfo();
+
+	UFUNCTION()
+	virtual FString SerializetemInfo();
+
+	UFUNCTION()
 	EItemType GetItemType();
 
 	UFUNCTION()
@@ -75,8 +86,6 @@ public:
 	UFUNCTION()
 	void SetEnablePhysics(bool State);
 
-	UFUNCTION()
-	virtual FString SerializetemInfo() PURE_VIRTUAL(AItem::SerializetemInfo, return "";);
 
 	UFUNCTION()
 	virtual void OnDrop() { UsingVillager = nullptr; }

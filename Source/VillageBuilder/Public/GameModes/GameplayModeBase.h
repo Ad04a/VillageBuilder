@@ -12,7 +12,7 @@
 
 #include "GameplayModeBase.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FErrorSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FErrorHandleSignature);
 
 UCLASS()
 class VILLAGEBUILDER_API AGameplayModeBase : public AGameModeBase
@@ -21,9 +21,14 @@ class VILLAGEBUILDER_API AGameplayModeBase : public AGameModeBase
 	
 private:
 	FString SaveSlotName = "";
+	UPROPERTY()
 	class UVillageBuilderSaveGame* LoadedGame;
+	FTimerHandle SavenHandle;
 protected:
 	virtual void StartPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Saving")
+	float SaveTime = 1;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameStart")
 	TSubclassOf<AVillageMayor> PlayerClass;
@@ -43,11 +48,13 @@ protected:
 	AVillageMayor* Player;
 
 public:
-
-	FErrorSignature OnErrorLoadingData;
+	FErrorHandleSignature OnErrorLoadingData;
+	FErrorHandleSignature OnSaveStarted;
+	FErrorHandleSignature OnSaveEnded;
+	FErrorHandleSignature OnGameEnd;
 
 	UFUNCTION()
-	void SaveGame(bool bIsAsync = false);
+	void SaveGame();
 
 	UFUNCTION()
 	void SetVillage(AVillageManager* VillageManager); //AddVillage for multicolony feature

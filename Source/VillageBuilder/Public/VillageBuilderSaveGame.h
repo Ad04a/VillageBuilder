@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "Headers/LoadInfo.h"
+#include "WorkSystem/VillageManager.h"
 #include "VillageBuilderSaveGame.generated.h"
 
 /**
@@ -21,4 +22,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
 	FVillagerLoadInfoStruct PlayerInfo = FVillagerLoadInfoStruct();
+
+	UPROPERTY(VisibleAnywhere, Category = Basic)
+	FVillageManagerLoadInfoStruct VillageInfo;
 };

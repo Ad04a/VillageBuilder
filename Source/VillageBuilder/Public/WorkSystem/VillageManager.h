@@ -11,6 +11,29 @@
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FVilligersUpdatedSignature, TArray<AVillager*>, Villagers);
 
+USTRUCT(BlueprintType)
+struct FVillageManagerLoadInfoStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FVillagerLoadInfoStruct> PassingVillagers = TArray<FVillagerLoadInfoStruct>();
+
+	UPROPERTY()
+	TArray<FVillagerLoadInfoStruct> Villagers = TArray<FVillagerLoadInfoStruct>();
+
+	UPROPERTY()
+	FTransform Transform;
+
+	inline bool operator==(const FVillageManagerLoadInfoStruct& other) const
+	{
+		return other.Transform.GetLocation() == Transform.GetLocation();
+	}
+	inline bool operator != (const FVillageManagerLoadInfoStruct& other) const
+	{
+		return !(other.Transform.GetLocation() == Transform.GetLocation());
+	}
+};
 
 UCLASS()
 class VILLAGEBUILDER_API AVillageManager : public AActor 
@@ -23,7 +46,7 @@ public:
 
 private:
 	void ApplyJobBehavior(FName StationName, AVillager* Worker);
-
+	FTimerHandle SpawnHandle;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -67,14 +90,24 @@ protected:
 	UFUNCTION()
 	void AknowedgeStartedConstruction(ABaseWorkStation* WorkStation);
 
+	UPROPERTY(EditDefaultsOnly, Category = PeriodicSpawn)
+	float MinTimeBetweenSpawn = 1.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = PeriodicSpawn)
+	float MaxTimeBetweenSpawn = 30.f;
+
+	UFUNCTION()
+	void TimedSpawn();
+
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	void Init(FVillageManagerLoadInfoStruct InLoadInfo);
 
 	FVilligersUpdatedSignature OnVillagersUpdated;
 
 	void AddVillagerToColony(AVillager* Villager);
 	void AddWorkStationToColony(ABaseWorkStation* WorkStation);
+
+	FVillageManagerLoadInfoStruct GetSaveInfo();
 
 	TArray<AVillager*> GetAllVillagers() { return Villagers; }
 	AVillager* GetWorkerAt(ABaseWorkStation* WorkStation);

@@ -56,12 +56,20 @@ void AGameplayModeBase::StartPlay() {
 		SaveGame();
 		return;
 	}
-	
+	Village = World->SpawnActor<AVillageManager>(VillageClass, FVector(0, 0, 500), FRotator(0, 0, 0), Params);
+	if (IsValid(Village) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(Village) == false"));
+	}
+	Village->Init(LoadedGame->VillageInfo);
 }
 
 void AGameplayModeBase::SaveGame(bool bIsAsync)
 {
-	LoadedGame->PlayerInfo = Player->GetSaveInfo();
+	LoadedGame->PlayerInfo  = Player->GetSaveInfo();
+	if (IsValid(Village) == true)
+	{
+		LoadedGame->VillageInfo = Village->GetSaveInfo();
+	}
 	UGameplayStatics::SaveGameToSlot(LoadedGame, SaveSlotName, 0);
 }
 

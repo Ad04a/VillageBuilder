@@ -28,18 +28,44 @@ void AVillageManager::BeginPlay()
 	}
 	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
 	GameMode->SetVillage(this);
-	AddVillagerToColony(SpawnVillager(FVector(500, 333, 100)));
-	AddVillagerToColony(SpawnVillager(FVector(300, 533, 100)));
+	float SpawnTime = FMath::RandRange(MinTimeBetweenSpawn, MaxTimeBetweenSpawn);
+	GetWorldTimerManager().SetTimer(SpawnHandle, this, &AVillageManager::TimedSpawn, SpawnTime, true, MinTimeBetweenSpawn);
 }
 
-// Called every frame
-void AVillageManager::Tick(float DeltaTime)
+void AVillageManager::Init(FVillageManagerLoadInfoStruct InLoadInfo)
 {
-	Super::Tick(DeltaTime);
-
+	SetActorTransform(InLoadInfo.Transform);
+	
+	for (FVillagerLoadInfoStruct VillagerInfo : InLoadInfo.PassingVillagers)
+	{
+		SpawnVillager(FVector(), VillagerInfo);
+	}
+	
+	
+	for (FVillagerLoadInfoStruct VillagerInfo : InLoadInfo.Villagers)
+	{
+		AddVillagerToColony(SpawnVillager(FVector(), VillagerInfo));
+	}
 }
 
-
+FVillageManagerLoadInfoStruct AVillageManager::GetSaveInfo()
+{
+	FVillageManagerLoadInfoStruct SaveInfo;
+	TArray<FVillagerLoadInfoStruct> PassingVillagerInfos;
+	TArray<FVillagerLoadInfoStruct> VillagerInfos;
+	for (AVillager* Villager : PassingVillagers)
+	{
+		PassingVillagerInfos.Add(Villager->GetSaveInfo());
+	}
+	for (AVillager* Villager : Villagers)
+	{
+		VillagerInfos.Add(Villager->GetSaveInfo());
+	}
+	SaveInfo.PassingVillagers = PassingVillagerInfos;
+	SaveInfo.Villagers		  = VillagerInfos;
+	SaveInfo.Transform		  = GetActorTransform();
+	return SaveInfo;
+}
 
 AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStruct LoadInfo)
 {
@@ -70,6 +96,11 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 	Villager->Init(LoadInfo);
 	PassingVillagers.Add(Villager);
 	return Villager;
+}
+
+void AVillageManager::TimedSpawn()
+{
+	AddVillagerToColony(SpawnVillager(FVector(FMath::RandRange(-500,500), FMath::RandRange(-500, 500), 100)));
 }
 
 void AVillageManager::OnVillagerDeath(AVillager* Villager)

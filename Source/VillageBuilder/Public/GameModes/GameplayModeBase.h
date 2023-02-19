@@ -34,6 +34,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "GameStart")
 	TSubclassOf<ABuilderItem> BuilderItemClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "GameStart")
+	TSubclassOf<AVillageManager> VillageClass;
+
 	UPROPERTY()
 	AVillageManager* Village; //TArray Villages for multicolony feature
 

@@ -24,6 +24,9 @@ struct FVillageManagerLoadInfoStruct
 	TArray<FVillagerLoadInfoStruct> Villagers = TArray<FVillagerLoadInfoStruct>();
 
 	UPROPERTY()
+	TArray<FWorkStationInfoStruct> WorkStations = TArray<FWorkStationInfoStruct>();
+	
+	UPROPERTY()
 	FTransform Transform;
 
 	inline bool operator==(const FVillageManagerLoadInfoStruct& other) const
@@ -48,6 +51,7 @@ public:
 private:
 	void ApplyJobBehavior(FName StationName, AVillager* Worker);
 	FTimerHandle SpawnHandle;
+	bool bCanGenerateSaves = true;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -101,6 +105,8 @@ protected:
 	void TimedSpawn();
 
 public:	
+
+	void GenerateSave();
 
 	UFUNCTION()
 	void PauseTimedSpawn();

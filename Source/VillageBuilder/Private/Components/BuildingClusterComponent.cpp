@@ -12,8 +12,39 @@ void UBuildingClusterComponent::BeginPlay()
 		Child->SetMaterial(0, MainMaterial);
 		Child->OnComponentStateChange.BindDynamic(this, &UBuildingClusterComponent::OnComponentPlaced);
 		Child->SetIsActive(false);
+		Child->ID = AllComponents;
 		AllComponents++;
 	}
+}
+
+void UBuildingClusterComponent::Init(FBuildingClusterInfoStruct InLoadInfo)
+{
+	if (InLoadInfo == FBuildingClusterInfoStruct())
+	{
+		return;
+	}
+	if (InLoadInfo.bIsConstructing == true)
+	{
+		bIsStarted = InLoadInfo.bIsConstructing;
+		OnBuildStarted.ExecuteIfBound(bIsStarted);
+	}
+	PlacedIDs = InLoadInfo.PlacedIDs;
+	for (UBaseBuildingComponent* Child : GetBuildingComponents())
+	{
+		Child->SetIsActive(bIsStarted);
+		if (InLoadInfo.PlacedIDs.Contains(Child->ID) == true)
+		{
+			Child->Build();
+		}
+	}
+}
+
+FBuildingClusterInfoStruct UBuildingClusterComponent::GetSaveInfo()
+{
+	FBuildingClusterInfoStruct SaveInfo;
+	SaveInfo.PlacedIDs = PlacedIDs;
+	SaveInfo.bIsConstructing = bIsStarted;
+	return SaveInfo;
 }
 
 void UBuildingClusterComponent::InteractRequest_Implementation(class AVillager* InteractingVillager)
@@ -43,14 +74,16 @@ FText UBuildingClusterComponent::DisplayInteractText_Implementation()
 	return FText::FromString("Building: " + FString::FromInt(PlacedComponents) + " / " + FString::FromInt(AllComponents));
 }
 
-void UBuildingClusterComponent::OnComponentPlaced(bool State)
+void UBuildingClusterComponent::OnComponentPlaced(int ID, bool State)
 {
 	if (State == false)
 	{
 		PlacedComponents--;
+		PlacedIDs.Remove(ID);
 		return;
 	}
 	PlacedComponents++;
+	PlacedIDs.Add(ID);
 	if (PlacedComponents == AllComponents)
 	{
 		OnBuildingFinisehd.ExecuteIfBound(true);

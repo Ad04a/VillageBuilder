@@ -8,6 +8,7 @@
 #include "Headers/StatAndTraitEnums.h"
 #include "Engine/DataTable.h"
 #include "WorkSystem/BuildProjection.h"
+#include "Components/BuildingClusterComponent.h"
 #include "BaseWorkStation.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FBuildingStateSignature, ABaseWorkStation*, WorkStation);
@@ -34,6 +35,30 @@ struct FWorkStationData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UBehaviorTree* BehaviorTree;
+};
+
+USTRUCT(BlueprintType)
+struct FWorkStationInfoStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TSubclassOf<AActor> WorkStationClass;
+
+	UPROPERTY()
+	FTransform Transform;
+
+	UPROPERTY()
+	FBuildingClusterInfoStruct BuildingClusterInfo = FBuildingClusterInfoStruct();
+
+	inline bool operator==(const FWorkStationInfoStruct& other) const
+	{
+		return (other.WorkStationClass == WorkStationClass) && (other.Transform.GetLocation() == Transform.GetLocation());
+	}
+	inline bool operator != (const FWorkStationInfoStruct& other) const
+	{
+		return !((other.WorkStationClass == WorkStationClass) && (other.Transform.GetLocation() == Transform.GetLocation()));
+	}
 };
 
 UCLASS()
@@ -81,13 +106,18 @@ protected:
 	void SetIsBuilt(bool State);
 	UFUNCTION()
 	void SetIsConstructing(bool State);
-	void ToggleStarges(bool State);
+	void ToggleStorages(bool State);
 
 public:	
+
 	FBuildingStateSignature OnStartedConstruction;
 	FBuildingStateSignature OnBuildingReady;
 
-	void ReleaseWorker();
+	void Init(FWorkStationInfoStruct InLoadInfo = FWorkStationInfoStruct());
+	FWorkStationInfoStruct GetSaveInfo();
+
+	static ABaseWorkStation* ABaseWorkStation::CreateInstance(UObject* WorldContext, FWorkStationInfoStruct InLoadInfo = FWorkStationInfoStruct());
+
 	FText GetName() { return DisplayName; }
 	float GetModifier(ETrait TraitName);
 	FText GetProfessionName() { return ProfessionName; }

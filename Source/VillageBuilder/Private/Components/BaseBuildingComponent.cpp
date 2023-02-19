@@ -42,7 +42,7 @@ void UBaseBuildingComponent::Build()
 
 	bIsPlaced = true;
 	
-	OnComponentStateChange.ExecuteIfBound(true);
+	OnComponentStateChange.ExecuteIfBound(ID,true);
 	FActorSpawnParameters SpawnParams;
 	AStaticMeshActor* NewMesh = World->SpawnActor<AStaticMeshActor>(AStaticMeshActor::StaticClass(), GetComponentLocation(), GetComponentRotation(), SpawnParams);
 	NewMesh->SetMobility(EComponentMobility::Movable);

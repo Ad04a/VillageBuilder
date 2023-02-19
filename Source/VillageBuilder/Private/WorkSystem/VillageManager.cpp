@@ -34,6 +34,7 @@ void AVillageManager::BeginPlay()
 
 void AVillageManager::Init(FVillageManagerLoadInfoStruct InLoadInfo)
 {
+	bCanGenerateSaves = false;
 	SetActorTransform(InLoadInfo.Transform);
 	
 	for (FVillagerLoadInfoStruct VillagerInfo : InLoadInfo.PassingVillagers)
@@ -41,16 +42,26 @@ void AVillageManager::Init(FVillageManagerLoadInfoStruct InLoadInfo)
 		SpawnVillager(FVector(), VillagerInfo);
 	}
 	
-	
 	for (FVillagerLoadInfoStruct VillagerInfo : InLoadInfo.Villagers)
 	{
 		AddVillagerToColony(SpawnVillager(FVector(), VillagerInfo));
 	}
+
+	for (FWorkStationInfoStruct StationInfo : InLoadInfo.WorkStations)
+	{
+		ABaseWorkStation* Station = ABaseWorkStation::CreateInstance(this, StationInfo);
+		AddWorkStationToColony(Station);
+		Station->Init(StationInfo);
+	}
+	bCanGenerateSaves = true;
+	GenerateSave();
 }
 
 FVillageManagerLoadInfoStruct AVillageManager::GetSaveInfo()
 {
 	FVillageManagerLoadInfoStruct SaveInfo;
+	SaveInfo.Transform = GetActorTransform();
+	//----------------VillagersSAveInfo------------------------
 	TArray<AVillager*> PassingVillagersCopy = PassingVillagers;
 	TArray<AVillager*> VillagersCopy = Villagers;
 	TArray<FVillagerLoadInfoStruct> PassingVillagerInfos;
@@ -65,7 +76,23 @@ FVillageManagerLoadInfoStruct AVillageManager::GetSaveInfo()
 	}
 	SaveInfo.PassingVillagers = PassingVillagerInfos;
 	SaveInfo.Villagers		  = VillagerInfos;
-	SaveInfo.Transform		  = GetActorTransform();
+	//----------------WorkStatiionSAveInfo----------------------
+	TArray<FWorkStationInfoStruct> WorkStationsInfos;
+	for (ABaseWorkStation* Building : PlacedBuildings)
+	{
+		WorkStationsInfos.Add(Building->GetSaveInfo());
+	}
+	for (ABaseWorkStation* Construct : UnderConstruction)
+	{
+		WorkStationsInfos.Add(Construct->GetSaveInfo());
+	}
+	TArray<ABaseWorkStation*> Stations;
+	WorkStations.GenerateKeyArray(Stations);
+	for (ABaseWorkStation* Station : Stations)
+	{
+		WorkStationsInfos.Add(Station->GetSaveInfo());
+	}
+	SaveInfo.WorkStations = WorkStationsInfos;
 	return SaveInfo;
 }
 
@@ -97,7 +124,7 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 
 	Villager->Init(LoadInfo);
 	PassingVillagers.Add(Villager);
-	OnStateUpdated.Broadcast();
+	GenerateSave();
 	return Villager;
 }
 
@@ -133,10 +160,10 @@ void AVillageManager::AddVillagerToColony(AVillager* Villager)
 {
 	PassingVillagers.Remove(Villager);
 	Villagers.Add(Villager);
-	OnStateUpdated.Broadcast();
 
 	Villager->OnDeath.AddDynamic(this, &AVillageManager::OnVillagerDeath);
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
+	GenerateSave();
 }
 
 AVillager* AVillageManager::GetWorkerAt(ABaseWorkStation* WorkStation)
@@ -175,16 +202,15 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, AVillager*
 
 	ApplyJobBehavior(WorkStation->GetClass()->GetFName(), Worker);
 	
-	OnStateUpdated.Broadcast();
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
-	
+	GenerateSave();
 }
 
 void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
 {
 	PlacedBuildings.Add(WorkStation);
-	OnStateUpdated.Broadcast();
 	WorkStation->OnStartedConstruction.BindDynamic(this, &AVillageManager::AknowedgeStartedConstruction);
+	GenerateSave();
 }
 
 void AVillageManager::AknowedgeStartedConstruction(ABaseWorkStation* WorkStation)
@@ -192,8 +218,8 @@ void AVillageManager::AknowedgeStartedConstruction(ABaseWorkStation* WorkStation
 	PlacedBuildings.Remove(WorkStation);
 	WorkStation->OnStartedConstruction.Unbind();
 	UnderConstruction.Add(WorkStation);
-	OnStateUpdated.Broadcast();
 	WorkStation->OnBuildingReady.BindDynamic(this, &AVillageManager::AknowedgeFinishedBuilding);
+	GenerateSave();
 }
 
 void AVillageManager::AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation)
@@ -201,7 +227,6 @@ void AVillageManager::AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation)
 	UnderConstruction.Remove(WorkStation);
 	WorkStation->OnBuildingReady.Unbind();
 	WorkStations.Add(WorkStation, nullptr);
-	OnStateUpdated.Broadcast();
 }
 
 void AVillageManager::ApplyJobBehavior(FName StationName, AVillager* Worker)
@@ -244,4 +269,13 @@ ABaseWorkStation* AVillageManager::GetFirstForConstructing()
 		return nullptr;
 	}
 	return UnderConstruction[0];
+}
+
+void AVillageManager::GenerateSave()
+{
+	if (bCanGenerateSaves == false)
+	{
+		return;
+	}
+	OnStateUpdated.Broadcast();
 }

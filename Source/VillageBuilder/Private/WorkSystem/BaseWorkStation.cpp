@@ -2,13 +2,28 @@
 
 
 #include "WorkSystem/BaseWorkStation.h"
-#include "Components/BuildingClusterComponent.h"
 #include "Components/StorageComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Items/Item.h"
 #include "Characters/VillageMayor.h"
 
-// Sets default values
+ABaseWorkStation* ABaseWorkStation::CreateInstance(UObject* WorldContext, FWorkStationInfoStruct InLoadInfo)
+{
+	UWorld* World = WorldContext->GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AItem::CreateInstance IsValid(World) == false"));
+		return nullptr;
+	}
+	if (InLoadInfo == FWorkStationInfoStruct())
+	{
+		return nullptr;
+	}
+	FActorSpawnParameters Params;
+	ABaseWorkStation* WorkStation = World->SpawnActor<ABaseWorkStation>(InLoadInfo.WorkStationClass, FVector(0, 0, 1000), FRotator(0, 0, 0), Params);
+	return WorkStation;
+}
+
 ABaseWorkStation::ABaseWorkStation()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -44,12 +59,21 @@ void ABaseWorkStation::BeginPlay()
 	TraitModifiers = StationData->TraitModifiers;
 	ProfessionName = StationData->ProfessionName;
 
-	ToggleStarges(false);
+	ToggleStorages(false);
 }
 
-void ABaseWorkStation::ReleaseWorker()
+void ABaseWorkStation::Init(FWorkStationInfoStruct InLoadInfo )
 {
-	HiredVillager = nullptr;
+	SetActorTransform(InLoadInfo.Transform);
+	BuildingComponent->Init(InLoadInfo.BuildingClusterInfo);
+}
+FWorkStationInfoStruct ABaseWorkStation::GetSaveInfo()
+{
+	FWorkStationInfoStruct SaveInfo;
+	SaveInfo.Transform		     = GetActorTransform();
+	SaveInfo.WorkStationClass    = GetClass();
+	SaveInfo.BuildingClusterInfo = BuildingComponent->GetSaveInfo();
+	return SaveInfo;
 }
 
 void ABaseWorkStation::InteractRequest_Implementation(AVillager* InteractingVillager)
@@ -115,7 +139,7 @@ UStorageComponent* ABaseWorkStation::GetRightStorage(TSubclassOf<class AItem> It
 	return nullptr;
 }
 
-void ABaseWorkStation::ToggleStarges(bool State)
+void ABaseWorkStation::ToggleStorages(bool State)
 {
 	TArray<UStorageComponent*>Storages = GetStorages();
 	for (UStorageComponent* Storage : Storages)
@@ -132,7 +156,7 @@ void ABaseWorkStation::SetIsBuilt(bool State)
 		return;
 	}
 	OnBuildingReady.ExecuteIfBound(this);
-	ToggleStarges(State);
+	ToggleStorages(State);
 }
 
 void ABaseWorkStation::SetIsConstructing(bool State)

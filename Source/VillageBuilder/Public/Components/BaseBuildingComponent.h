@@ -8,7 +8,7 @@
 #include "Headers/Interactable.h"
 #include "BaseBuildingComponent.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FComponentStateSignature, bool, State);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FComponentStateSignature,int,ID, bool, State);
 
 UCLASS()
 class VILLAGEBUILDER_API UBaseBuildingComponent : public UStaticMeshComponent, public IInteractable
@@ -21,8 +21,6 @@ public:
 private:
 	bool bIsPlaced = false;
 	bool bIsActive = false;
-
-	void Build();
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
@@ -43,6 +41,8 @@ protected:
 	virtual FText DisplayInteractText_Implementation();
 
 public:
+	int ID;
+	void Build();
 	FComponentStateSignature OnComponentStateChange;
 	void SetIsActive(bool State);
 	TSubclassOf<AItem> GetNeededClass(){return NeededItem;}

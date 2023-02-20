@@ -38,5 +38,5 @@ protected:
 	void SetupPerceptionSystem();
 
 	UFUNCTION()
-	void ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus);
+	virtual void ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus);
 };

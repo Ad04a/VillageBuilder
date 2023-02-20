@@ -7,7 +7,7 @@
 #include "BehaviorTree/Decorators/BTDecorator_ConditionalLoop.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-#include "AI/Villager/VillagerAIController.h"
+#include "AI/GeneralAIController.h"
 
 #include "BTD_ConditionalLoopForClassCompare.generated.h"
 

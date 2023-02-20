@@ -26,7 +26,7 @@ protected:
 	TArray<FTransform> ItemTransforms;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Interact")
-	FText InteractionText;
+	FString InteractionText;
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
 	void InteractRequest(class AVillager* InteractingVillager);
@@ -39,6 +39,7 @@ protected:
 	bool PlaceItem(AItem* InItem);
 
 	TSubclassOf<AItem> GetItemClass();
+	int GetCurrentNumberOfItems();
 public:
 	TSubclassOf<AItem> GetExplicitItemClass()const {return ExplicitItemClass;}
 	bool GetIsFull();

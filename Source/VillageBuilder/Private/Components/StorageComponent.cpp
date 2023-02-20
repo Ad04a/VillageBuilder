@@ -53,10 +53,15 @@ TSubclassOf<AItem> UStorageComponent::GetItemClass()
 
 FText UStorageComponent::DisplayInteractText_Implementation()
 {
-	return InteractionText;
+	return FText::FromString(InteractionText + "\n" + FString::FromInt(GetCurrentNumberOfItems()) + "/" + FString::FromInt(MaxNumberOfItems));
 }
 
 bool UStorageComponent::GetIsFull()
+{
+	return GetCurrentNumberOfItems() >= MaxNumberOfItems;
+}
+
+int UStorageComponent::GetCurrentNumberOfItems()
 {
 	TArray<int> NumItems;
 	Content.GenerateValueArray(NumItems);
@@ -65,11 +70,7 @@ bool UStorageComponent::GetIsFull()
 	{
 		CurrentItems += NumItems[i];
 	}
-	if (CurrentItems >= MaxNumberOfItems)
-	{
-		return true;
-	}
-	return false;
+	return CurrentItems;
 }
 
 void UStorageComponent::SetIsActive(bool State)

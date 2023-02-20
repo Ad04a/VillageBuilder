@@ -15,7 +15,7 @@ bool UBTD_ConditionalLoopForClassCompare::CalculateRawConditionValue(UBehaviorTr
 	{
 		return false;
 	}
-	AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
+	AGeneralAIController* Controller = Cast<AGeneralAIController>(OwnerComponent.GetAIOwner());
 	if (IsValid(Controller) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UBTTask_GetLocationOfObject::CalculateRawConditionValue IsValid(Controller) == false"));

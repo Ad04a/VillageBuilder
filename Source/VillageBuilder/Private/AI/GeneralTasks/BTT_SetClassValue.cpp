@@ -11,7 +11,7 @@ UBTT_SetClassValue::UBTT_SetClassValue()
 EBTNodeResult::Type UBTT_SetClassValue::ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory)
 {
 
-	AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
+	AGeneralAIController* Controller = Cast<AGeneralAIController>(OwnerComponent.GetAIOwner());
 	if (IsValid(Controller) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UBTT_SetClassValue::ExecuteTask IsValid(Controller) == false"));

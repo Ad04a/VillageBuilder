@@ -11,7 +11,7 @@ UBTTask_Chase::UBTTask_Chase()
 EBTNodeResult::Type UBTTask_Chase::ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory)
 {
 
-	AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
+	AGeneralAIController* Controller = Cast<AGeneralAIController>(OwnerComponent.GetAIOwner());
 	if (IsValid(Controller) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UBTTask_Chase::ExecuteTask IsValid(Controller) == false"));

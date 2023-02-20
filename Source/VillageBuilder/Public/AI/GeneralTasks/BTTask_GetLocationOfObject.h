@@ -7,7 +7,7 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-#include "AI/Villager/VillagerAIController.h"
+#include "AI/GeneralAIController.h"
 
 #include "BTTask_GetLocationOfObject.generated.h"
 

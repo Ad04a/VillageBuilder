@@ -19,7 +19,7 @@ EBTNodeResult::Type UBTTask_GetLocationOfObject::ExecuteTask(UBehaviorTreeCompon
 		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
 		return EBTNodeResult::Failed;
 	}
-	AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
+	AGeneralAIController* Controller = Cast<AGeneralAIController>(OwnerComponent.GetAIOwner());
 	if (IsValid(Controller) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UBTTask_GetLocationOfObject::ExecuteTask IsValid(Controller) == false"));

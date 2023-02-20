@@ -7,7 +7,7 @@
 #include "BehaviorTree/Decorators/BTDecorator_BlackboardBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-#include "AI/Villager/VillagerAIController.h"
+#include "AI/GeneralAIController.h"
 
 #include "BTD_CompareClassKeys.generated.h"
 

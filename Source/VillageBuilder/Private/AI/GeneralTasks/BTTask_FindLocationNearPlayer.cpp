@@ -18,7 +18,7 @@ EBTNodeResult::Type UBTTask_FindLocationNearPlayer::ExecuteTask(UBehaviorTreeCom
 		return EBTNodeResult::Failed;
 	}
 
-	AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
+	AGeneralAIController* Controller = Cast<AGeneralAIController>(OwnerComponent.GetAIOwner());
 	if (IsValid(Controller) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UBTTask_FindLocationNearPlayer::ExecuteTask IsValid(Controller) == false"));

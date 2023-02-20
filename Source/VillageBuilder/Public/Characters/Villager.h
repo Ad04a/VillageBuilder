@@ -36,7 +36,7 @@ private:
 protected:
 	virtual void Tick(float DeltaTime) override;
 
-	FString Name = "nqkoi";
+	FString Name = "Name";
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UDataTable* StatTraitDataTable = nullptr;

@@ -14,7 +14,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 
-#include "AI/Villager/VillagerAIController.h"
+#include "AI/GeneralAIController.h"
 #include "Headers/VillagerBBKeys.h"
 
 #include "BTTask_FindLocationNearPlayer.generated.h"

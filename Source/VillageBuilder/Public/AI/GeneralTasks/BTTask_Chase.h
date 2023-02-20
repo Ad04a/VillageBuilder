@@ -8,7 +8,7 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-#include "AI/Villager/VillagerAIController.h"
+#include "AI/GeneralAIController.h"
 #include "Headers/VillagerBBKeys.h"
 
 #include "BTTask_Chase.generated.h"

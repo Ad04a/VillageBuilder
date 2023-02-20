@@ -118,7 +118,7 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 	AVillager* Villager = World->SpawnActor<AVillager>(VillagerClass, Location, Rotation, Params);
 
 	if (IsValid(Villager) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillageManager::SpawnVillager IsValid(Player) == false"));
+		UE_LOG(LogTemp, Error, TEXT("AVillageManager::SpawnVillager IsValid(Villager) == false"));
 		return nullptr;
 	}
 
@@ -158,6 +158,12 @@ void AVillageManager::OnVillagerDeath(AVillager* Villager)
 
 void AVillageManager::AddVillagerToColony(AVillager* Villager)
 {
+	if (Villager == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AVillageManager::AddVillagerToColony IsValid(Villager) == false"));
+		return;
+	}
+
 	PassingVillagers.Remove(Villager);
 	Villagers.Add(Villager);
 

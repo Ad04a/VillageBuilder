@@ -47,11 +47,23 @@ protected:
 
 	AVillageMayor* Player;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Building")
+	UDataTable* BuildingDataTable;
+
+	void GetBuildingsInfo();
+
+	TMap<FString, FName> BuildingsInfo;
+
 public:
 	FErrorHandleSignature OnErrorLoadingData;
 	FErrorHandleSignature OnSaveStarted;
 	FErrorHandleSignature OnSaveEnded;
 	FErrorHandleSignature OnGameEnd;
+
+	TArray<FString> GetAllBuildingNames();
+
+	UFUNCTION()
+	bool GivePlayerBuildItem(FString StationName);
 
 	UFUNCTION()
 	void SaveGame();

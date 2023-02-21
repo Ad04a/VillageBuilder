@@ -36,7 +36,7 @@ protected:
 	static const FName ItemSecondaryBinding;
 	static const FName DropItemBinding;
 	static const FName InGameOptionsBinding;
-	
+	static const FName OpenBuildMenuBinding;
 	
 	void ItemPrimary();
 	void ItemSecondary();

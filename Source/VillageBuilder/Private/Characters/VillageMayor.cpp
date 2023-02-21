@@ -31,7 +31,6 @@ void AVillageMayor::CheckForInteractables()
 		UE_LOG(LogTemp, Error, TEXT("AVillageMayor::CheckForInteractables IsValid(World) == false"));
 		return;
 	}
-	World->DebugDrawTraceTag = TraceTag;
 
 	FHitResult HitResult;
 	FCollisionQueryParams CQP;

@@ -55,6 +55,13 @@ void AGameplayHUDBase::BeginPlay()
 	UInGameOptionsWidget->OnExitClicked.BindDynamic(GameMode, &AGameplayModeBase::EndGame);
 	UInGameOptionsWidget->OnContinueClicked.BindDynamic(this, &AGameplayHUDBase::ToggleOptions);
 	
+
+	BuildMenuWidget = Cast<UBuildMenuWidgetBase>(CreateWidget<UUserWidget>(World, BuildMenuWidgetBaseClass));
+	if (IsValid(BuildMenuWidget) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(BuildMenuWidget) == false"));
+		return;
+	}
+	BuildMenuWidget->OnCloseSignal.BindDynamic(this, &AGameplayHUDBase::ShowBuildMenu);
 }
 
 void AGameplayHUDBase::ShowStats(AVillager* Villager)
@@ -87,8 +94,6 @@ void AGameplayHUDBase::ShowInteraction(FText ActionText)
 		return;
 	}
 	InteractionWidget->AddToViewport();
-	PlayerOwner->bShowMouseCursor = false;
-	PlayerOwner->SetInputMode(FInputModeGameOnly());
 }
 
 void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
@@ -168,6 +173,37 @@ void AGameplayHUDBase::ShowEmployeeMenu(ABaseWorkStation* WorkStation)
 	PlayerOwner->bShowMouseCursor = true;
 	PlayerOwner->SetInputMode(FInputModeGameAndUI());
 	
+}
+
+void AGameplayHUDBase::ShowBuildMenu()
+{
+	if ((IsValid(PlayerOwner) && IsValid(BuildMenuWidget)) == false) {
+		return;
+	}
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(World) == false"));
+		return;
+	}
+
+	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(GameMode) == false"));
+		return;
+	}
+	if (BuildMenuWidget->GetIsVisible() == true) {
+		BuildMenuWidget->RemoveFromViewport();
+		BuildMenuWidget->OnBuildingSelected.Unbind();
+		PlayerOwner->bShowMouseCursor = false;
+		PlayerOwner->SetInputMode(FInputModeGameOnly());
+		return;
+	}
+	BuildMenuWidget->Init(GameMode->GetAllBuildingNames());
+	BuildMenuWidget->OnBuildingSelected.BindDynamic(GameMode, &AGameplayModeBase::GivePlayerBuildItem);
+	BuildMenuWidget->AddToViewport();
+	PlayerOwner->bShowMouseCursor = true;
+	PlayerOwner->SetInputMode(FInputModeUIOnly());
 }
 
 void AGameplayHUDBase::Clear()

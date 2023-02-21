@@ -24,6 +24,8 @@ void AGameplayModeBase::StartPlay() {
 		OnErrorLoadingData.Broadcast();
 		return;
 	}
+	GetBuildingsInfo();
+
 	SaveSlotName = GameInstane->SaveSlotName;
 	if (UGameplayStatics::DoesSaveGameExist(SaveSlotName, 0) == false)
 	{
@@ -46,12 +48,6 @@ void AGameplayModeBase::StartPlay() {
 
 		Player->Equip(VillageManager);
 
-		ABuilderItem* BuilderItem = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(300, 300, 300), FRotator(0, 0, 0), Params);
-		BuilderItem->BindToPlayer("BP_ForesterHut_C", Player);
-
-		ABuilderItem* BuilderItem2 = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(500, 500, 300), FRotator(0, 0, 0), Params);
-		BuilderItem2->BindToPlayer("BP_BuilderWorkStation_C", Player);
-
 		LoadedGame->bIsFirstLoad = false;
 		SaveGame();
 		return;
@@ -72,6 +68,22 @@ void AGameplayModeBase::StartPlay() {
 	}
 	Village->Init(LoadedGame->VillageInfo);
 	SaveGame();
+}
+
+bool AGameplayModeBase::GivePlayerBuildItem(FString StationName)
+{
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::GivePlayerBuildItem IsValid(World) == false"));
+		return false;
+	}
+	FActorSpawnParameters Params;
+	ABuilderItem* BuilderItem = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(0, 0, 300), FRotator(0, 0, 0), Params);
+	FName Name = *BuildingsInfo.Find(StationName);
+	BuilderItem->BindToPlayer(Name, Player);
+	Player->Equip(BuilderItem);
+	return true;
 }
 
 void AGameplayModeBase::SaveGame()
@@ -129,4 +141,33 @@ AVillageManager* AGameplayModeBase::GetCurrentVillage(AActor* Entity)
 {
 	//Logic for find in which village the work station is for multicoloni feature
 	return Village;
+}
+
+void AGameplayModeBase::GetBuildingsInfo()
+{
+	if (IsValid(BuildingDataTable) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::GetBuildingsInfo IsValid(StationDataTable) == false"));
+		return;
+	}
+	for (FName Row : BuildingDataTable->GetRowNames())
+	{
+
+		FWorkStationData* StationData = BuildingDataTable->FindRow<FWorkStationData>(Row, "");
+
+		if (StationData == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::GetBuildingsInfo FWorkStationData == nullptr from %s"), *Row.ToString());
+			return;
+		}
+		UE_LOG(LogTemp, Display, TEXT("AGameplayModeBase::GetBuildingsInfo  %s : %s"), *StationData->DisplayName.ToString() , *Row.ToString());
+		BuildingsInfo.Add(StationData->DisplayName.ToString(), Row);
+	}
+}
+
+TArray<FString> AGameplayModeBase::GetAllBuildingNames()
+{
+	TArray<FString> Names;
+	BuildingsInfo.GenerateKeyArray(Names);
+	return Names;
 }

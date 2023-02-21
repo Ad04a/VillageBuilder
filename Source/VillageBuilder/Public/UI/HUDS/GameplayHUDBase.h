@@ -9,6 +9,7 @@
 #include "UI/Widgets/Gameplay/TraitMenuWidgetBase.h"
 #include "UI/Widgets/Gameplay/EmployeeMenuWidgetBase.h"
 #include "UI/Widgets/Gameplay/InGameOptionsWidgetBase.h"
+#include "UI/Widgets/Gameplay/BuildMenuWidgetBase.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "GameplayHUDBase.generated.h"
 
@@ -51,6 +52,11 @@ protected:
 	UPROPERTY()
 	class UInGameOptionsWidgetBase* UInGameOptionsWidget;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UBuildMenuWidgetBase> BuildMenuWidgetBaseClass;
+
+	UPROPERTY()
+	class UBuildMenuWidgetBase* BuildMenuWidget;
 	
 	virtual void BeginPlay()override;
 
@@ -71,4 +77,7 @@ public:
 
 	UFUNCTION()
 	void ToggleOptions();
+
+	UFUNCTION()
+	void ShowBuildMenu();
 };

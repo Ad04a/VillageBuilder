@@ -7,6 +7,8 @@
 #include "VillageBuilderSaveGame.h"
 #include "VillageBuilderPlayerController.h"
 
+#include "Components/BaseBuildingComponent.h"
+
 void AGameplayModeBase::StartPlay() {
 
 	Super::StartPlay();
@@ -174,4 +176,30 @@ TArray<FString> AGameplayModeBase::GetAllBuildingNames()
 	TArray<FString> Names;
 	BuildingsInfo.GenerateKeyArray(Names);
 	return Names;
+}
+
+
+
+//---------------------CheatSection-----------------------------------
+
+void AGameplayModeBase::ForceBuildComponents()
+{
+	TArray<AActor*> FoundItems;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ABaseWorkStation::StaticClass(), FoundItems);
+	int Sum = 0;
+	for (AActor* Actor : FoundItems)
+	{
+		ABaseWorkStation* Station = Cast<ABaseWorkStation>(Actor);
+		if (IsValid(Station) == false)
+		{
+			continue;
+		}
+		if (Station->GetIsConstructing() == false)
+		{
+			continue;
+		}
+		Sum++;
+		Station->ForceBuild();
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Builded " + FString::FromInt(Sum) + " stations");
 }

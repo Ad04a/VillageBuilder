@@ -51,6 +51,9 @@ struct FWorkStationInfoStruct
 	UPROPERTY()
 	FBuildingClusterInfoStruct BuildingClusterInfo = FBuildingClusterInfoStruct();
 
+	UPROPERTY()
+	int ID = -1;
+
 	inline bool operator==(const FWorkStationInfoStruct& other) const
 	{
 		return (other.WorkStationClass == WorkStationClass) && (other.Transform.GetLocation() == Transform.GetLocation());
@@ -102,6 +105,7 @@ protected:
 	virtual FText DisplayInteractText_Implementation();
 
 	bool IsBuilt = false;
+	bool IsConstructing = false;
 	UFUNCTION()
 	void SetIsBuilt(bool State);
 	UFUNCTION()
@@ -109,7 +113,8 @@ protected:
 	void ToggleStorages(bool State);
 
 public:	
-
+	UPROPERTY(VisibleAnywhere, Category = Identification)
+	unsigned int ID = -1;
 	FBuildingStateSignature OnStartedConstruction;
 	FBuildingStateSignature OnBuildingReady;
 
@@ -124,6 +129,8 @@ public:
 	TArray<class UStorageComponent*> GetStorages();
 	UStorageComponent* GetRightStorage(TSubclassOf<class AItem> ItemClass);
 	bool GetIsBuilt() { return IsBuilt; }
+	bool GetIsConstructing() { return IsConstructing; }
+	void ForceBuild();
 	class UBaseBuildingComponent* GetFirstBuildingComponent(); 
 
 

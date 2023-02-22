@@ -62,16 +62,16 @@ EBTNodeResult::Type UBTT_GetTargetBuildingComponent::ExecuteTask(UBehaviorTreeCo
 
 		BlackBoard->ClearValue(GetSelectedBlackboardKey());
 		BlackBoard->ClearValue(WriteInto.SelectedKeyName);
-		FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
-		return EBTNodeResult::Succeeded;
+		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
+		return EBTNodeResult::Failed;
 	}
 	UBaseBuildingComponent* BuildComp = WorkStation->GetFirstBuildingComponent();
 	if (IsValid(BuildComp) == false) {
 
 		BlackBoard->ClearValue(GetSelectedBlackboardKey());
 		BlackBoard->ClearValue(WriteInto.SelectedKeyName);
-		FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
-		return EBTNodeResult::Succeeded;
+		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
+		return EBTNodeResult::Failed;
 	}
 	BlackBoard->SetValueAsObject(GetSelectedBlackboardKey(), BuildComp);
 	BlackBoard->SetValueAsClass(WriteInto.SelectedKeyName, BuildComp->GetNeededClass());

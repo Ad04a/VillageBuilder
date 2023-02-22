@@ -63,4 +63,5 @@ public:
 	FBuildingClusterInfoStruct GetSaveInfo();
 	TArray<class UBaseBuildingComponent*> GetBuildingComponents();
 	class UBaseBuildingComponent* GetFirstBuildingComponent();
+	void ForceBuild();
 };

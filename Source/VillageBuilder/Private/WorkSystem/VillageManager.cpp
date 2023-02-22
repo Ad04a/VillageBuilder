@@ -53,6 +53,30 @@ void AVillageManager::Init(FVillageManagerLoadInfoStruct InLoadInfo)
 		AddWorkStationToColony(Station);
 		Station->Init(StationInfo);
 	}
+
+	for (TPair<int, int> Contract : InLoadInfo.WorkPlaces)
+	{
+		ABaseWorkStation* TempWorkStation = nullptr;
+		for (TPair<ABaseWorkStation*, int> Station : WorkStations)
+		{
+			if (Station.Key->ID == Contract.Key)
+			{
+				TempWorkStation = Station.Key;
+				break;
+			}
+		}
+		int TempIndex = -1;
+		for (AVillager* Villager : Villagers)
+		{
+			if (Villager->ID == Contract.Value)
+			{
+				TempIndex = Villagers.IndexOfByKey(Villager);
+				break;
+			}
+		}
+		ManageEmployment(TempWorkStation, TempIndex);
+	}
+
 	bCanGenerateSaves = true;
 	GenerateSave();
 }
@@ -88,11 +112,14 @@ FVillageManagerLoadInfoStruct AVillageManager::GetSaveInfo()
 	}
 	TArray<ABaseWorkStation*> Stations;
 	WorkStations.GenerateKeyArray(Stations);
-	for (ABaseWorkStation* Station : Stations)
+	for (TPair<ABaseWorkStation*, int> Station : WorkStations)
 	{
-		WorkStationsInfos.Add(Station->GetSaveInfo());
+		WorkStationsInfos.Add(Station.Key->GetSaveInfo());
+		SaveInfo.WorkPlaces.Add(Station.Key->ID, Station.Value);
 	}
 	SaveInfo.WorkStations = WorkStationsInfos;
+
+
 	return SaveInfo;
 }
 
@@ -123,6 +150,10 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 	}
 
 	Villager->Init(LoadInfo);
+	if (Villager->ID == -1)
+	{
+		Villager->ID = CurrentID++;
+	}
 	PassingVillagers.Add(Villager);
 	GenerateSave();
 	return Villager;
@@ -148,10 +179,10 @@ void AVillageManager::UnPauseTimedSpawn()
 void AVillageManager::OnVillagerDeath(AVillager* Villager)
 {
 	Villagers.Remove(Villager);
-	ABaseWorkStation* Station = GetWorkPlaceFor(Villager);
+	ABaseWorkStation* Station = GetWorkPlaceFor(Villager->ID);
 	if (Station != nullptr)
 	{
-		ManageEmployment(Station, nullptr);
+		ManageEmployment(Station, -1);
 	}
 	Villager->Destroy();
 }
@@ -174,14 +205,22 @@ void AVillageManager::AddVillagerToColony(AVillager* Villager)
 
 AVillager* AVillageManager::GetWorkerAt(ABaseWorkStation* WorkStation)
 {
-	return *WorkStations.Find(WorkStation);
+	int WorkerID = *WorkStations.Find(WorkStation);
+	for (AVillager* Villager : Villagers)
+	{
+		if (Villager->ID == WorkerID)
+		{
+			return Villager;
+		}
+	}
+	return nullptr;
 }
 
-ABaseWorkStation* AVillageManager::GetWorkPlaceFor(AVillager* Worker)
+ABaseWorkStation* AVillageManager::GetWorkPlaceFor(int WorkerID)
 {
-	for (TPair<ABaseWorkStation*, AVillager*>Station : WorkStations)
+	for (TPair<ABaseWorkStation*, int>Station : WorkStations)
 	{
-		if (Station.Value == Worker)
+		if (Station.Value == WorkerID)
 		{
 			return Station.Key;
 		}
@@ -189,25 +228,36 @@ ABaseWorkStation* AVillageManager::GetWorkPlaceFor(AVillager* Worker)
 	return nullptr;
 }
 
-void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, AVillager* Worker)
+void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, int WorkerIndex)
 {
 	if (IsValid(WorkStation) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(WorkStation) == false"));
 		return;
 	}
-
+	if (Villagers.IsValidIndex(WorkerIndex) == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AVillageManager::ManageEmployment IsValid(VIllager) == false"));
+		return;
+	}
+	unsigned int WorkerID = Villagers[WorkerIndex]->ID;
+	bool bWorksHere = false;
+	if (IsValid(GetWorkerAt(WorkStation)) == true)
+	{
+		bWorksHere = (GetWorkerAt(WorkStation)->ID == WorkerID);
+	}
 	ApplyJobBehavior("Unemployed", GetWorkerAt(WorkStation));
 
-	if (GetWorkPlaceFor(Worker) != nullptr)
+	if (GetWorkPlaceFor(WorkerID) != nullptr)
 	{
-		WorkStations.Add(GetWorkPlaceFor(Worker), nullptr);
+		WorkStations.Add(GetWorkPlaceFor(WorkerID), -1);
 	}
+	if (bWorksHere == false)
+	{
+		WorkStations.Add(WorkStation, WorkerID);
+		ApplyJobBehavior(WorkStation->GetClass()->GetFName(), GetWorkerAt(WorkStation));
 
-	WorkStations.Add(WorkStation, Worker);
-
-	ApplyJobBehavior(WorkStation->GetClass()->GetFName(), Worker);
-	
+	}
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	GenerateSave();
 }
@@ -216,6 +266,11 @@ void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
 {
 	PlacedBuildings.Add(WorkStation);
 	WorkStation->OnStartedConstruction.BindDynamic(this, &AVillageManager::AknowedgeStartedConstruction);
+	if (WorkStation->ID == -1)
+	{
+		WorkStation->ID = CurrentID++;
+	}
+	
 	GenerateSave();
 }
 
@@ -232,7 +287,7 @@ void AVillageManager::AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation)
 {
 	UnderConstruction.Remove(WorkStation);
 	WorkStation->OnBuildingReady.Unbind();
-	WorkStations.Add(WorkStation, nullptr);
+	WorkStations.Add(WorkStation, -1);
 }
 
 void AVillageManager::ApplyJobBehavior(FName StationName, AVillager* Worker)

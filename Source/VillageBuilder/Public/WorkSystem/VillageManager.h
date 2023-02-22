@@ -27,6 +27,9 @@ struct FVillageManagerLoadInfoStruct
 	TArray<FWorkStationInfoStruct> WorkStations = TArray<FWorkStationInfoStruct>();
 	
 	UPROPERTY()
+	TMap<int, int> WorkPlaces;
+
+	UPROPERTY()
 	FTransform Transform;
 
 	inline bool operator==(const FVillageManagerLoadInfoStruct& other) const
@@ -52,6 +55,8 @@ private:
 	void ApplyJobBehavior(FName StationName, AVillager* Worker);
 	FTimerHandle SpawnHandle;
 	bool bCanGenerateSaves = true;
+	UPROPERTY(VisibleAnywhere, Category = Identification)
+	unsigned int CurrentID = 0;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -62,7 +67,7 @@ protected:
 	TArray<AVillager*> Villagers;
 
 	UPROPERTY(VisibleAnywhere)
-	TMap<ABaseWorkStation*, AVillager*> WorkStations; //(WorkStation, HiredVillager)
+	TMap<ABaseWorkStation*, int> WorkStations; //(WorkStation, HiredVillager)
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<ABaseWorkStation*> UnderConstruction;
@@ -126,8 +131,8 @@ public:
 
 	TArray<AVillager*> GetAllVillagers() { return Villagers; }
 	AVillager* GetWorkerAt(ABaseWorkStation* WorkStation);
-	ABaseWorkStation* GetWorkPlaceFor(AVillager* Worker);
+	ABaseWorkStation* GetWorkPlaceFor(int WorkerID);
 	UFUNCTION()
-	void ManageEmployment(ABaseWorkStation* WorkStation, AVillager* Worker);
+	void ManageEmployment(ABaseWorkStation* WorkStation, int WorkerIndex);
 	ABaseWorkStation* GetFirstForConstructing();
 };

@@ -72,6 +72,8 @@ protected:
 	void RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
 public:	
+	UPROPERTY(VisibleAnywhere, Category = Identification)
+	unsigned int ID = -1;
 
 	FStatUpdatedSignature OnStatUpdated;
 	FVillagerPassingSignature OnDeath;

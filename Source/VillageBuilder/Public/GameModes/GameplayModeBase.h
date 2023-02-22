@@ -77,4 +77,7 @@ public:
 	UFUNCTION()
 	void EndGame();
 
+
+	UFUNCTION(Exec, Category = Cheat)
+	void ForceBuildComponents();
 };

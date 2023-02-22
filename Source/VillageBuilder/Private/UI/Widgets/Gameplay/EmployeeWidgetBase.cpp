@@ -25,11 +25,11 @@ void UEmployeeWidgetBase::Init(AVillager* Villager, ABaseWorkStation* WorkStatio
 {
 	CurrentVillager = Villager;
 	ManageButtonText->SetText(FText::FromString("Hire"));
-	float Color = 0.f;
+	int Color = 0;
 	if ((Villager->GetWorkStation() == WorkStation)) {
 		CurrentVillager = nullptr;
 		ManageButtonText->SetText(FText::FromString("Fire"));
-		Color = -2.f;
+		Color = -2;
 	}
 	ManageButtonText->SetColorAndOpacity(GetTraitColor(Color));
 	Name->SetText(FText::FromString(Villager->GetName()));
@@ -53,7 +53,7 @@ void UEmployeeWidgetBase::SetTrait(ETrait TraitName, int Value, FSlateColor Colo
 
 void UEmployeeWidgetBase::ManageButtonCliked()
 {
-	OnManageButtonClicked.ExecuteIfBound(CurrentVillager);
+	OnManageButtonClicked.ExecuteIfBound(this);
 }
 
 FSlateColor UEmployeeWidgetBase::GetTraitColor(float Modifier)

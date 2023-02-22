@@ -10,7 +10,7 @@
 #include "Components/Button.h"
 #include "EmployeeWidgetBase.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FManageButtonSignature, AVillager*, Villagers);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FManageButtonSignature, UEmployeeWidgetBase*, Emitter);
 
 UCLASS()
 class VILLAGEBUILDER_API UEmployeeWidgetBase : public UUserWidget

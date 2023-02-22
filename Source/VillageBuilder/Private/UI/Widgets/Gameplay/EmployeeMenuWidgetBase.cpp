@@ -39,7 +39,11 @@ void UEmployeeMenuWidgetBase::LoadVillagerWidgets(TArray<AVillager*> Villagers)
 	}
 }
 
-void UEmployeeMenuWidgetBase::ManageButtonClicked(AVillager* Villager)
+void UEmployeeMenuWidgetBase::ManageButtonClicked(UEmployeeWidgetBase* EmitterWidget)
 {
-	OnVillagerEmployed.ExecuteIfBound(CurrentWorkStation, Villager);
+	if (IsValid(EmitterWidget) == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UEmployeeMenuWidgetBase::ManageButtonClicked IsValid(EmitterWidget) == false ChildIndex: %d"), VillagerScrollBox->GetChildIndex(EmitterWidget));
+	}
+	OnVillagerEmployed.ExecuteIfBound(CurrentWorkStation, VillagerScrollBox->GetChildIndex(EmitterWidget));
 }

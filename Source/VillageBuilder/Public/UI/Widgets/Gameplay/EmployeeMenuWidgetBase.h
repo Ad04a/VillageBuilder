@@ -9,7 +9,7 @@
 #include "UI/Widgets/Gameplay/EmployeeWidgetBase.h"
 #include "EmployeeMenuWidgetBase.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FEmploymentButtonSignature, ABaseWorkStation*, WorkStation, AVillager*, Villagers);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FEmploymentButtonSignature, ABaseWorkStation*, WorkStation, int, VillagerID);
 
 UCLASS()
 class VILLAGEBUILDER_API UEmployeeMenuWidgetBase : public UUserWidget
@@ -28,7 +28,7 @@ protected:
 	TSubclassOf<UEmployeeWidgetBase> EmployeeWidgetClass;
 
 	UFUNCTION()
-	void ManageButtonClicked(AVillager* Villager);
+	void ManageButtonClicked(UEmployeeWidgetBase* EmitterWidget);
 
 public:
 	void Init(ABaseWorkStation* WorkStation);

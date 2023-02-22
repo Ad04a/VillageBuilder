@@ -23,6 +23,7 @@ void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
 		Name      = InLoadInfo.Name;
 		TraitsMap = InLoadInfo.TraitsMap;
 		StatsMap  = InLoadInfo.StatsMap;
+		ID		  = InLoadInfo.ID;
 		SetActorTransform(InLoadInfo.Transform);
 		AItem* Item = AItem::CreateInstance(this, InLoadInfo.HoldingItem);
 		if (IsValid(Item) == true)
@@ -108,6 +109,7 @@ FVillagerLoadInfoStruct AVillager::GetSaveInfo()
 	SaveInfo.TraitsMap = TraitsMap;
 	SaveInfo.StatsMap  = StatsMap;
 	SaveInfo.Transform = GetActorTransform();
+	SaveInfo.ID		   = ID;
 	if (ItemSlot != nullptr)
 	{
 		SaveInfo.HoldingItem = ItemSlot->GetSaveInfo();
@@ -389,7 +391,7 @@ ABaseWorkStation* AVillager::GetWorkStation()
 		return nullptr;
 	}
 
-	return Village->GetWorkPlaceFor(this);
+	return Village->GetWorkPlaceFor(ID);
 }
 FText AVillager::GetProfession()
 {

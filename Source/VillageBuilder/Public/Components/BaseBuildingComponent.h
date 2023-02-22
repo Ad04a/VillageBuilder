@@ -46,4 +46,5 @@ public:
 	FComponentStateSignature OnComponentStateChange;
 	void SetIsActive(bool State);
 	TSubclassOf<AItem> GetNeededClass(){return NeededItem;}
+	bool GetIsActive() { return bIsActive; }
 };

@@ -86,6 +86,7 @@ void UBuildingClusterComponent::OnComponentPlaced(int ID, bool State)
 	PlacedIDs.Add(ID);
 	if (PlacedComponents == AllComponents)
 	{
+		OnBuildStarted.ExecuteIfBound(false);
 		OnBuildingFinisehd.ExecuteIfBound(true);
 	}
 }
@@ -114,4 +115,13 @@ class UBaseBuildingComponent* UBuildingClusterComponent::GetFirstBuildingCompone
 		return nullptr;
 	}
 	return BuildingComponents[0];
+}
+
+//---------------------CheatSection-----------------------------------
+void UBuildingClusterComponent::ForceBuild()
+{
+	for (UBaseBuildingComponent* Child : GetBuildingComponents())
+	{
+		Child->Build();	
+	}
 }

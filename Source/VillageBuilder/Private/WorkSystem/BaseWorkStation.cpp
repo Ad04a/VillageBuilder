@@ -66,13 +66,16 @@ void ABaseWorkStation::Init(FWorkStationInfoStruct InLoadInfo )
 {
 	SetActorTransform(InLoadInfo.Transform);
 	BuildingComponent->Init(InLoadInfo.BuildingClusterInfo);
+	ID = InLoadInfo.ID;
 }
+
 FWorkStationInfoStruct ABaseWorkStation::GetSaveInfo()
 {
 	FWorkStationInfoStruct SaveInfo;
 	SaveInfo.Transform		     = GetActorTransform();
 	SaveInfo.WorkStationClass    = GetClass();
 	SaveInfo.BuildingClusterInfo = BuildingComponent->GetSaveInfo();
+	SaveInfo.ID					 = ID;
 	return SaveInfo;
 }
 
@@ -161,6 +164,7 @@ void ABaseWorkStation::SetIsBuilt(bool State)
 
 void ABaseWorkStation::SetIsConstructing(bool State)
 {
+	IsConstructing = State;
 	if (State == false)
 	{
 		return;
@@ -171,4 +175,11 @@ void ABaseWorkStation::SetIsConstructing(bool State)
 class UBaseBuildingComponent* ABaseWorkStation::GetFirstBuildingComponent()
 {
 	return BuildingComponent->GetFirstBuildingComponent();
+}
+
+
+//---------------------CheatSection-----------------------------------
+void ABaseWorkStation::ForceBuild()
+{
+	BuildingComponent->ForceBuild();
 }

@@ -78,6 +78,10 @@ bool AGameplayModeBase::GivePlayerBuildItem(FString StationName)
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::GivePlayerBuildItem IsValid(World) == false"));
 		return false;
 	}
+	if (Player->CanEquip() == false)
+	{
+		return false;
+	}
 	FActorSpawnParameters Params;
 	ABuilderItem* BuilderItem = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(0, 0, 300), FRotator(0, 0, 0), Params);
 	FName Name = *BuildingsInfo.Find(StationName);

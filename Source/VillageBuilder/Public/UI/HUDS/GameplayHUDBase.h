@@ -20,7 +20,7 @@ class VILLAGEBUILDER_API AGameplayHUDBase : public AHUD
 	GENERATED_BODY()
 
 private:
-
+	class AGameplayModeBase* GameMode;
 protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UStatWidgetBase> StatWidgetClass;

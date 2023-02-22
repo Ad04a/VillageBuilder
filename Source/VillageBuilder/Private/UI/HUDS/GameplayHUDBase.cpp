@@ -17,7 +17,7 @@ void AGameplayHUDBase::BeginPlay()
 		return;
 	}
 
-	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
+	GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
 	if (IsValid(GameMode) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(GameMode) == false"));
 		return;
@@ -66,7 +66,7 @@ void AGameplayHUDBase::BeginPlay()
 
 void AGameplayHUDBase::ShowStats(AVillager* Villager)
 {
-	if ((IsValid(PlayerOwner) && IsValid(StatWidget)) == false) {
+	if ((IsValid(PlayerOwner) && IsValid(StatWidget)) == false && IsValid(GameMode) == false) {
 		return;
 	}
 	
@@ -79,7 +79,7 @@ void AGameplayHUDBase::ShowStats(AVillager* Villager)
 
 void AGameplayHUDBase::ShowInteraction(FText ActionText)
 {
-	if ((IsValid(PlayerOwner) && IsValid(InteractionWidget)) == false) {
+	if ((IsValid(PlayerOwner) && IsValid(InteractionWidget)) == false && IsValid(GameMode) == false) {
 		return;
 	}
 	
@@ -99,7 +99,7 @@ void AGameplayHUDBase::ShowInteraction(FText ActionText)
 void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
 {
 	
-	if ((IsValid(PlayerOwner) && IsValid(TraitMenuWidget)) == false) {
+	if ((IsValid(PlayerOwner) && IsValid(TraitMenuWidget)) == false && IsValid(GameMode) == false) {
 		return;
 	}
 
@@ -119,7 +119,7 @@ void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
 
 void AGameplayHUDBase::ToggleOptions()
 {
-	if ((IsValid(PlayerOwner) && IsValid(InteractionWidget)) == false) {
+	if ((IsValid(PlayerOwner) && IsValid(UInGameOptionsWidget)) == false && IsValid(GameMode) == false) {
 		return;
 	}
 	if (UInGameOptionsWidget->IsInViewport() == true)
@@ -127,6 +127,7 @@ void AGameplayHUDBase::ToggleOptions()
 		UInGameOptionsWidget->RemoveFromViewport();
 		PlayerOwner->bShowMouseCursor = false;
 		PlayerOwner->SetInputMode(FInputModeGameOnly());
+		return;
 	}
 
 	UInGameOptionsWidget->AddToViewport();
@@ -137,27 +138,16 @@ void AGameplayHUDBase::ToggleOptions()
 
 void AGameplayHUDBase::ShowEmployeeMenu(ABaseWorkStation* WorkStation)
 {
-	if ((IsValid(PlayerOwner) && IsValid(EmployeeMenuWidget)) == false) {
-		return;
-	}
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(World) == false"));
+	if ((IsValid(PlayerOwner) && IsValid(EmployeeMenuWidget)) == false && IsValid(GameMode) == false) {
 		return;
 	}
 
-	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
-	if (IsValid(GameMode) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(GameMode) == false"));
-		return;
-	}
 	AVillageManager* CurrentVillage = GameMode->GetCurrentVillage(WorkStation);
 	if (IsValid(CurrentVillage) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(CurrentVillage) == false"));
 		return;
 	}
-	if (EmployeeMenuWidget->GetIsVisible() == true) {
+	if (EmployeeMenuWidget->IsInViewport() == true) {
 		CurrentVillage->OnVillagersUpdated.Unbind();
 		EmployeeMenuWidget->OnVillagerEmployed.Unbind();
 		EmployeeMenuWidget->RemoveFromViewport();
@@ -177,22 +167,10 @@ void AGameplayHUDBase::ShowEmployeeMenu(ABaseWorkStation* WorkStation)
 
 void AGameplayHUDBase::ShowBuildMenu()
 {
-	if ((IsValid(PlayerOwner) && IsValid(BuildMenuWidget)) == false) {
+	if ((IsValid(PlayerOwner) && IsValid(BuildMenuWidget)) == false && IsValid(GameMode) == false) {
 		return;
 	}
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(World) == false"));
-		return;
-	}
-
-	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
-	if (IsValid(GameMode) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(GameMode) == false"));
-		return;
-	}
-	if (BuildMenuWidget->GetIsVisible() == true) {
+	if (BuildMenuWidget->IsInViewport() == true) {
 		BuildMenuWidget->RemoveFromViewport();
 		BuildMenuWidget->OnBuildingSelected.Unbind();
 		PlayerOwner->bShowMouseCursor = false;

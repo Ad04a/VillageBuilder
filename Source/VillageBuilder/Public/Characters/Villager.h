@@ -118,4 +118,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	EItemType GetEquipItemType();
 
+	bool CanEquip() { return !IsValid(ItemSlot); }
+
 };

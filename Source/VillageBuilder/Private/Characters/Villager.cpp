@@ -176,15 +176,14 @@ void AVillager::Die()
 
 void AVillager::Equip(AActor* ItemToEquip)
 {
-	
+	if (CanEquip() == false)
+	{
+		return;
+	}
 	AItem* NewItem = Cast<AItem>(ItemToEquip);
 	if (IsValid(NewItem) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AVillager::Equip IsValid(NewItem) == false"));
-		return;
-	}
-	if (IsValid(ItemSlot) == true) {
-		UE_LOG(LogTemp, Warning, TEXT("AVillager::Equip ItemAlreadyEquiped"));
 		return;
 	}
 	NewItem->SetEnablePhysics(false);

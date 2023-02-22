@@ -35,11 +35,14 @@ void UBuildMenuWidgetBase::Init(TArray<FString> Buildings)
 
 void UBuildMenuWidgetBase::BuildingSelected(FString SelectedBuildingName)
 {
-	if (OnBuildingSelected.IsBound() == true)
+	if (OnBuildingSelected.IsBound() == false)
 	{
-		OnBuildingSelected.Execute(SelectedBuildingName);
-		OnCloseSignal.ExecuteIfBound();
+		return;
 	}
+	if (OnBuildingSelected.Execute(SelectedBuildingName) == false)
+	{
+	}
+	OnCloseSignal.ExecuteIfBound();
 }
 
 void UBuildMenuWidgetBase::CloseClicked()

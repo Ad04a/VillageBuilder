@@ -12,7 +12,7 @@ UBTT_GetRightStorage::UBTT_GetRightStorage()
 
 EBTNodeResult::Type UBTT_GetRightStorage::ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory)
 {
-	AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
+	/*AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
 	if (IsValid(Controller) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UBTT_GetRightStorage::ExecuteTask IsValid(Controller) == false"));
@@ -47,7 +47,7 @@ EBTNodeResult::Type UBTT_GetRightStorage::ExecuteTask(UBehaviorTreeComponent& Ow
 		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
 		return EBTNodeResult::Failed;
 	}
-	BlackBoard->SetValueAsObject(GetSelectedBlackboardKey(), StorageComponent);
+	BlackBoard->SetValueAsObject(GetSelectedBlackboardKey(), StorageComponent);*/
 	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 

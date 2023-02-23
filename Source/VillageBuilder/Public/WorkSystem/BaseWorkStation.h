@@ -110,7 +110,6 @@ protected:
 	void SetIsBuilt(bool State);
 	UFUNCTION()
 	void SetIsConstructing(bool State);
-	void ToggleStorages(bool State);
 
 public:	
 	UPROPERTY(VisibleAnywhere, Category = Identification)
@@ -126,8 +125,6 @@ public:
 	FText GetName() { return DisplayName; }
 	float GetModifier(ETrait TraitName);
 	FText GetProfessionName() { return ProfessionName; }
-	TArray<class UStorageComponent*> GetStorages();
-	UStorageComponent* GetRightStorage(TSubclassOf<class AItem> ItemClass);
 	bool GetIsBuilt() { return IsBuilt; }
 	bool GetIsConstructing() { return IsConstructing; }
 	void ForceBuild();

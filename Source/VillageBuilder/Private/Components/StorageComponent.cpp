@@ -4,83 +4,73 @@
 #include "Components/StorageComponent.h"
 #include "Characters/VillageMayor.h"
 
-
-void UStorageComponent::InteractRequest_Implementation(class AVillager* InteractingVillager)
+void UStorageComponent::Init(FStorageInfoStruct InLoadInfo )
 {
-	if (InteractingVillager->GetEquipItemType() == EItemType::Default)
-	{
-		AItem* TempItem = DropItem(GetItemClass());
-		InteractingVillager->Equip(TempItem);
-		return;
-	}
-	if (InteractingVillager->GetItem()->IsA(GetExplicitItemClass()) == false)
+	if (InLoadInfo == FStorageInfoStruct()) 
 	{
 		return;
 	}
-	AItem* TempItem = InteractingVillager->GetItem();
-	if (PlaceItem(TempItem) == false)
+	Items       = InLoadInfo.Items;
+	LockedSlots = InLoadInfo.LockedSlots;
+	ItemRows    = InLoadInfo.ItemRows;
+}
+
+FStorageInfoStruct UStorageComponent::GetSaveInfo()
+{
+	FStorageInfoStruct SaveInfo;
+	SaveInfo.Items		 = Items;
+	SaveInfo.LockedSlots = LockedSlots;
+	SaveInfo.ItemRows    = ItemRows;
+
+	return SaveInfo;
+}
+
+TPair<int, int>  UStorageComponent::CanPlace(AItem* ItemToPlace, TPair<int, int> DesiredPosition)
+{
+	int TargetSlots = ItemToPlace->GetSlots();
+	if (DesiredPosition != TPair<int, int>())
 	{
-		return;
+		return TPair<int, int>();
 	}
-	InteractingVillager->DropItem();
-	TempItem->Destroy();
+	int Start = 0;
+	int Counter = Start;
+	for (FStorageRow Row : ItemRows)
+	{
+		int Unocupied = 0;
+		for (int Slot : Row.ItemSlots)
+		{
+			if (Slot == -1)
+			{
+				Start = Counter;
+				Unocupied ++;
+			}
+			if (Unocupied == TargetSlots)
+			{
+				
+				return TPair<int, int>(ItemRows.IndexOfByKey(Row), Start);
+			}
+
+			Counter++;
+		}
+	}
+	return TPair<int, int>();
 }
 
 bool UStorageComponent::PlaceItem(AItem* InItem)
 {
-	if (IsValid(InItem) == false)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("UStorageComponent::PlaceItem IsValid(InItem) == false"));
-		return false;
-	}
-	if (GetIsFull() == true)
+	TPair<int, int> Start = CanPlace(InItem);
+	int StartRow = 0;
+	if (Start == TPair<int, int>())
 	{
 		return false;
 	}
-	Super::AddItem(InItem);
+	FItemInfoStruct ItemInfo = InItem->GetSaveInfo();
+	Items.Add(ItemInfo);
+	for (int i = 0; i < InItem->GetSlots(); i++)
+	{
+		ItemRows[Start.Key].ItemSlots[Start.Value+i] = Items.IndexOfByKey(ItemInfo);
+	}
+	InItem->Destroy();
 	return true;
-}
-
-TSubclassOf<AItem> UStorageComponent::GetItemClass()
-{
-	TArray<TSubclassOf<AItem>> TempArray = Super::GetItemTypes();
-	if (TempArray.Num() < 1)
-	{
-		return AItem::StaticClass();
-	}
-	return TempArray[0];
-}
-
-FText UStorageComponent::DisplayInteractText_Implementation()
-{
-	return FText::FromString(InteractionText + "\n" + FString::FromInt(GetCurrentNumberOfItems()) + "/" + FString::FromInt(MaxNumberOfItems));
-}
-
-bool UStorageComponent::GetIsFull()
-{
-	return GetCurrentNumberOfItems() >= MaxNumberOfItems;
-}
-
-int UStorageComponent::GetCurrentNumberOfItems()
-{
-	TArray<int> NumItems;
-	Content.GenerateValueArray(NumItems);
-	int CurrentItems = 0;
-	for (int i = 0; i < NumItems.Num(); i++)
-	{
-		CurrentItems += NumItems[i];
-	}
-	return CurrentItems;
-}
-
-void UStorageComponent::SetIsActive(bool State)
-{
-	SetCanEverAffectNavigation(State);
-	if (State == false)
-	{
-		SetCollisionProfileName(TEXT("NoCollision"));
-		return;
-	}
-	SetCollisionProfileName(TEXT("BlockAll"));
 }
 

@@ -38,7 +38,7 @@ protected:
 	class UDataTable* SecondaryDataTable = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
-	float Weight;
+	int Slots;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	FText DisplayName;
@@ -94,5 +94,7 @@ public:
 
 	UFUNCTION()
 	UMaterialInterface* GetMaterial();
+
+	int GetSlots() { return Slots; }
 
 };

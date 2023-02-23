@@ -59,7 +59,6 @@ void ABaseWorkStation::BeginPlay()
 	TraitModifiers = StationData->TraitModifiers;
 	ProfessionName = StationData->ProfessionName;
 
-	ToggleStorages(false);
 }
 
 void ABaseWorkStation::Init(FWorkStationInfoStruct InLoadInfo )
@@ -111,46 +110,6 @@ float ABaseWorkStation::GetModifier(ETrait TraitName)
 	return *TraitModifiers.Find(TraitName);
 }
 
-TArray<UStorageComponent*> ABaseWorkStation::GetStorages() 
-{
-	TArray<UStorageComponent*>TempArray;
-
-	TArray<USceneComponent*>ChildrenComponents;
-	MeshComponent->GetChildrenComponents(true, ChildrenComponents);
-	for (USceneComponent* Child : ChildrenComponents)
-	{
-		UStorageComponent* StorageComponent = Cast<UStorageComponent>(Child);
-		if (IsValid(StorageComponent) == false) {
-			continue;
-		}
-		TempArray.Add(StorageComponent);
-	}
-	return TempArray;
-}
-
-UStorageComponent* ABaseWorkStation::GetRightStorage(TSubclassOf<class AItem> ItemClass)
-{
-	TArray<UStorageComponent*>Storages = GetStorages();
-	for (UStorageComponent* Storage : Storages)
-	{
-		if (Storage->GetExplicitItemClass() != ItemClass)
-		{
-			continue;
-		}
-		return Storage;
-	}
-	return nullptr;
-}
-
-void ABaseWorkStation::ToggleStorages(bool State)
-{
-	TArray<UStorageComponent*>Storages = GetStorages();
-	for (UStorageComponent* Storage : Storages)
-	{
-		Storage->SetIsActive(State);
-	}
-}
-
 void ABaseWorkStation::SetIsBuilt(bool State)
 {
 	IsBuilt = State;
@@ -159,7 +118,6 @@ void ABaseWorkStation::SetIsBuilt(bool State)
 		return;
 	}
 	OnBuildingReady.ExecuteIfBound(this);
-	ToggleStorages(State);
 }
 
 void ABaseWorkStation::SetIsConstructing(bool State)

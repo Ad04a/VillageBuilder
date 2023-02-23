@@ -81,7 +81,7 @@ void AItem::LoadFromDataTable()
 		return;
 	}
 
-	Weight			= ItemData->Weight;
+	Slots			= ItemData->Slots;
 	DisplayName		= ItemData->DisplayName;
 	Description		= ItemData->Description;
 	ItemType		= ItemData->ItemType;

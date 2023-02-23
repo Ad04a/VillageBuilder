@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/BoxComponent.h"
 #include "Items/Item.h"
 #include "ItemCarrierComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class VILLAGEBUILDER_API UItemCarrierComponent : public UBoxComponent
+class VILLAGEBUILDER_API UItemCarrierComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -18,15 +17,11 @@ public:
 	UItemCarrierComponent();
 
 protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, Category = Content)
 	TMap<TSubclassOf<AItem>, int> Content;
 
 public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void AddItem(AItem* Item);
 

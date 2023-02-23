@@ -27,7 +27,7 @@ struct FItemData : public FTableRowBase
 	FText Description;
 
 	UPROPERTY(EditAnywhere)
-	float Weight;
+	int Slots;
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EItemType> ItemType;

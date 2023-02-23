@@ -3,46 +3,72 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ItemCarrierComponent.h"
-#include "Headers/Interactable.h"
+#include "Items/Item.h"
 #include "StorageComponent.generated.h"
 
-/**
- * 
- */
+USTRUCT(BlueprintType)
+struct FStorageRow
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, Category = Content)
+	TArray<int> ItemSlots;
+
+	inline bool operator==(const FStorageRow& other) const
+	{
+		return (other.ItemSlots == ItemSlots);
+	}
+	inline bool operator != (const FStorageRow& other) const
+	{
+		return !(other.ItemSlots == ItemSlots);
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FStorageInfoStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TArray<FItemInfoStruct> Items;
+
+	UPROPERTY(EditDefaultsOnly, Category = Content)
+	TArray<int> LockedSlots;
+
+	UPROPERTY(EditDefaultsOnly, Category = Content)
+	TArray<FStorageRow> ItemRows;
+
+	inline bool operator==(const FStorageInfoStruct& other) const
+	{
+		return (other.Items == Items && other.ItemRows == ItemRows);
+	}
+	inline bool operator != (const FStorageInfoStruct& other) const
+	{
+		return !(other.Items == Items && other.ItemRows == ItemRows);
+	}
+};
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class VILLAGEBUILDER_API UStorageComponent : public UItemCarrierComponent, public IInteractable
+class VILLAGEBUILDER_API UStorageComponent : public UActorComponent
 {
 	GENERATED_BODY()
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = Content)
-	int MaxNumberOfItems;
+	TArray<FItemInfoStruct> Items;
 
 	UPROPERTY(EditDefaultsOnly, Category = Content)
-	TSubclassOf<AItem> ExplicitItemClass;
+	TArray<int> LockedSlots;
 
 	UPROPERTY(EditDefaultsOnly, Category = Content)
-	TArray<FTransform> ItemTransforms;
+	TArray<FStorageRow> ItemRows;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Interact")
-	FString InteractionText;
+	TPair<int, int> CanPlace(AItem* ItemToPlace, TPair<int, int> DesiredPosition = TPair<int, int>());
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	void InteractRequest(class AVillager* InteractingVillager);
-	virtual void InteractRequest_Implementation(class AVillager* InteractingVillager);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	FText DisplayInteractText();
-	virtual FText DisplayInteractText_Implementation();
-
+public:
+	void Init(FStorageInfoStruct InLoadInfo = FStorageInfoStruct());
+	FStorageInfoStruct GetSaveInfo();
 	bool PlaceItem(AItem* InItem);
 
-	TSubclassOf<AItem> GetItemClass();
-	int GetCurrentNumberOfItems();
-public:
-	TSubclassOf<AItem> GetExplicitItemClass()const {return ExplicitItemClass;}
-	bool GetIsFull();
-	void SetIsActive(bool State);
 
 };

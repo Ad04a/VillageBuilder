@@ -53,10 +53,10 @@ struct FItemInfoStruct
 
 	inline bool operator==(const FItemInfoStruct& other) const
 	{
-		return other.ItemClass == ItemClass;
+		return (other.ItemClass == ItemClass && other.Transform.GetLocation() == Transform.GetLocation());
 	}
 	inline bool operator != (const FItemInfoStruct& other) const
 	{
-		return !(other.ItemClass == ItemClass);
+		return !(other.ItemClass == ItemClass && other.Transform.GetLocation() == Transform.GetLocation());
 	}
 };

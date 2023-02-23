@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Items/Item.h"
+#include "Engine/DataTable.h"
 #include "StorageComponent.generated.h"
 
 USTRUCT(BlueprintType)
@@ -11,7 +12,7 @@ struct FStorageRow
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, Category = Content)
+	UPROPERTY(EditAnywhere, Category = Content)
 	TArray<int> ItemSlots;
 
 	inline bool operator==(const FStorageRow& other) const
@@ -35,7 +36,7 @@ struct FStorageInfoStruct
 	UPROPERTY(EditDefaultsOnly, Category = Content)
 	TArray<int> LockedSlots;
 
-	UPROPERTY(EditDefaultsOnly, Category = Content)
+	UPROPERTY(EditAnywhere, Category = Content)
 	TArray<FStorageRow> ItemRows;
 
 	inline bool operator==(const FStorageInfoStruct& other) const
@@ -48,19 +49,33 @@ struct FStorageInfoStruct
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FStorageData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, Category = Content)
+	TArray<FStorageRow> ItemRows;
+};
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VILLAGEBUILDER_API UStorageComponent : public UActorComponent
 {
 	GENERATED_BODY()
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = Content)
+	UDataTable* StorageDataTable;
 
 	UPROPERTY(EditDefaultsOnly, Category = Content)
+	FName RollToRead = "Station";
+
+	UPROPERTY(VisibleAnywhere, Category = Content)
 	TArray<FItemInfoStruct> Items;
 
-	UPROPERTY(EditDefaultsOnly, Category = Content)
+	UPROPERTY(VisibleAnywhere, Category = Content)
 	TArray<int> LockedSlots;
 
-	UPROPERTY(EditDefaultsOnly, Category = Content)
+	UPROPERTY(VisibleAnywhere, Category = Content)
 	TArray<FStorageRow> ItemRows;
 
 	TPair<int, int> CanPlace(AItem* ItemToPlace, TPair<int, int> DesiredPosition = TPair<int, int>());

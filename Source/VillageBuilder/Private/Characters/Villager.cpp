@@ -4,6 +4,7 @@
 #include "Characters/Villager.h"
 #include "Characters/VillageMayor.h"
 #include "GameModes/GameplayModeBase.h"
+#include "Components/StorageComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -12,6 +13,7 @@ AVillager::AVillager()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	OnTakeAnyDamage.AddDynamic(this, &AVillager::RecieveDamage);
+	Inventory = CreateDefaultSubobject<UStorageComponent>(TEXT("Iventory"));
 }
 
 void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
@@ -32,6 +34,7 @@ void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
 		}
 		bIsLoadingFromFile = true;
 	}
+	Inventory->Init(InLoadInfo.InventoryInfo);
 	if (InName != "")
 	{
 		Name = InName;
@@ -105,11 +108,12 @@ void AVillager::CalculateStats()
 FVillagerLoadInfoStruct AVillager::GetSaveInfo()
 {
 	FVillagerLoadInfoStruct SaveInfo;
-	SaveInfo.Name	   = Name;
-	SaveInfo.TraitsMap = TraitsMap;
-	SaveInfo.StatsMap  = StatsMap;
-	SaveInfo.Transform = GetActorTransform();
-	SaveInfo.ID		   = ID;
+	SaveInfo.Name	       = Name;
+	SaveInfo.TraitsMap     = TraitsMap;
+	SaveInfo.StatsMap      = StatsMap;
+	SaveInfo.Transform     = GetActorTransform();
+	SaveInfo.ID			   = ID;
+	SaveInfo.InventoryInfo = Inventory->GetSaveInfo();
 	if (ItemSlot != nullptr)
 	{
 		SaveInfo.HoldingItem = ItemSlot->GetSaveInfo();
@@ -178,15 +182,21 @@ void AVillager::Die()
 
 void AVillager::Equip(AActor* ItemToEquip)
 {
-	if (CanEquip() == false)
-	{
-		return;
-	}
 	AItem* NewItem = Cast<AItem>(ItemToEquip);
 	if (IsValid(NewItem) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AVillager::Equip IsValid(NewItem) == false"));
 		return;
+	}
+	if (CanEquip() == false)
+	{
+		if (Inventory->PlaceItem(NewItem) == false)
+		{
+			if (Inventory->PlaceItem(ItemSlot) == false)
+			{
+				return;
+			}
+		}
 	}
 	NewItem->SetEnablePhysics(false);
 	ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));

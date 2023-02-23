@@ -62,6 +62,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float SaturationForPassiveHealing = 0.5;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	class UStorageComponent* Inventory;
+
 	FRotator MovementInputRotator;
 
 	bool bCanUseItems = true;

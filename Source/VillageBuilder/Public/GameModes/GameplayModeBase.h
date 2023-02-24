@@ -14,6 +14,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FErrorHandleSignature);
 
+
 UCLASS()
 class VILLAGEBUILDER_API AGameplayModeBase : public AGameModeBase
 {
@@ -41,6 +42,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameStart")
 	TSubclassOf<AVillageManager> VillageClass;
+
+	UPROPERTY(VisibleAnywhere, Category = "DataLinks")
+	TArray<UObject*> CurrentDataLinks;
+
+	void ReleaseDataLink(class UDataLink* InDataLink);
 
 	UPROPERTY()
 	AVillageManager* Village; //TArray Villages for multicolony feature
@@ -77,7 +83,9 @@ public:
 	UFUNCTION()
 	void EndGame();
 
+	void LockDataLink(class UDataLink* InDataLink);
 
+	//---------------------CheatSection-----------------------------------
 	UFUNCTION(Exec, Category = Cheat)
 	void ForceBuildComponents();
 };

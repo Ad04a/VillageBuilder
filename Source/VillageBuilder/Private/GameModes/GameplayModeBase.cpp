@@ -1,13 +1,13 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+#include "Kismet/GameplayStatics.h"
 
 #include "GameModes/GameplayModeBase.h"
 #include "GameModes/VillageBuilderGameInstance.h"
-#include "Kismet/GameplayStatics.h"
 #include "VillageBuilderSaveGame.h"
 #include "VillageBuilderPlayerController.h"
-
 #include "Components/BaseBuildingComponent.h"
+#include "DataTransfers/DataLink.h"
 
 void AGameplayModeBase::StartPlay() {
 
@@ -178,7 +178,16 @@ TArray<FString> AGameplayModeBase::GetAllBuildingNames()
 	return Names;
 }
 
+void AGameplayModeBase::LockDataLink(UDataLink* InDataLink)
+{
+	CurrentDataLinks.Add(InDataLink);
+	InDataLink->OnLinkBroken.BindDynamic(this, &AGameplayModeBase::ReleaseDataLink);
+}
 
+void AGameplayModeBase::ReleaseDataLink(UDataLink* InDataLink)
+{
+	CurrentDataLinks.Remove(InDataLink);
+}
 
 //---------------------CheatSection-----------------------------------
 

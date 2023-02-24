@@ -1,18 +1,21 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "UI/Widgets/Gameplay/EmployeeMenuWidgetBase.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/ScrollBox.h"
+#include "Components/TextBlock.h"
 
-void UEmployeeMenuWidgetBase::Init(ABaseWorkStation* WorkStation)
+#include "UI/Widgets/Gameplay/Employment/EmployeeMenuWidgetBase.h"
+#include "UI/Widgets/Gameplay/Employment/EmployeeWidgetBase.h"
+
+void UEmployeeMenuWidgetBase::Init()
 {
-	CurrentWorkStation = WorkStation;
-	StationName->SetText(CurrentWorkStation->GetName());
+	/*CurrentWorkStation = WorkStation;
+	StationName->SetText(CurrentWorkStation->GetName());*/
 }
 
-void UEmployeeMenuWidgetBase::LoadVillagerWidgets(TArray<AVillager*> Villagers)
+void UEmployeeMenuWidgetBase::LoadVillagerWidgets()
 {
-	UWorld* World = GetWorld();
+	/*UWorld* World = GetWorld();
 	if (IsValid(World) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UEmployeeMenuWidgetBase::LoadVillagerWidgets IsValid(World) == false"));
@@ -36,7 +39,7 @@ void UEmployeeMenuWidgetBase::LoadVillagerWidgets(TArray<AVillager*> Villagers)
 		EmployeeWidget->OnManageButtonClicked.BindDynamic(this, &UEmployeeMenuWidgetBase::ManageButtonClicked);
 		VillagerScrollBox->AddChild(EmployeeWidget);
 
-	}
+	}*/
 }
 
 void UEmployeeMenuWidgetBase::ManageButtonClicked(UEmployeeWidgetBase* EmitterWidget)
@@ -45,5 +48,5 @@ void UEmployeeMenuWidgetBase::ManageButtonClicked(UEmployeeWidgetBase* EmitterWi
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UEmployeeMenuWidgetBase::ManageButtonClicked IsValid(EmitterWidget) == false ChildIndex: %d"), VillagerScrollBox->GetChildIndex(EmitterWidget));
 	}
-	OnVillagerEmployed.ExecuteIfBound(CurrentWorkStation, VillagerScrollBox->GetChildIndex(EmitterWidget));
+	OnVillagerEmployed.ExecuteIfBound(VillagerScrollBox->GetChildIndex(EmitterWidget));
 }

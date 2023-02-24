@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/ScrollBox.h"
-#include "UI/Widgets/Gameplay/InventoryRowWidgetBase.h"
 #include "InventoryWidgetBase.generated.h"
 
 /**
@@ -22,7 +21,7 @@ protected:
 	class UScrollBox* InventoryScrollBox;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UInventoryRowWidgetBase> InventoryRowClass;
+	TSubclassOf<class UInventoryRowWidgetBase> InventoryRowClass;
 
 
 public:

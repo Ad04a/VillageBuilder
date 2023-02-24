@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/Widgets/Gameplay/StatWidgetBase.h"
+#include "UI/Widgets/Gameplay/StatsAndTraits/StatWidgetBase.h"
 void UStatWidgetBase::NativeOnInitialized() {
 	StatMap.Add(EStat::Hunger, HungerBar);
 	StatMap.Add(EStat::Energy, EnergyBar);

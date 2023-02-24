@@ -1,10 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/Widgets/Gameplay/EmployeeWidgetBase.h"
 #include "Styling/SlateColor.h"
+#include "Components/TextBlock.h"
+#include "Components/Button.h"
 
-void UEmployeeWidgetBase::NativeOnInitialized()
+#include "UI/Widgets/Gameplay/StatsAndTraits/TraitWidgetBase.h"
+
+void UTraitWidgetBase::NativeOnInitialized()
 {
 	TextBlocks.Add(ETrait::Vitality, Vitality);
 	TextBlocks.Add(ETrait::Survivability, Survivability);
@@ -18,12 +21,11 @@ void UEmployeeWidgetBase::NativeOnInitialized()
 	TraitNames.Add(ETrait::Strength, FString("Strength"));
 	TraitNames.Add(ETrait::Dexterity, FString("Dexterity"));
 
-	ManageButton->OnClicked.AddDynamic(this, &UEmployeeWidgetBase::ManageButtonCliked);
 }
 
-void UEmployeeWidgetBase::Init(AVillager* Villager, ABaseWorkStation* WorkStation)
+void UTraitWidgetBase::Init()
 {
-	CurrentVillager = Villager;
+	/*CurrentVillager = Villager;
 	ManageButtonText->SetText(FText::FromString("Hire"));
 	int Color = 0;
 	if ((Villager->GetWorkStation() == WorkStation)) {
@@ -36,10 +38,10 @@ void UEmployeeWidgetBase::Init(AVillager* Villager, ABaseWorkStation* WorkStatio
 	for (ETrait Trait : TEnumRange<ETrait>())
 	{
 		SetTrait(Trait, Villager->GetTrait(Trait), GetTraitColor(WorkStation->GetModifier(Trait)));
-	}
+	}*/
 }
 
-void UEmployeeWidgetBase::SetTrait(ETrait TraitName, int Value, FSlateColor Color)
+void UTraitWidgetBase::SetTrait(ETrait TraitName, int Value, FSlateColor Color)
 {
 	UTextBlock* TextBlock = *TextBlocks.Find(TraitName);
 	FString Text = *TraitNames.Find(TraitName);
@@ -47,16 +49,12 @@ void UEmployeeWidgetBase::SetTrait(ETrait TraitName, int Value, FSlateColor Colo
 		UE_LOG(LogTemp, Error, TEXT("UEmployeeWidgetBase::SetTrait IsValid(Trait) == false"));
 		return;
 	}
-	TextBlock->SetText(FText::FromString(Text+ " " + FString::FromInt(Value)));
+	TextBlock->SetText(FText::FromString(Text + " " + FString::FromInt(Value)));
 	TextBlock->SetColorAndOpacity(Color);
 }
 
-void UEmployeeWidgetBase::ManageButtonCliked()
-{
-	OnManageButtonClicked.ExecuteIfBound(this);
-}
 
-FSlateColor UEmployeeWidgetBase::GetTraitColor(float Modifier)
+FSlateColor UTraitWidgetBase::GetTraitColor(float Modifier)
 {
 	if (Modifier <= -1)
 	{

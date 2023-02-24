@@ -4,19 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/ScrollBox.h"
-#include "Components/TextBlock.h"
-#include "UI/Widgets/Gameplay/EmployeeWidgetBase.h"
 #include "EmployeeMenuWidgetBase.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_TwoParams(FEmploymentButtonSignature, ABaseWorkStation*, WorkStation, int, VillagerID);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FEmploymentButtonSignature, int, VillagerID);
 
 UCLASS()
 class VILLAGEBUILDER_API UEmployeeMenuWidgetBase : public UUserWidget
 {
 	GENERATED_BODY()
 private:
-	ABaseWorkStation* CurrentWorkStation = nullptr;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* StationName;
@@ -25,16 +21,16 @@ protected:
 	class UScrollBox* VillagerScrollBox;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UEmployeeWidgetBase> EmployeeWidgetClass;
+	TSubclassOf<class UEmployeeWidgetBase> EmployeeWidgetClass;
 
 	UFUNCTION()
 	void ManageButtonClicked(UEmployeeWidgetBase* EmitterWidget);
 
 public:
-	void Init(ABaseWorkStation* WorkStation);
+	void Init();
 
 	UFUNCTION()
-	void LoadVillagerWidgets(TArray<AVillager*> Villagers);
+	void LoadVillagerWidgets();
 
 	FEmploymentButtonSignature OnVillagerEmployed;
 };

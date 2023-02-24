@@ -10,6 +10,7 @@
 #include "UI/Widgets/Gameplay/EmployeeMenuWidgetBase.h"
 #include "UI/Widgets/Gameplay/InGameOptionsWidgetBase.h"
 #include "UI/Widgets/Gameplay/BuildMenuWidgetBase.h"
+#include "UI/Widgets/Gameplay/InventoryWidgetBase.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "GameplayHUDBase.generated.h"
 
@@ -57,6 +58,10 @@ protected:
 
 	UPROPERTY()
 	class UBuildMenuWidgetBase* BuildMenuWidget;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UInventoryWidgetBase> InventoryWidgetBaseClass;
+
 	
 	virtual void BeginPlay()override;
 

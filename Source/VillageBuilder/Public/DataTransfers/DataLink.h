@@ -16,12 +16,23 @@ enum EDataLinkType {
 	VillagerStation		UMETA(DisplayName = "VillagerStation")
 };
 
+UENUM(BlueprintType)
+enum EVisualiationTypes {
+	StatAndTrait UMETA(DisplayName = "StatAndTrait"),
+	Inventory    UMETA(DisplayName = "Inventory"),
+	Employment 	 UMETA(DisplayName = "Employment")
+};
+
 UCLASS()
 class VILLAGEBUILDER_API UDataLink : public UObject
 {
 	GENERATED_BODY()
 
 protected:
+
+	static TMap<TEnumAsByte<EVisualiationTypes>, TSubclassOf<class UVisualizationInfo>> TypesMap;
+
+
 	UPROPERTY(VisibleAnywhere)
 	AActor* Initiator;
 
@@ -41,6 +52,7 @@ protected:
 
 	void BreakConnection();
 
+	static void InitRelations();
 public:
 
 	FLinkBrokenSignature OnLinkBroken;

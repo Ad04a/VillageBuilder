@@ -4,13 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "UI/Widgets/Gameplay/StatWidgetBase.h"
-#include "UI/Widgets/Gameplay/InteractionWidgetBase.h"
-#include "UI/Widgets/Gameplay/TraitMenuWidgetBase.h"
-#include "UI/Widgets/Gameplay/EmployeeMenuWidgetBase.h"
-#include "UI/Widgets/Gameplay/InGameOptionsWidgetBase.h"
-#include "UI/Widgets/Gameplay/BuildMenuWidgetBase.h"
-#include "UI/Widgets/Gameplay/InventoryWidgetBase.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "GameplayHUDBase.generated.h"
 
@@ -24,43 +17,43 @@ private:
 	class AGameplayModeBase* GameMode;
 protected:
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UStatWidgetBase> StatWidgetClass;
+	TSubclassOf<class UStatWidgetBase> StatWidgetClass;
 
 	UPROPERTY()
 	class UStatWidgetBase* StatWidget;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UInteractionWidgetBase> InteractionWidgetClass;
+	TSubclassOf<class UInteractionWidgetBase> InteractionWidgetClass;
 
 	UPROPERTY()
 	class UInteractionWidgetBase* InteractionWidget;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UTraitMenuWidgetBase> TraitMenuWidgetClass;
+	TSubclassOf<class UTraitMenuWidgetBase> TraitMenuWidgetClass;
 
 	UPROPERTY()
 	class UTraitMenuWidgetBase* TraitMenuWidget;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UEmployeeMenuWidgetBase> EmployeeMenuWidgetClass;
+	TSubclassOf<class UEmployeeMenuWidgetBase> EmployeeMenuWidgetClass;
 
 	UPROPERTY()
 	class UEmployeeMenuWidgetBase* EmployeeMenuWidget;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UInGameOptionsWidgetBase> InGameOptionsWidgetClass;
+	TSubclassOf<class UInGameOptionsWidgetBase> InGameOptionsWidgetClass;
 
 	UPROPERTY()
 	class UInGameOptionsWidgetBase* UInGameOptionsWidget;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UBuildMenuWidgetBase> BuildMenuWidgetBaseClass;
+	TSubclassOf<class UBuildMenuWidgetBase> BuildMenuWidgetBaseClass;
 
 	UPROPERTY()
 	class UBuildMenuWidgetBase* BuildMenuWidget;
 	
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UInventoryWidgetBase> InventoryWidgetBaseClass;
+	TSubclassOf<class UInventoryWidgetBase> InventoryWidgetBaseClass;
 
 	
 	virtual void BeginPlay()override;

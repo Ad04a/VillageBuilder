@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "UI/Widgets/Gameplay/TraitMenuWidgetBase.h"
+#include "UI/Widgets/Gameplay/StatsAndTraits/TraitMenuWidgetBase.h"
 
 void UTraitMenuWidgetBase::SetStat(EStat StatName, float Current, float Max)
 {

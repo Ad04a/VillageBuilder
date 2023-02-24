@@ -5,6 +5,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 
+#include "UI/Widgets/Gameplay/InteractionWidgetBase.h"
+#include "UI/Widgets/Gameplay/InGameOptionsWidgetBase.h"
+#include "UI/Widgets/Gameplay/StatsAndTraits/StatWidgetBase.h"
+#include "UI/Widgets/Gameplay/StatsAndTraits/TraitMenuWidgetBase.h"
+#include "UI/Widgets/Gameplay/Employment/EmployeeMenuWidgetBase.h"
+#include "UI/Widgets/Gameplay/Building/BuildMenuWidgetBase.h"
+#include "UI/Widgets/Gameplay/Inventory/InventoryWidgetBase.h"
 
 void AGameplayHUDBase::BeginPlay()
 {
@@ -155,10 +162,8 @@ void AGameplayHUDBase::ShowEmployeeMenu(ABaseWorkStation* WorkStation)
 		PlayerOwner->SetInputMode(FInputModeGameOnly());
 		return;
 	}
-	EmployeeMenuWidget->Init(WorkStation);
-	EmployeeMenuWidget->OnVillagerEmployed.BindDynamic(CurrentVillage, &AVillageManager::ManageEmployment);
-	CurrentVillage->OnVillagersUpdated.BindDynamic(EmployeeMenuWidget, &UEmployeeMenuWidgetBase::LoadVillagerWidgets);
-	EmployeeMenuWidget->LoadVillagerWidgets(CurrentVillage->GetAllVillagers());
+	EmployeeMenuWidget->Init();
+	EmployeeMenuWidget->LoadVillagerWidgets();
 	EmployeeMenuWidget->AddToViewport();
 	PlayerOwner->bShowMouseCursor = true;
 	PlayerOwner->SetInputMode(FInputModeGameAndUI());

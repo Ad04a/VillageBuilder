@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/WrapBox.h"
-#include "UI/Widgets/Gameplay/InventorySlotWidgetBase.h"
 #include "InventoryRowWidgetBase.generated.h"
 
 /**
@@ -22,5 +21,5 @@ protected:
 	class UWrapBox* ContentWrapBox;
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UInventorySlotWidgetBase> InventorySlotClass;
+	TSubclassOf<class UInventorySlotWidgetBase> InventorySlotClass;
 };

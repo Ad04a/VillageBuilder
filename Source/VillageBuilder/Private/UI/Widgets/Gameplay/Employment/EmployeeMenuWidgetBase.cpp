@@ -1,11 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Blueprint/WidgetLayoutLibrary.h"
-#include "Components/ScrollBox.h"
-#include "Components/TextBlock.h"
 
 #include "UI/Widgets/Gameplay/Employment/EmployeeMenuWidgetBase.h"
 #include "UI/Widgets/Gameplay/Employment/EmployeeWidgetBase.h"
+
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/ScrollBox.h"
+#include "Components/TextBlock.h"
 
 void UEmployeeMenuWidgetBase::Init()
 {

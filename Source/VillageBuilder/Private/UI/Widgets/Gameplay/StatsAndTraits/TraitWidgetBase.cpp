@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "UI/Widgets/Gameplay/StatsAndTraits/TraitWidgetBase.h"
 
 #include "Styling/SlateColor.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
 
-#include "UI/Widgets/Gameplay/StatsAndTraits/TraitWidgetBase.h"
 
 void UTraitWidgetBase::NativeOnInitialized()
 {
@@ -23,7 +23,7 @@ void UTraitWidgetBase::NativeOnInitialized()
 
 }
 
-void UTraitWidgetBase::Init()
+void UTraitWidgetBase::Init(TMap<TEnumAsByte<ETrait>, int> InTraitMap, TMap<TEnumAsByte<ETrait>, float> Scaling)
 {
 	/*CurrentVillager = Villager;
 	ManageButtonText->SetText(FText::FromString("Hire"));

@@ -13,7 +13,7 @@ class VILLAGEBUILDER_API UTraitWidgetBase : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	TMap<TEnumAsByte<ETrait>, UTextBlock*> TextBlocks;
+	TMap<TEnumAsByte<ETrait>, class UTextBlock*> TextBlocks;
 	TMap<TEnumAsByte<ETrait>, FString> TraitNames;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
@@ -39,7 +39,7 @@ protected:
 	FSlateColor GetTraitColor(float Modifier);
 
 public:
-	void Init();
+	void Init(TMap<TEnumAsByte<ETrait>, int> InTraitMap, TMap<TEnumAsByte<ETrait>, float> Scaling = TMap<TEnumAsByte<ETrait>, float>());
 
 	void NativeOnInitialized() override;
 

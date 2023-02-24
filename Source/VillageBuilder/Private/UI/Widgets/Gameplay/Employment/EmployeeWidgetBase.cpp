@@ -2,12 +2,12 @@
 
 
 
+#include "UI/Widgets/Gameplay/Employment/EmployeeWidgetBase.h"
+#include "UI/Widgets/Gameplay/StatsAndTraits/TraitWidgetBase.h"
+
 #include "Styling/SlateColor.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
-
-#include "UI/Widgets/Gameplay/Employment/EmployeeWidgetBase.h"
-#include "UI/Widgets/Gameplay/StatsAndTraits/TraitWidgetBase.h"
 
 void UEmployeeWidgetBase::NativeOnInitialized()
 {
@@ -16,7 +16,7 @@ void UEmployeeWidgetBase::NativeOnInitialized()
 
 void UEmployeeWidgetBase::Init()
 {
-	TraitWidget->Init();
+	//TraitWidget->Init();
 }
 
 

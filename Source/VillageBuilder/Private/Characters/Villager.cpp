@@ -76,7 +76,7 @@ void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
 		}
 		Trait->Level = FMath::RandRange(1, PossibleLevel);
 	}
-
+	CalculateStats();
 }
 
 void AVillager::CalculateStats()
@@ -156,7 +156,9 @@ void AVillager::Tick(float DeltaTime)
 		AddStatValue(EStat::Health, Health->Max * -0.01);
 	}
 
-	if (Hunger->Current > Hunger->Max * SaturationForPassiveHealing && Thirst->Current > Thirst->Max * SaturationForPassiveHealing) {
+	if (Hunger->Current > Hunger->Max * SaturationForPassiveHealing && 
+		Thirst->Current > Thirst->Max * SaturationForPassiveHealing && 
+		Health->Current < Health->Max) {
 
 		AddStatValue(EStat::Health, Health->ChangeValue);
 	}
@@ -236,10 +238,11 @@ void AVillager::RecieveXP(ETrait, int XPAmount)
 
 void AVillager::AcknowledgeWidgetBinding()
 {
-	AddStatValue(EStat::Hunger, 0);
-	AddStatValue(EStat::Energy, 0);
-	AddStatValue(EStat::Thirst, 0);
-	AddStatValue(EStat::Health, 0);
+	for (EStat Stat : TEnumRange<EStat>())
+	{
+		FStatInfoStruct* StatStruct = StatsMap.Find(Stat);
+		OnStatUpdated.Broadcast(Stat, StatStruct->Current, StatStruct->Max);
+	}
 
 }
 
@@ -333,9 +336,13 @@ void AVillager::AddStatValue(EStat StatName, float InValue)
 		UE_LOG(LogTemp, Error, TEXT("AVillager::AddStatValue IsValid(Stat) == false"));
 		return;
 	}
-	
-	Stat->Current = FMath::Clamp(Stat->Current+InValue, 0, Stat->Max);
-
+	UE_LOG(LogTemp, Display, TEXT("UStatsAndTraitsVisualInfo::PassStatUpdate: %s - %f / %f"), *UEnum::GetValueAsString(StatName), Stat->Current, InValue);
+	float NewValue = FMath::Clamp(Stat->Current + InValue, 0, Stat->Max);
+	if (NewValue == Stat->Current)
+	{
+		return;
+	}
+	Stat->Current = NewValue;
 	OnStatUpdated.Broadcast(StatName,Stat->Current, Stat->Max);
 }
 

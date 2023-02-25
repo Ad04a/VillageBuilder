@@ -20,13 +20,28 @@ UVisualizationInfo* UStatsAndTraitsVisualInfo::CreateVisualInfo(AActor* InActor)
 		return nullptr;
 	}
 	Info->Name = Villager->GetName();
+	Info->LinkedVillager = Villager;
 	for (ETrait Trait : TEnumRange<ETrait>())
 	{
 		Info->TraitMap.Add(Trait, Villager->GetTrait(Trait));
 	};
-	TMap<TEnumAsByte<ETrait>, float> Scaling;
-	//Villager->OnStatUpdated.AddDynamic(this, &UTraitMenuWidgetBase::SetStat);
-	//Villager->AcknowledgeWidgetBinding();
-
+	Info->LinkedVillager->OnStatUpdated.AddDynamic(Info, &UStatsAndTraitsVisualInfo::PassStatUpdate);
 	return Info;
+}
+
+void UStatsAndTraitsVisualInfo::PassStatUpdate(EStat StatName, float Current, float Max)
+{
+	OnStatUpdated.ExecuteIfBound(StatName, Current, Max);
+}
+
+void UStatsAndTraitsVisualInfo::NotifyLinked()
+{
+	LinkedVillager->AcknowledgeWidgetBinding(); 
+}
+
+void UStatsAndTraitsVisualInfo::Clear()
+{
+	LinkedVillager->OnStatUpdated.RemoveDynamic(this, &UStatsAndTraitsVisualInfo::PassStatUpdate);
+	OnStatUpdated.Unbind();
+	LinkedVillager = nullptr;
 }

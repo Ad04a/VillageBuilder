@@ -72,11 +72,11 @@ void AGameplayHUDBase::VisualizeDataLink(UDataLink* InDataLink)
 		return;
 	}
 	DataLinkWidget->Init(InDataLink->GetInitiatorInfo(), InDataLink->GetTargetInfo());
-	DataLinkWidget->AddToViewport();
 	DataLinkWidget->OnLinkClosed.AddDynamic(InDataLink, &UDataLink::BreakConnection);
 	InDataLink->OnLinkBroken.AddDynamic(this, &AGameplayHUDBase::VisualizeDataLink);
 	PlayerOwner->bShowMouseCursor = true;
 	PlayerOwner->SetInputMode(FInputModeUIOnly());
+	DataLinkWidget->AddToViewport();
 }
 
 void AGameplayHUDBase::ShowInteraction(FText ActionText)

@@ -100,6 +100,14 @@ void UDataLink::BreakConnection()
 	{
 		
 	}
+	for(TPair<TEnumAsByte<EVisualiationTypes>, UVisualizationInfo*> Info : InitiatorInfo)
+	{
+		Info.Value->Clear();
+	}
+	for(TPair<TEnumAsByte<EVisualiationTypes>, UVisualizationInfo*> Info : TargetInfo)
+	{
+		Info.Value->Clear();
+	}
 	Initiator = nullptr;
 	Target 	  = nullptr;
 	InitiatorInfo.Empty();

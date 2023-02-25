@@ -13,4 +13,6 @@ UCLASS(Abstract)
 class VILLAGEBUILDER_API UVisualizationInfo : public UObject
 {
 	GENERATED_BODY()
+public:
+	virtual void Clear() PURE_VIRTUAL(UVisualizationInfo::Clear, );
 };

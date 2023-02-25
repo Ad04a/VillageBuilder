@@ -9,12 +9,6 @@ void UStatWidgetBase::NativeOnInitialized() {
 	StatMap.Add(EStat::Thirst, ThirstBar);
 }
 
-void UStatWidgetBase::Init(AVillager* Villager)
-{
-	Villager->OnStatUpdated.AddDynamic(this, &UStatWidgetBase::SetStat);
-	Villager->AcknowledgeWidgetBinding();
-}
-
 void UStatWidgetBase::SetStat(EStat StatName, float Current, float Max)
 {
 	UProgressBar** ProgressBar = StatMap.Find(StatName);

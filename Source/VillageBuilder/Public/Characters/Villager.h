@@ -32,7 +32,7 @@ private:
 
 	AVillager* InteractingWith = nullptr;
 
-
+	bool bIsBinding = false;
 protected:
 	virtual void Tick(float DeltaTime) override;
 
@@ -125,4 +125,5 @@ public:
 
 	bool CanEquip() { return !IsValid(ItemSlot); }
 
+	void SetBindingState(bool State) { bIsBinding = State; }
 };

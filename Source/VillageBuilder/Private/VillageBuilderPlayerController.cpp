@@ -46,7 +46,7 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::ShowTraitMenu);
 	InputComponent->BindAction(DropItemBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::DropItem);
 
-	//InputComponent->BindAction(InGameOptionsBinding, IE_Pressed, HUD, &AGameplayHUDBase::ToggleOptions);
+	InputComponent->BindAction(InGameOptionsBinding, IE_Pressed, HUD, &AGameplayHUDBase::ToggleOptions);
 	//InputComponent->BindAction(OpenBuildMenuBinding, IE_Pressed, HUD, &AGameplayHUDBase::ShowBuildMenu);
 
 	//ControlledVillageMayorPawn->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);

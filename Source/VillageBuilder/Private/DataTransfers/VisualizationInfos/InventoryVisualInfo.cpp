@@ -14,3 +14,7 @@ UVisualizationInfo* UInventoryVisualInfo::CreateVisualInfo(AActor* InActor)
 
 	return Info;
 }
+
+void UInventoryVisualInfo::Clear()
+{
+}

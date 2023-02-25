@@ -35,7 +35,5 @@ public:
 	UFUNCTION()
 	void SetStat(EStat StatName, float Current, float Max);
 
-	void Init(AVillager* Villager);
-
 	void NativeOnInitialized();
 };

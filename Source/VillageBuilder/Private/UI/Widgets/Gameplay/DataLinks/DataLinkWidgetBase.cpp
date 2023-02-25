@@ -6,13 +6,14 @@
 #include "DataTransfers/VisualizationInfo.h"
 
 #include "Components/WrapBox.h"
+#include "Components/Button.h"
 
 void UDataLinkWidgetBase::NativeOnInitialized()
 {
-
+	CloseButton->OnClicked.AddDynamic(this, &UDataLinkWidgetBase::ButtonClicked);
 }
 
-void UDataLinkWidgetBase::Init(TArray<UVisualizationInfo*> InitiatorVisualizationInfos, TArray<UVisualizationInfo*> TargetVisualizationInfos)
+void UDataLinkWidgetBase::Init(TMap<TEnumAsByte<EVisualiationTypes>, UVisualizationInfo*> InitiatorVisualizationInfos, TMap<TEnumAsByte<EVisualiationTypes>, UVisualizationInfo*> TargetVisualizationInfos)
 {
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false)
@@ -24,15 +25,25 @@ void UDataLinkWidgetBase::Init(TArray<UVisualizationInfo*> InitiatorVisualizatio
 	UVisualModuleWidgetBase*  InitiatorVisualModule = Cast<UVisualModuleWidgetBase>(CreateWidget<UUserWidget>(World, VisualModuleWidgetClass));
 	if (IsValid(InitiatorVisualModule) == false) {
 		UE_LOG(LogTemp, Error, TEXT("UDataLinkWidgetBase::Init IsValid(InitiatorVisualModule) == false"));
+		return;
 	}
 	InitiatorVisualModule->Init(InitiatorVisualizationInfos);
-	ModuleWrapBox->AddChild(InitiatorVisualModule);
 	
+
 	UVisualModuleWidgetBase* TargetVisualModule = Cast<UVisualModuleWidgetBase>(CreateWidget<UUserWidget>(World, VisualModuleWidgetClass));
 	if (IsValid(TargetVisualModule) == false) {
 		UE_LOG(LogTemp, Error, TEXT("UDataLinkWidgetBase::Init IsValid(TargetVisualModule) == false"));
+		return;
 	}
 	TargetVisualModule->Init(TargetVisualizationInfos);
-	ModuleWrapBox->AddChild(TargetVisualModule);
 
+	ModuleWrapBox->AddChild(TargetVisualModule);
+	ModuleWrapBox->AddChild(InitiatorVisualModule);
+
+}
+
+void UDataLinkWidgetBase::ButtonClicked()
+{
+	ModuleWrapBox->ClearChildren();
+	OnLinkClosed.Broadcast();
 }

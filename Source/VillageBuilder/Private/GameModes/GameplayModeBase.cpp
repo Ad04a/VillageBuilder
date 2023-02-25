@@ -181,7 +181,11 @@ TArray<FString> AGameplayModeBase::GetAllBuildingNames()
 void AGameplayModeBase::LockDataLink(UDataLink* InDataLink)
 {
 	CurrentDataLinks.Add(InDataLink);
-	InDataLink->OnLinkBroken.BindDynamic(this, &AGameplayModeBase::ReleaseDataLink);
+	InDataLink->OnLinkBroken.AddDynamic(this, &AGameplayModeBase::ReleaseDataLink);
+	if (InDataLink->GetShouldVisualize() == true)
+	{
+		OnLinkNeedsVisualization.Broadcast(InDataLink);
+	}
 }
 
 void AGameplayModeBase::ReleaseDataLink(UDataLink* InDataLink)

@@ -9,9 +9,8 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class VILLAGEBUILDER_API UVisualizationInfo : public UObject
 {
 	GENERATED_BODY()
-	
 };

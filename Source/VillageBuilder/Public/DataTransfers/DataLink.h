@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Headers/VisualizationTypes.h"
+#include "Headers/DataLinkable.h"
 #include "DataLink.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FLinkBrokenSignature, UDataLink*, BrokenLink);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLinkBrokenSignature, UDataLink*, BrokenLink);
 
 UENUM(BlueprintType)
 enum EDataLinkType {
@@ -16,13 +18,6 @@ enum EDataLinkType {
 	VillagerStation		UMETA(DisplayName = "VillagerStation")
 };
 
-UENUM(BlueprintType)
-enum EVisualiationTypes {
-	StatAndTrait UMETA(DisplayName = "StatAndTrait"),
-	Inventory    UMETA(DisplayName = "Inventory"),
-	Employment 	 UMETA(DisplayName = "Employment")
-};
-
 UCLASS()
 class VILLAGEBUILDER_API UDataLink : public UObject
 {
@@ -30,32 +25,37 @@ class VILLAGEBUILDER_API UDataLink : public UObject
 
 protected:
 
-	static TMap<TEnumAsByte<EVisualiationTypes>, TSubclassOf<class UVisualizationInfo>> TypesMap;
-
-
 	UPROPERTY(VisibleAnywhere)
 	AActor* Initiator;
 
 	UPROPERTY()
-	TSubclassOf<AActor> InitiatorClass;
+	TMap<TEnumAsByte<EVisualiationTypes>, class UVisualizationInfo*> InitiatorInfo;
 
 	UPROPERTY(VisibleAnywhere)
 	AActor* Target;
 
 	UPROPERTY()
-	TSubclassOf<AActor> TargetClass;
+	TMap<TEnumAsByte<EVisualiationTypes>, class UVisualizationInfo*> TargetInfo;
 
 	UPROPERTY(VisibleAnywhere)
 	TEnumAsByte<EDataLinkType> LinkType;
 
+	bool bShouldVisualize = false;
+
 	bool EstablishConnection();
 
-	void BreakConnection();
-
-	static void InitRelations();
 public:
+
+	UFUNCTION()
+	void BreakConnection();
 
 	FLinkBrokenSignature OnLinkBroken;
 
-	static UDataLink* CreateDataLink(AActor* InInitiator, AActor* InTarget, EDataLinkType InLinkType = EDataLinkType::PlayerSelf);
+	static UDataLink* CreateDataLink(AActor* InInitiator, AActor* InTarget);
+
+	TMap<TEnumAsByte<EVisualiationTypes>, class UVisualizationInfo*> GetInitiatorInfo() { return InitiatorInfo; }
+	TMap<TEnumAsByte<EVisualiationTypes>, class UVisualizationInfo*> GetTargetInfo() { return TargetInfo; }
+	bool GetShouldVisualize() { return bShouldVisualize; }
+	IDataLinkable* GetInitiator();
+	IDataLinkable* GetTarget();
 };

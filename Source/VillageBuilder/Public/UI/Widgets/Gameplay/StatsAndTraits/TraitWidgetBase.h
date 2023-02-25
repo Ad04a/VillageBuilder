@@ -13,8 +13,8 @@ class VILLAGEBUILDER_API UTraitWidgetBase : public UUserWidget
 	GENERATED_BODY()
 
 protected:
-	TMap<TEnumAsByte<ETrait>, class UTextBlock*> TextBlocks;
-	TMap<TEnumAsByte<ETrait>, FString> TraitNames;
+	TMap<TEnumAsByte<ETrait>, class UTextBlock*> Values;
+	TMap<TEnumAsByte<ETrait>, class UTextBlock*> Names;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* Name;
@@ -34,12 +34,27 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* Dexterity;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* VitalityValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* SurvivabilityValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* AgilityValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* StrengthValue;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* DexterityValue;
+
 	void SetTrait(ETrait TraitName, int Value, FSlateColor Color);
 
 	FSlateColor GetTraitColor(float Modifier);
 
 public:
-	void Init(TMap<TEnumAsByte<ETrait>, int> InTraitMap, TMap<TEnumAsByte<ETrait>, float> Scaling = TMap<TEnumAsByte<ETrait>, float>());
+	void Init(FString InName, TMap<TEnumAsByte<ETrait>, float> InTraitMap, TMap<TEnumAsByte<ETrait>, float> Scaling = TMap<TEnumAsByte<ETrait>, float>());
 
 	void NativeOnInitialized() override;
 

@@ -13,5 +13,6 @@ UCLASS()
 class VILLAGEBUILDER_API UInventoryVisualInfo : public UVisualizationInfo
 {
 	GENERATED_BODY()
-	
+public:
+	static UVisualizationInfo* CreateVisualInfo(AActor* InActor);
 };

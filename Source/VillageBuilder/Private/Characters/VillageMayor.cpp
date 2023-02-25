@@ -2,6 +2,7 @@
 
 
 #include "Characters/VillageMayor.h"
+#include "DataTransfers/DataLink.h"
 
 AVillageMayor::AVillageMayor()
 {
@@ -70,19 +71,11 @@ void AVillageMayor::CheckForInteractables()
 }
 void AVillageMayor::ShowTraitMenu()
 {
-	if (bIsInteracting == false)
-	{
-		bIsInteracting = !bIsInteracting;
-		ToggleTraitsMenu(this);
-		CanInteract = !CanInteract;
-	}
-
+	UDataLink::CreateDataLink(this, nullptr);
 }
 
 void AVillageMayor::ToggleTraitsMenu(AVillager* Caller)
 {
-	OnToggleTraitsMenu.Broadcast(Caller);
-	ToggleStableInteraction();
 }
 
 void AVillageMayor::Interact()

@@ -8,63 +8,71 @@
 #include "GameModes/GameplayModeBase.h"
 #include "Characters/VillageMayor.h"
 #include "WorkSystem/BaseWorkStation.h"
-#include "Headers/DataLinkable.h"
+
+#include "Kismet/GameplayStatics.h"
 
 
-TMap<TEnumAsByte<EVisualiationTypes>, TSubclassOf<class UVisualizationInfo>> UDataLink::TypesMap  = TMap<TEnumAsByte<EVisualiationTypes>, TSubclassOf<class UVisualizationInfo>>();
-
-void UDataLink::InitRelations()
+UDataLink* UDataLink::CreateDataLink(AActor* InInitiator, AActor* InTarget)
 {
-	if (UDataLink::TypesMap.IsEmpty() == false)
-	{
-		return;
-	}
-	UDataLink::TypesMap.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::StaticClass());
-	UDataLink::TypesMap.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::StaticClass());
-	UDataLink::TypesMap.Add(EVisualiationTypes::Employment, UEmploymentVisualInfo::StaticClass());
-}
-
-UDataLink* UDataLink::CreateDataLink(AActor* InInitiator, AActor* InTarget, EDataLinkType InLinkType)
-{
-	UDataLink::InitRelations();
 	UDataLink* DataLink = NewObject<UDataLink>();
 	if (IsValid(DataLink) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UDataLink::CreateDataLink for %s and %s: IsValid(DataLink) == false "), *InInitiator->GetName(), *InTarget->GetName());
+		UE_LOG(LogTemp, Error, TEXT("UDataLink::CreateDataLink IsValid(DataLink) == false "));
 		return nullptr;
 	}
 	DataLink->Initiator = InInitiator;
 	DataLink->Target	= InTarget;
-	DataLink->LinkType = InLinkType;
 	if (DataLink->EstablishConnection() == false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UDataLink::CreateDataLink for %s and %s:\n No establishment method found for link type %s\n with Classes: %s and %s "),
-										*InInitiator->GetName(), *InTarget->GetName(), *UEnum::GetValueAsString(DataLink->LinkType),
-										*(DataLink->Initiator->GetClass()->GetName()), *(DataLink->Target->GetClass()->GetName()));
+		UE_LOG(LogTemp, Warning, TEXT("UDataLink::CreateDataLink No establishment method found"));
 		return nullptr;
 	}
+
+	UWorld* World = InInitiator->GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UDataLink::CreateDataLink IsValid(World) == false"));
+		return nullptr;
+	}
+
+	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("UDataLink::CreateDataLink IsValid(GameMode) == false"));
+		return nullptr;
+	}
+	GameMode->LockDataLink(DataLink);
 	return DataLink;
 }
 
 bool UDataLink::EstablishConnection()
 {
-	if (LinkType == EDataLinkType::PlayerSelf && Initiator->IsA(AVillageMayor::StaticClass()) == true && Target == nullptr)
+	if (Initiator->IsA(AVillageMayor::StaticClass()) == true && Target == nullptr)
 	{
+		LinkType = EDataLinkType::PlayerSelf;
+		InitiatorInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Initiator));
+		InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
+		bShouldVisualize = true;
 		return true;
 	}
 
-	if (LinkType == EDataLinkType::PlayerVillager && Initiator->IsA(AVillageMayor::StaticClass()) == true && Target->IsA(AVillager::StaticClass()) == true)
+	if ( Initiator->IsA(AVillageMayor::StaticClass()) == true && Target->IsA(AVillager::StaticClass()) == true)
 	{
+		LinkType = EDataLinkType::PlayerVillager;
+		bShouldVisualize = true;
 		return true;
 	}
 
-	if (LinkType == EDataLinkType::PlayerStation && Initiator->IsA(AVillageMayor::StaticClass()) == true && Target->IsA(ABaseWorkStation::StaticClass()) == true)
+	if (Initiator->IsA(AVillageMayor::StaticClass()) == true && Target->IsA(ABaseWorkStation::StaticClass()) == true)
 	{
+		LinkType = EDataLinkType::PlayerStation;
+		bShouldVisualize = true;
 		return true;
 	}
 
-	if (LinkType == EDataLinkType::VillagerStation && Initiator->IsA(AVillager::StaticClass()) == true && Target->IsA(ABaseWorkStation::StaticClass()) == true)
+	if (Initiator->IsA(AVillager::StaticClass()) == true && Target->IsA(ABaseWorkStation::StaticClass()) == true)
 	{
+		LinkType = EDataLinkType::VillagerStation;
+		bShouldVisualize = false;
 		return true;
 	}
 
@@ -92,9 +100,29 @@ void UDataLink::BreakConnection()
 	{
 		
 	}
-	Initiator		= nullptr;
-	Target			= nullptr;
-	InitiatorClass  = nullptr;
-	TargetClass		= nullptr;
-	OnLinkBroken.ExecuteIfBound(this);
+	Initiator = nullptr;
+	Target 	  = nullptr;
+	InitiatorInfo.Empty();
+	TargetInfo.Empty();
+	OnLinkBroken.Broadcast(this);
+}
+
+IDataLinkable* UDataLink::GetInitiator()
+{
+	IDataLinkable* CastObject = Cast<IDataLinkable>(Initiator);
+	if (CastObject == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT(" UDataLink::GetInitiator Initiator is not DataLinkable"));
+	}
+	return CastObject;
+}
+
+IDataLinkable* UDataLink::GetTarget()
+{
+	IDataLinkable* CastObject = Cast<IDataLinkable>(Target);
+	if (CastObject == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT(" UDataLink::GetInitiator Target is not DataLinkable"));
+	}
+	return CastObject;
 }

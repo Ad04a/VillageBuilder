@@ -9,48 +9,49 @@
 
 void UTraitWidgetBase::NativeOnInitialized()
 {
-	TextBlocks.Add(ETrait::Vitality, Vitality);
-	TextBlocks.Add(ETrait::Survivability, Survivability);
-	TextBlocks.Add(ETrait::Agility, Agility);
-	TextBlocks.Add(ETrait::Strength, Strength);
-	TextBlocks.Add(ETrait::Dexterity, Dexterity);
+	Names.Add(ETrait::Vitality, Vitality);
+	Names.Add(ETrait::Survivability, Survivability);
+	Names.Add(ETrait::Agility, Agility);
+	Names.Add(ETrait::Strength, Strength);
+	Names.Add(ETrait::Dexterity, Dexterity);
 
-	TraitNames.Add(ETrait::Vitality, FString("Vitality"));
-	TraitNames.Add(ETrait::Survivability, FString("Survivability"));
-	TraitNames.Add(ETrait::Agility, FString("Agility"));
-	TraitNames.Add(ETrait::Strength, FString("Strength"));
-	TraitNames.Add(ETrait::Dexterity, FString("Dexterity"));
+	Values.Add(ETrait::Vitality, VitalityValue);
+	Values.Add(ETrait::Survivability, SurvivabilityValue);
+	Values.Add(ETrait::Agility, AgilityValue);
+	Values.Add(ETrait::Strength, StrengthValue);
+	Values.Add(ETrait::Dexterity, DexterityValue);
 
 }
 
-void UTraitWidgetBase::Init(TMap<TEnumAsByte<ETrait>, int> InTraitMap, TMap<TEnumAsByte<ETrait>, float> Scaling)
+void UTraitWidgetBase::Init(FString InName, TMap<TEnumAsByte<ETrait>, float> InTraitMap, TMap<TEnumAsByte<ETrait>, float> Scaling)
 {
-	/*CurrentVillager = Villager;
-	ManageButtonText->SetText(FText::FromString("Hire"));
-	int Color = 0;
-	if ((Villager->GetWorkStation() == WorkStation)) {
-		CurrentVillager = nullptr;
-		ManageButtonText->SetText(FText::FromString("Fire"));
-		Color = -2;
-	}
-	ManageButtonText->SetColorAndOpacity(GetTraitColor(Color));
-	Name->SetText(FText::FromString(Villager->GetName()));
-	for (ETrait Trait : TEnumRange<ETrait>())
+	Name->SetText(FText::FromString(InName));
+	for (TPair<ETrait, int> Trait : InTraitMap)
 	{
-		SetTrait(Trait, Villager->GetTrait(Trait), GetTraitColor(WorkStation->GetModifier(Trait)));
-	}*/
+		float Color = 0;
+		if (Scaling.Contains(Trait.Key))
+		{
+			Color = *Scaling.Find(Trait.Key);
+		}
+		SetTrait(Trait.Key, Trait.Value, GetTraitColor(Color));
+	}
 }
 
 void UTraitWidgetBase::SetTrait(ETrait TraitName, int Value, FSlateColor Color)
 {
-	UTextBlock* TextBlock = *TextBlocks.Find(TraitName);
-	FString Text = *TraitNames.Find(TraitName);
-	if (TextBlock == nullptr) {
+	UTextBlock* NameTextBlock = *Names.Find(TraitName);
+	UTextBlock* ValueTextBlock = *Values.Find(TraitName);
+	if (NameTextBlock == nullptr) {
 		UE_LOG(LogTemp, Error, TEXT("UEmployeeWidgetBase::SetTrait IsValid(Trait) == false"));
 		return;
 	}
-	TextBlock->SetText(FText::FromString(Text + " " + FString::FromInt(Value)));
-	TextBlock->SetColorAndOpacity(Color);
+	if (ValueTextBlock == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("UEmployeeWidgetBase::SetTrait IsValid(Trait) == false"));
+		return;
+	}
+	ValueTextBlock->SetText(FText::FromString(UEnum::GetValueAsString(TraitName)));
+	NameTextBlock->SetText(FText::FromString(FString::FromInt(Value)));
+	NameTextBlock->SetColorAndOpacity(Color);
 }
 
 

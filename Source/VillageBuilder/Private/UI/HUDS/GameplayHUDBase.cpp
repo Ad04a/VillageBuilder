@@ -12,6 +12,8 @@
 #include "UI/Widgets/Gameplay/Employment/EmployeeMenuWidgetBase.h"
 #include "UI/Widgets/Gameplay/Building/BuildMenuWidgetBase.h"
 #include "UI/Widgets/Gameplay/Inventory/InventoryWidgetBase.h"
+#include "UI/Widgets/Gameplay/DataLinks/DataLinkWidgetBase.h"
+#include "DataTransfers/DataLink.h"
 
 void AGameplayHUDBase::BeginPlay()
 {
@@ -30,27 +32,11 @@ void AGameplayHUDBase::BeginPlay()
 		return;
 	}
 
-	StatWidget = Cast<UStatWidgetBase>(CreateWidget<UUserWidget>(World, StatWidgetClass));
-	if (IsValid(StatWidget) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(StatWidget) == false"));
-		return;
-	}
+	GameMode->OnLinkNeedsVisualization.AddDynamic(this, &AGameplayHUDBase::VisualizeDataLink);
 
 	InteractionWidget = Cast<UInteractionWidgetBase>(CreateWidget<UUserWidget>(World, InteractionWidgetClass));
 	if (IsValid(InteractionWidget) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(InteractionWidget) == false"));
-		return;
-	}
-
-	TraitMenuWidget = Cast<UTraitMenuWidgetBase>(CreateWidget<UUserWidget>(World, TraitMenuWidgetClass));
-	if (IsValid(TraitMenuWidget) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(TraitMenuWidget) == false"));
-		return;
-	}
-
-	EmployeeMenuWidget = Cast<UEmployeeMenuWidgetBase>(CreateWidget<UUserWidget>(World, EmployeeMenuWidgetClass));
-	if (IsValid(EmployeeMenuWidget) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(EmployeeMenuWidget) == false"));
 		return;
 	}
 
@@ -61,27 +47,36 @@ void AGameplayHUDBase::BeginPlay()
 	}
 	UInGameOptionsWidget->OnExitClicked.BindDynamic(GameMode, &AGameplayModeBase::EndGame);
 	UInGameOptionsWidget->OnContinueClicked.BindDynamic(this, &AGameplayHUDBase::ToggleOptions);
-	
 
-	BuildMenuWidget = Cast<UBuildMenuWidgetBase>(CreateWidget<UUserWidget>(World, BuildMenuWidgetBaseClass));
-	if (IsValid(BuildMenuWidget) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(BuildMenuWidget) == false"));
+	DataLinkWidget = Cast<UDataLinkWidgetBase>(CreateWidget<UUserWidget>(World, DataLinkWidgetBaseClass));
+	if (IsValid(DataLinkWidget) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(DataLinkWidget) == false"));
 		return;
 	}
-	BuildMenuWidget->OnCloseSignal.BindDynamic(this, &AGameplayHUDBase::ShowBuildMenu);
-}
 
-void AGameplayHUDBase::ShowStats(AVillager* Villager)
-{
-	if ((IsValid(PlayerOwner) && IsValid(StatWidget)) == false && IsValid(GameMode) == false) {
-		return;
-	}
-	
-	StatWidget->Init(Villager);
-	StatWidget->AddToViewport();
 	PlayerOwner->bShowMouseCursor = false;
 	PlayerOwner->SetInputMode(FInputModeGameOnly());
-	
+}
+
+void AGameplayHUDBase::VisualizeDataLink(UDataLink* InDataLink)
+{
+	if ((IsValid(PlayerOwner)  && IsValid(DataLinkWidget)) == false && IsValid(GameMode) == false)
+	{
+		return;
+	}
+	if (DataLinkWidget->IsInViewport() == true)
+	{
+		DataLinkWidget->RemoveFromViewport();
+		PlayerOwner->bShowMouseCursor = false;
+		PlayerOwner->SetInputMode(FInputModeGameOnly());
+		return;
+	}
+	DataLinkWidget->Init(InDataLink->GetInitiatorInfo(), InDataLink->GetTargetInfo());
+	DataLinkWidget->AddToViewport();
+	DataLinkWidget->OnLinkClosed.AddDynamic(InDataLink, &UDataLink::BreakConnection);
+	InDataLink->OnLinkBroken.AddDynamic(this, &AGameplayHUDBase::VisualizeDataLink);
+	PlayerOwner->bShowMouseCursor = true;
+	PlayerOwner->SetInputMode(FInputModeUIOnly());
 }
 
 void AGameplayHUDBase::ShowInteraction(FText ActionText)
@@ -103,27 +98,6 @@ void AGameplayHUDBase::ShowInteraction(FText ActionText)
 	InteractionWidget->AddToViewport();
 }
 
-void AGameplayHUDBase::ShowTraitMenu(AVillager* Caller)
-{
-	
-	if ((IsValid(PlayerOwner) && IsValid(TraitMenuWidget)) == false && IsValid(GameMode) == false) {
-		return;
-	}
-
-	if (TraitMenuWidget->IsInViewport() == true) 
-	{
-		TraitMenuWidget->RemoveFromViewport();
-		Caller->OnStatUpdated.RemoveAll(TraitMenuWidget);
-		return;
-	}
-
-	TraitMenuWidget->Init(Caller);
-	TraitMenuWidget->AddToViewport();
-	PlayerOwner->bShowMouseCursor = false;
-	PlayerOwner->SetInputMode(FInputModeGameOnly());
-
-}
-
 void AGameplayHUDBase::ToggleOptions()
 {
 	if ((IsValid(PlayerOwner) && IsValid(UInGameOptionsWidget)) == false && IsValid(GameMode) == false) {
@@ -141,52 +115,6 @@ void AGameplayHUDBase::ToggleOptions()
 	PlayerOwner->bShowMouseCursor = true;
 	PlayerOwner->SetInputMode(FInputModeUIOnly());
 	
-}
-
-void AGameplayHUDBase::ShowEmployeeMenu(ABaseWorkStation* WorkStation)
-{
-	if ((IsValid(PlayerOwner) && IsValid(EmployeeMenuWidget)) == false && IsValid(GameMode) == false) {
-		return;
-	}
-
-	AVillageManager* CurrentVillage = GameMode->GetCurrentVillage(WorkStation);
-	if (IsValid(CurrentVillage) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::ShowEmployeeMenu() IsValid(CurrentVillage) == false"));
-		return;
-	}
-	if (EmployeeMenuWidget->IsInViewport() == true) {
-		CurrentVillage->OnVillagersUpdated.Unbind();
-		EmployeeMenuWidget->OnVillagerEmployed.Unbind();
-		EmployeeMenuWidget->RemoveFromViewport();
-		PlayerOwner->bShowMouseCursor = false;
-		PlayerOwner->SetInputMode(FInputModeGameOnly());
-		return;
-	}
-	EmployeeMenuWidget->Init();
-	EmployeeMenuWidget->LoadVillagerWidgets();
-	EmployeeMenuWidget->AddToViewport();
-	PlayerOwner->bShowMouseCursor = true;
-	PlayerOwner->SetInputMode(FInputModeGameAndUI());
-	
-}
-
-void AGameplayHUDBase::ShowBuildMenu()
-{
-	if ((IsValid(PlayerOwner) && IsValid(BuildMenuWidget)) == false && IsValid(GameMode) == false) {
-		return;
-	}
-	if (BuildMenuWidget->IsInViewport() == true) {
-		BuildMenuWidget->RemoveFromViewport();
-		BuildMenuWidget->OnBuildingSelected.Unbind();
-		PlayerOwner->bShowMouseCursor = false;
-		PlayerOwner->SetInputMode(FInputModeGameOnly());
-		return;
-	}
-	BuildMenuWidget->Init(GameMode->GetAllBuildingNames());
-	BuildMenuWidget->OnBuildingSelected.BindDynamic(GameMode, &AGameplayModeBase::GivePlayerBuildItem);
-	BuildMenuWidget->AddToViewport();
-	PlayerOwner->bShowMouseCursor = true;
-	PlayerOwner->SetInputMode(FInputModeUIOnly());
 }
 
 void AGameplayHUDBase::Clear()

@@ -13,7 +13,7 @@
 #include "GameplayModeBase.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FErrorHandleSignature);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVisualizeLinkSignature, UDataLink*, Link);
 
 UCLASS()
 class VILLAGEBUILDER_API AGameplayModeBase : public AGameModeBase
@@ -46,8 +46,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "DataLinks")
 	TArray<UObject*> CurrentDataLinks;
 
-	void ReleaseDataLink(class UDataLink* InDataLink);
-
 	UPROPERTY()
 	AVillageManager* Village; //TArray Villages for multicolony feature
 
@@ -56,15 +54,19 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Building")
 	UDataTable* BuildingDataTable;
 
+	TMap<FString, FName> BuildingsInfo;
+
 	void GetBuildingsInfo();
 
-	TMap<FString, FName> BuildingsInfo;
+	UFUNCTION()
+	void ReleaseDataLink(class UDataLink* InDataLink);
 
 public:
 	FErrorHandleSignature OnErrorLoadingData;
 	FErrorHandleSignature OnSaveStarted;
 	FErrorHandleSignature OnSaveEnded;
 	FErrorHandleSignature OnGameEnd;
+	FVisualizeLinkSignature OnLinkNeedsVisualization;
 
 	TArray<FString> GetAllBuildingNames();
 

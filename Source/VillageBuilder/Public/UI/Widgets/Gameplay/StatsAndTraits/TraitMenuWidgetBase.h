@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/Widgets/Gameplay/DataLinks/VisualFragmentWidgetBase.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
 #include "Characters/Villager.h"
@@ -14,52 +13,17 @@
  */
 
 UCLASS()
-class VILLAGEBUILDER_API UTraitMenuWidgetBase : public UUserWidget
+class VILLAGEBUILDER_API UTraitMenuWidgetBase : public UVisualFragmentWidgetBase
 {
 	GENERATED_BODY()
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UProgressBar* HungerBar;
+	class UTraitWidgetBase* TraitWidget;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UProgressBar* ThirstBar;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UProgressBar* EnergyBar;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UProgressBar* HealthBar;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* Name;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* Strength;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* Survivability;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* Vitality;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* Dexterity;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UTextBlock* Agility;
-
-	TMap<TEnumAsByte<EStat>, UProgressBar*> StatMap;
-	TMap<TEnumAsByte<ETrait>, UTextBlock*> TraitMap;
+	class UStatWidgetBase* StatWidget;
 
 public:
-	UFUNCTION()
-	void SetStat(EStat StatName, float Current, float Max);
-
-	UFUNCTION()
-	void SetTrait(ETrait TraitName, int Value);
-
-	void Init(AVillager* Villager);
-
-	void NativeOnInitialized() override;
+	virtual void Init(class UVisualizationInfo* VisualInfo) override;
 };

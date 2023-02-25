@@ -8,10 +8,9 @@
 #include "Components/ScrollBox.h"
 #include "Components/TextBlock.h"
 
-void UEmployeeMenuWidgetBase::Init()
+void UEmployeeMenuWidgetBase::Init(UVisualizationInfo* VisualInfo)
 {
-	/*CurrentWorkStation = WorkStation;
-	StationName->SetText(CurrentWorkStation->GetName());*/
+	UE_LOG(LogTemp, Display, TEXT(" UEmployeeMenuWidgetBase initialized"));
 }
 
 void UEmployeeMenuWidgetBase::LoadVillagerWidgets()
@@ -42,6 +41,7 @@ void UEmployeeMenuWidgetBase::LoadVillagerWidgets()
 
 	}*/
 }
+
 
 void UEmployeeMenuWidgetBase::ManageButtonClicked(UEmployeeWidgetBase* EmitterWidget)
 {

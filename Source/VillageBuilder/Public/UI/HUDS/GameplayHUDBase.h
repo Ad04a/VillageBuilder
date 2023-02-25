@@ -15,12 +15,8 @@ class VILLAGEBUILDER_API AGameplayHUDBase : public AHUD
 
 private:
 	class AGameplayModeBase* GameMode;
+	class UDataLink* CurrentDataLink = nullptr;
 protected:
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UStatWidgetBase> StatWidgetClass;
-
-	UPROPERTY()
-	class UStatWidgetBase* StatWidget;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UInteractionWidgetBase> InteractionWidgetClass;
@@ -29,53 +25,31 @@ protected:
 	class UInteractionWidgetBase* InteractionWidget;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UTraitMenuWidgetBase> TraitMenuWidgetClass;
-
-	UPROPERTY()
-	class UTraitMenuWidgetBase* TraitMenuWidget;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UEmployeeMenuWidgetBase> EmployeeMenuWidgetClass;
-
-	UPROPERTY()
-	class UEmployeeMenuWidgetBase* EmployeeMenuWidget;
-
-	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UInGameOptionsWidgetBase> InGameOptionsWidgetClass;
 
 	UPROPERTY()
 	class UInGameOptionsWidgetBase* UInGameOptionsWidget;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UBuildMenuWidgetBase> BuildMenuWidgetBaseClass;
-
 	UPROPERTY()
-	class UBuildMenuWidgetBase* BuildMenuWidget;
-	
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UInventoryWidgetBase> InventoryWidgetBaseClass;
+	class UDataLinkWidgetBase* DataLinkWidget;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UDataLinkWidgetBase> DataLinkWidgetBaseClass;
+	
 	
 	virtual void BeginPlay()override;
 
 	void Clear();
 
 public:
+
 	UFUNCTION()
-	void ShowStats(AVillager* Villager);
+	void VisualizeDataLink(class UDataLink* InDataLink);
 
 	UFUNCTION()
 	void ShowInteraction(FText Action);
 
 	UFUNCTION()
-	void ShowTraitMenu(AVillager* Caller);
-
-	UFUNCTION()
-	void ShowEmployeeMenu(ABaseWorkStation* WorkStation);
-
-	UFUNCTION()
 	void ToggleOptions();
 
-	UFUNCTION()
-	void ShowBuildMenu();
 };

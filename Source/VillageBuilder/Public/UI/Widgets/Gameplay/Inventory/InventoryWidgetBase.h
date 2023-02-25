@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/Widgets/Gameplay/DataLinks/VisualFragmentWidgetBase.h"
 #include "Components/ScrollBox.h"
 #include "InventoryWidgetBase.generated.h"
 
@@ -11,7 +10,7 @@
  * 
  */
 UCLASS()
-class VILLAGEBUILDER_API UInventoryWidgetBase : public UUserWidget
+class VILLAGEBUILDER_API UInventoryWidgetBase : public UVisualFragmentWidgetBase
 {
 	GENERATED_BODY()
 private:
@@ -25,5 +24,5 @@ protected:
 
 
 public:
-
+	virtual void Init(class UVisualizationInfo* VisualInfo) override;
 };

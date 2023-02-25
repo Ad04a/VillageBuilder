@@ -2,14 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "UI/Widgets/Gameplay/DataLinks/VisualFragmentWidgetBase.h"
 #include "EmployeeMenuWidgetBase.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FEmploymentButtonSignature, int, VillagerID);
 
 UCLASS()
-class VILLAGEBUILDER_API UEmployeeMenuWidgetBase : public UUserWidget
+class VILLAGEBUILDER_API UEmployeeMenuWidgetBase : public UVisualFragmentWidgetBase
 {
 	GENERATED_BODY()
 private:
@@ -27,10 +26,12 @@ protected:
 	void ManageButtonClicked(UEmployeeWidgetBase* EmitterWidget);
 
 public:
-	void Init();
+
+	virtual void Init(class UVisualizationInfo* VisualInfo) override;
 
 	UFUNCTION()
 	void LoadVillagerWidgets();
 
 	FEmploymentButtonSignature OnVillagerEmployed;
+
 };

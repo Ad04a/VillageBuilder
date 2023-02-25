@@ -2,53 +2,19 @@
 
 
 #include "UI/Widgets/Gameplay/StatsAndTraits/TraitMenuWidgetBase.h"
+#include "UI/Widgets/Gameplay/StatsAndTraits/StatWidgetBase.h"
+#include "UI/Widgets/Gameplay/StatsAndTraits/TraitWidgetBase.h"
+#include "DataTransfers/VisualizationInfos/StatsAndTraitsVisualInfo.h"
 
-void UTraitMenuWidgetBase::SetStat(EStat StatName, float Current, float Max)
+void UTraitMenuWidgetBase::Init(UVisualizationInfo* VisualInfo)
 {
-	UProgressBar** ProgressBar = StatMap.Find(StatName);
-	if (ProgressBar == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("UTraitMenuWidgetBase::SetStat IsValid(Stat) == false, %f"), Current);
-		return;
-	}
-	(*ProgressBar)->SetPercent(Current / Max);
-}
-
-
-void UTraitMenuWidgetBase::SetTrait(ETrait TraitName, int Value)
-{
-	UTextBlock* TextBlock = *TraitMap.Find(TraitName);
-	if (TextBlock == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("UTraitMenuWidgetBase::SetTrait IsValid(Trait) == false"));
-		return;
-	}
-	TextBlock->SetText(FText::FromString(FString::FromInt(Value)));
-}
-
-void UTraitMenuWidgetBase::Init(AVillager* Villager)
-{
-	Name->SetText(FText::FromString(Villager->GetName()));
-
-	Villager->OnStatUpdated.AddDynamic(this, &UTraitMenuWidgetBase::SetStat);
-	Villager->AcknowledgeWidgetBinding();
-
-	for (ETrait Trait : TEnumRange<ETrait>())
+	UStatsAndTraitsVisualInfo* StatAndTraitInfo = Cast<UStatsAndTraitsVisualInfo>(VisualInfo);
+	if (IsValid(StatAndTraitInfo) == false)
 	{
-		SetTrait(Trait, Villager->GetTrait(Trait));
+		UE_LOG(LogTemp, Warning, TEXT("UTraitMenuWidgetBase::Init Given VisualInfo doesnt mach the required type"));
 	}
-}
+	TraitWidget->Init(StatAndTraitInfo->Name, StatAndTraitInfo->TraitMap, StatAndTraitInfo->Scaling);
 
-void UTraitMenuWidgetBase::NativeOnInitialized()
-{
-	StatMap.Add(EStat::Hunger, HungerBar);
-	StatMap.Add(EStat::Energy, EnergyBar);
-	StatMap.Add(EStat::Health, HealthBar);
-	StatMap.Add(EStat::Thirst, ThirstBar);
-
-	TraitMap.Add(ETrait::Vitality, Vitality);
-	TraitMap.Add(ETrait::Survivability, Survivability);
-	TraitMap.Add(ETrait::Agility, Agility);
-	TraitMap.Add(ETrait::Strength, Strength);
-	TraitMap.Add(ETrait::Dexterity, Dexterity);
 }
 
 

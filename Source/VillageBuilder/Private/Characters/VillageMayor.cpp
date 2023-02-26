@@ -16,10 +16,10 @@ void AVillageMayor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CheckForInteractables();
+	EmitChecker();
 }
 
-void AVillageMayor::CheckForInteractables()
+void AVillageMayor::EmitChecker()
 {
 	FVector StartTrace = CameraComponent->GetComponentLocation();
 	FVector EndTrace = CameraComponent->GetForwardVector() * Reach + StartTrace;
@@ -41,61 +41,62 @@ void AVillageMayor::CheckForInteractables()
 
 	World->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_GameTraceChannel1, CQP);
 
-	AActor* HitActor = HitResult.GetActor();
-	UPrimitiveComponent* HitComponent = HitResult.GetComponent();
-	IInteractable* InteractableActor = Cast<IInteractable>(HitActor);
-	IInteractable* InteractableComponent = Cast<IInteractable>(HitComponent);
-
-	if (HitActor == nullptr)
-	{
-		FocusedObject = nullptr;
-		OnInteraction.Broadcast(FText());
-		return;
-	}
-	if (InteractableComponent != nullptr)
-	{
-		FocusedObject = HitComponent;
-		OnInteraction.Broadcast(InteractableComponent->Execute_DisplayInteractText(HitComponent));
-		return;
-	}
-	if(InteractableActor == nullptr)
-	{
-		FocusedObject = nullptr;
-		OnInteraction.Broadcast(FText());
-		return;
-	}
-	FocusedObject = HitActor;
-	OnInteraction.Broadcast(InteractableActor->Execute_DisplayInteractText(HitActor));
-	
-
+	CheckForInteractables(HitResult.GetActor());
+	CheckForDataLinks(HitResult.GetActor());
 }
+
+void AVillageMayor::CheckForInteractables(AActor* HitActor)
+{
+	IInteractable* InteractableActor = Cast<IInteractable>(HitActor);
+
+	if (HitActor == nullptr || InteractableActor == nullptr)
+	{
+		FocusedInteractableObject = nullptr;
+		OnInteraction.Broadcast(FText());
+		return;
+	}
+	FocusedInteractableObject = HitActor;
+	OnInteraction.Broadcast(InteractableActor->Execute_DisplayInteractText(HitActor));
+}
+
+void AVillageMayor::CheckForDataLinks(AActor* HitActor)
+{
+	IDataLinkable* DataLinkableActor = Cast<IDataLinkable>(HitActor);
+
+	if (HitActor == nullptr || DataLinkableActor == nullptr)
+	{
+		FocusedDataLinkableObject = nullptr;
+		OnDataLink.Broadcast(FText());
+		return;
+	}
+	FocusedDataLinkableObject = HitActor;
+	OnDataLink.Broadcast(DataLinkableActor->Execute_DisplayDataLinkText(HitActor));
+}
+
 void AVillageMayor::ShowTraitMenu()
 {
 	UDataLink::CreateDataLink(this, nullptr);
 }
 
-void AVillageMayor::ToggleTraitsMenu(AVillager* Caller)
-{
-}
-
 void AVillageMayor::Interact()
 {
-	if (FocusedObject != nullptr && CanInteract == true)
+	if (FocusedInteractableObject != nullptr )
 	{
-		Cast<IInteractable>(FocusedObject)->Execute_InteractRequest(FocusedObject, this);
+		Cast<IInteractable>(FocusedInteractableObject)->Execute_InteractRequest(FocusedInteractableObject, this);
 	}
 }
 
-void AVillageMayor::ToggleEmployeeMenu(ABaseWorkStation* WorkStation)
+void AVillageMayor::InitiateLink()
 {
-	OnToggleEmployeeMenu.Broadcast(WorkStation);
-	ToggleStableInteraction();
+	if (FocusedDataLinkableObject != nullptr)
+	{
+		UDataLink::CreateDataLink(this, FocusedDataLinkableObject);
+	}
 }
 
 void AVillageMayor::ToggleStableInteraction()
 {
 	bCanUseItems = !bCanUseItems;
-	bIsInteracting = !bIsInteracting;
 	bIsMovementEnabled = !bIsMovementEnabled;
 	bIsRotationEnabled = !bIsRotationEnabled;
 }

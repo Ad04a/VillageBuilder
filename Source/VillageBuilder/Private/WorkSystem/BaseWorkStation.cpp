@@ -78,9 +78,9 @@ FWorkStationInfoStruct ABaseWorkStation::GetSaveInfo()
 	return SaveInfo;
 }
 
-void ABaseWorkStation::InteractRequest_Implementation(AVillager* InteractingVillager)
+void ABaseWorkStation::BreakDataLinks_Implementation()
 {
-	if (GetIsBuilt() == false)
+	/*if (GetIsBuilt() == false)
 	{
 		return;
 	}
@@ -89,10 +89,10 @@ void ABaseWorkStation::InteractRequest_Implementation(AVillager* InteractingVill
 	{
 		return;
 	}
-	InteractingPlayer->ToggleEmployeeMenu(this);
+	InteractingPlayer->ToggleEmployeeMenu(this);*/
 }
 
-FText ABaseWorkStation::DisplayInteractText_Implementation()
+FText ABaseWorkStation::DisplayDataLinkText_Implementation()
 {
 	if (GetIsBuilt() == false)
 	{

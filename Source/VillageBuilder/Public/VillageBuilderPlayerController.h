@@ -30,13 +30,12 @@ protected:
 	static const FName MoveRightBinding;
 	static const FName LookUpBinding;
 	static const FName TurnRightBinding;
-	static const FName InteractBinding;
 	static const FName TraitsMenuBinding;
 	static const FName ItemPrimaryBinding;
 	static const FName ItemSecondaryBinding;
 	static const FName DropItemBinding;
-	static const FName InGameOptionsBinding;
-	static const FName OpenBuildMenuBinding;
+	static const FName InteractBinding;
+	static const FName DataLinkBinding;
 	
 	void ItemPrimary();
 	void ItemSecondary();

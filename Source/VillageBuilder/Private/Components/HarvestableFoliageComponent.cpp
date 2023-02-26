@@ -22,7 +22,7 @@ void UHarvestableFoliageComponent::BeginPlay()
 void UHarvestableFoliageComponent::TakeDamage(int32 InstanceIndex, float Damage, class AController* InstigatedBy, FVector HitLocation, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser)
 {
 	PerInstanceHealth[InstanceIndex] = PerInstanceHealth[InstanceIndex] - Damage;
-	UE_LOG(LogTemp, Error, TEXT(" index %d Takena damage i e s health %f"), InstanceIndex, PerInstanceHealth[InstanceIndex]);
+	UE_LOG(LogTemp, Display, TEXT(" index %d took damage and is with health %f"), InstanceIndex, PerInstanceHealth[InstanceIndex]);
 	
 	if (PerInstanceHealth[InstanceIndex] > 0)
 	{

@@ -29,7 +29,7 @@ void AHarvestableTree::BeginPlay()
 
 void AHarvestableTree::OnTreeFallen(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Error, TEXT("Component %s \nOverlapna s actor: %s, \ncomponent: %s\n s index: %d\n s bFromSweep: %d"), *OverlappedComponent->GetName(),*OtherActor->GetName(), *OtherComp->GetName(), OtherBodyIndex, bFromSweep);
+	UE_LOG(LogTemp, Display, TEXT("Component %s \nOverlapna s actor: %s, \ncomponent: %s\n s index: %d\n s bFromSweep: %d"), *OverlappedComponent->GetName(),*OtherActor->GetName(), *OtherComp->GetName(), OtherBodyIndex, bFromSweep);
 	if (OtherActor ==  this || OtherComp == MeshComponent) {
 		return;
 	}

@@ -20,4 +20,4 @@ enum EStat {
 	Thirst  UMETA(DisplayName = "Thirst"),
 	Speed   UMETA(DisplayName = "Speed")
 };
-ENUM_RANGE_BY_FIRST_AND_LAST(EStat, EStat::Health, EStat::Speed);
+ENUM_RANGE_BY_FIRST_AND_LAST(EStat, EStat::Health, EStat::Thirst);

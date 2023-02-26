@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Items/Item.h"
-#include "Headers/Interactable.h"
+#include "Headers/DataLinkable.h"
 #include "Headers/LoadInfo.h"
 #include "Headers/ItemActionEnums.h"
 #include "Villager.generated.h"
@@ -13,9 +13,10 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FStatUpdatedSignature, EStat, StatName, float, Current, float, Max);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVillagerPassingSignature, AVillager*, Villager);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBrakeVillagerLinkSignature);
 
 UCLASS()
-class VILLAGEBUILDER_API AVillager : public ACharacter, public IInteractable
+class VILLAGEBUILDER_API AVillager : public ACharacter, public IDataLinkable
 {
 	GENERATED_BODY()
 
@@ -80,6 +81,7 @@ public:
 
 	FStatUpdatedSignature OnStatUpdated;
 	FVillagerPassingSignature OnDeath;
+	FBrakeVillagerLinkSignature OnLinkBroken;
 
 	void UpdateMovement(float MoveForwardValue, float MoveRightValue);
 	void TurnAtRate(float Rate);
@@ -106,13 +108,13 @@ public:
 	UFUNCTION()
 	void UseItem(EItemActionType ActionType);
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	void InteractRequest(class AVillager* InteractingVillager);
-	virtual void InteractRequest_Implementation(class AVillager* InteractingVillager);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "DataLink")
+	void BreakDataLinks();
+	virtual void BreakDataLinks_Implementation();
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	FText DisplayInteractText();
-	virtual FText DisplayInteractText_Implementation();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "DataLink")
+	FText DisplayDataLinkText();
+	virtual FText DisplayDataLinkText_Implementation();
 
 	FString GetName() { return Name; }
 	int GetTrait(ETrait TraitName);

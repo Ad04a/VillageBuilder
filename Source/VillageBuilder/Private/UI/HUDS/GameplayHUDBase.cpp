@@ -5,15 +5,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 
-#include "UI/Widgets/Gameplay/InteractionWidgetBase.h"
-#include "UI/Widgets/Gameplay/InGameOptionsWidgetBase.h"
-#include "UI/Widgets/Gameplay/StatsAndTraits/StatWidgetBase.h"
-#include "UI/Widgets/Gameplay/StatsAndTraits/TraitMenuWidgetBase.h"
-#include "UI/Widgets/Gameplay/Employment/EmployeeMenuWidgetBase.h"
-#include "UI/Widgets/Gameplay/Building/BuildMenuWidgetBase.h"
-#include "UI/Widgets/Gameplay/Inventory/InventoryWidgetBase.h"
+#include "UI/Widgets/Gameplay/MainPurpose/MainPurposeWidgetBase.h"
 #include "UI/Widgets/Gameplay/DataLinks/DataLinkWidgetBase.h"
 #include "DataTransfers/DataLink.h"
+#include "Characters/VillageMayor.h"
 
 void AGameplayHUDBase::BeginPlay()
 {
@@ -34,19 +29,11 @@ void AGameplayHUDBase::BeginPlay()
 
 	GameMode->OnLinkNeedsVisualization.AddDynamic(this, &AGameplayHUDBase::VisualizeDataLink);
 
-	InteractionWidget = Cast<UInteractionWidgetBase>(CreateWidget<UUserWidget>(World, InteractionWidgetClass));
-	if (IsValid(InteractionWidget) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(InteractionWidget) == false"));
+	MainWidget = Cast<UMainPurposeWidgetBase>(CreateWidget<UUserWidget>(World, MainWidgetClass));
+	if (IsValid(MainWidget) == false) {
+		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(MainWidget) == false"));
 		return;
 	}
-
-	UInGameOptionsWidget = Cast<UInGameOptionsWidgetBase>(CreateWidget<UUserWidget>(World, InGameOptionsWidgetClass));
-	if (IsValid(UInGameOptionsWidget) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AGameplayHUDBase::BeginPlay() IsValid(UInGameOptionsWidget) == false"));
-		return;
-	}
-	UInGameOptionsWidget->OnExitClicked.BindDynamic(GameMode, &AGameplayModeBase::EndGame);
-	UInGameOptionsWidget->OnContinueClicked.BindDynamic(this, &AGameplayHUDBase::ToggleOptions);
 
 	DataLinkWidget = Cast<UDataLinkWidgetBase>(CreateWidget<UUserWidget>(World, DataLinkWidgetBaseClass));
 	if (IsValid(DataLinkWidget) == false) {
@@ -79,9 +66,25 @@ void AGameplayHUDBase::VisualizeDataLink(UDataLink* InDataLink)
 	DataLinkWidget->AddToViewport();
 }
 
-void AGameplayHUDBase::ShowInteraction(FText ActionText)
+void AGameplayHUDBase::ShowMainWidget(class AVillageMayor* Player)
 {
-	if ((IsValid(PlayerOwner) && IsValid(InteractionWidget)) == false && IsValid(GameMode) == false) {
+	if ((IsValid(PlayerOwner) && IsValid(MainWidget)) == false && IsValid(GameMode) == false)
+	{
+		return;
+	}
+	Player->OnStatUpdated.AddDynamic(MainWidget, &UMainPurposeWidgetBase::PassStatUpdate);
+	Player->OnInteraction.AddDynamic(MainWidget, &UMainPurposeWidgetBase::SetInteractionText);
+	Player->OnDataLink.AddDynamic(MainWidget, &UMainPurposeWidgetBase::SetDataLinkText);
+	Player->AcknowledgeWidgetBinding();
+	PlayerOwner->bShowMouseCursor = false;
+	PlayerOwner->SetInputMode(FInputModeGameOnly());
+
+	MainWidget->AddToViewport();
+}
+
+void ShowInteraction(FText ActionText)
+{
+	/*if ((IsValid(PlayerOwner) && IsValid(InteractionWidget)) == false && IsValid(GameMode) == false) {
 		return;
 	}
 	
@@ -95,12 +98,12 @@ void AGameplayHUDBase::ShowInteraction(FText ActionText)
 	if (InteractionWidget->IsInViewport()==true) {
 		return;
 	}
-	InteractionWidget->AddToViewport();
+	InteractionWidget->AddToViewport();*/
 }
 
-void AGameplayHUDBase::ToggleOptions()
+void ToggleOptions()
 {
-	if ((IsValid(PlayerOwner) && IsValid(UInGameOptionsWidget)) == false && IsValid(GameMode) == false) {
+	/*if ((IsValid(PlayerOwner) && IsValid(UInGameOptionsWidget)) == false && IsValid(GameMode) == false) {
 		return;
 	}
 	if (UInGameOptionsWidget->IsInViewport() == true)
@@ -113,7 +116,7 @@ void AGameplayHUDBase::ToggleOptions()
 
 	UInGameOptionsWidget->AddToViewport();
 	PlayerOwner->bShowMouseCursor = true;
-	PlayerOwner->SetInputMode(FInputModeUIOnly());
+	PlayerOwner->SetInputMode(FInputModeUIOnly());*/
 	
 }
 

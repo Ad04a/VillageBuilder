@@ -41,6 +41,7 @@ protected:
 	TEnumAsByte<EDataLinkType> LinkType;
 
 	bool bShouldVisualize = false;
+	bool bStartedBreak = false;
 
 	bool EstablishConnection();
 

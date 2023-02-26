@@ -31,7 +31,7 @@ struct FBuildingClusterInfoStruct
 };
 
 UCLASS()
-class VILLAGEBUILDER_API UBuildingClusterComponent : public UStaticMeshComponent, public IInteractable
+class VILLAGEBUILDER_API UBuildingClusterComponent : public UStaticMeshComponent
 {
 	GENERATED_BODY()
 
@@ -46,17 +46,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInterface* MainMaterial;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	void InteractRequest(class AVillager* InteractingVillager);
-	virtual void InteractRequest_Implementation(class AVillager* InteractingVillager);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	FText DisplayInteractText();
-	virtual FText DisplayInteractText_Implementation();
-
 	UFUNCTION()
 	void OnComponentPlaced(int ID, bool State);
 public:
+	void StartBuild();
 	FBuildingClusterStateSignature OnBuildingFinisehd;
 	FBuildingClusterStateSignature OnBuildStarted;
 	void Init(FBuildingClusterInfoStruct InLoadInfo = FBuildingClusterInfoStruct());

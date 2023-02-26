@@ -30,4 +30,5 @@ public:
 	void Init(TMap<TEnumAsByte<EVisualiationTypes>, class UVisualizationInfo*> InitiatorVisualizationInfos, TMap<TEnumAsByte<EVisualiationTypes>, class UVisualizationInfo*> TargetVisualizationInfos);
 	void NativeOnInitialized() override;
 	FLinkClosedSignature OnLinkClosed;
+	void Clear();
 };

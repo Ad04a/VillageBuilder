@@ -13,7 +13,6 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FStatUpdatedSignature, EStat, StatName, float, Current, float, Max);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVillagerPassingSignature, AVillager*, Villager);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBrakeVillagerLinkSignature);
 
 UCLASS()
 class VILLAGEBUILDER_API AVillager : public ACharacter, public IDataLinkable
@@ -81,7 +80,7 @@ public:
 
 	FStatUpdatedSignature OnStatUpdated;
 	FVillagerPassingSignature OnDeath;
-	FBrakeVillagerLinkSignature OnLinkBroken;
+	FBrakeLinkSignature OnLinkBroken;
 
 	void UpdateMovement(float MoveForwardValue, float MoveRightValue);
 	void TurnAtRate(float Rate);

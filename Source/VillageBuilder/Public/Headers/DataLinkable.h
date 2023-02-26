@@ -13,9 +13,8 @@ class UDataLinkable : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FBrakeLinkSignature);
+
 class VILLAGEBUILDER_API IDataLinkable
 {
 	GENERATED_BODY()

@@ -9,5 +9,6 @@ enum EVisualiationTypes {
 	Inventory    UMETA(DisplayName = "Inventory"),
 	Employment 	 UMETA(DisplayName = "Employment"),
 	Options 	 UMETA(DisplayName = "Options"),
-	Building 	 UMETA(DisplayName = "Building")
+	Building 	 UMETA(DisplayName = "Building"),
+	Construction UMETA(DisplayName = "Construction")
 };

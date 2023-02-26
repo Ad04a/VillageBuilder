@@ -98,7 +98,7 @@ protected:
 	void AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation);
 
 	UFUNCTION()
-	void AknowedgeStartedConstruction(ABaseWorkStation* WorkStation);
+	void AknowedgeStartedConstruction(bool State, ABaseWorkStation* WorkStation);
 
 	UPROPERTY(EditDefaultsOnly, Category = PeriodicSpawn)
 	float MinTimeBetweenSpawn = 1.f;

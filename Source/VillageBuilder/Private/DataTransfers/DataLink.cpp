@@ -7,6 +7,8 @@
 #include "DataTransfers/VisualizationInfos/EmploymentVisualInfo.h"
 #include "DataTransfers/VisualizationInfos/OptionsVisualInfo.h"
 #include "DataTransfers/VisualizationInfos/BuildingVisualInfo.h"
+#include "DataTransfers/VisualizationInfos/ConstructionVisualInfo.h"
+
 #include "GameModes/GameplayModeBase.h"
 #include "Characters/VillageMayor.h"
 #include "WorkSystem/BaseWorkStation.h"
@@ -88,9 +90,18 @@ bool UDataLink::EstablishConnection()
 		InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
 		AVillager* Player = Cast<AVillager>(Initiator);
 		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
-
-		TargetInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Target));
-		TargetInfo.Add(EVisualiationTypes::Employment, UEmploymentVisualInfo::CreateVisualInfo(Target));
+		
+		ABaseWorkStation* WorkStation = Cast<ABaseWorkStation>(Target);
+		WorkStation->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
+		if (WorkStation->GetIsBuilt() == false)
+		{
+			TargetInfo.Add(EVisualiationTypes::Construction, UConstructionVisualInfo::CreateVisualInfo(Target));
+		}
+		else
+		{
+			TargetInfo.Add(EVisualiationTypes::Employment, UEmploymentVisualInfo::CreateVisualInfo(Target));
+			TargetInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Target));
+		}
 
 		bShouldVisualize = true;
 		return true;

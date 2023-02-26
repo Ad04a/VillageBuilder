@@ -49,3 +49,8 @@ void UDataLinkWidgetBase::ButtonClicked()
 	ModuleWrapBox->ClearChildren();
 	OnLinkClosed.Broadcast();
 }
+
+void UDataLinkWidgetBase::Clear()
+{
+	ModuleWrapBox->ClearChildren();
+}

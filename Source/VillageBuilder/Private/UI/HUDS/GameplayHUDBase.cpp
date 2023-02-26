@@ -82,44 +82,6 @@ void AGameplayHUDBase::ShowMainWidget(class AVillageMayor* Player)
 	MainWidget->AddToViewport();
 }
 
-void ShowInteraction(FText ActionText)
-{
-	/*if ((IsValid(PlayerOwner) && IsValid(InteractionWidget)) == false && IsValid(GameMode) == false) {
-		return;
-	}
-	
-	if (FText().EqualTo(ActionText)) {
-		InteractionWidget->RemoveFromViewport();
-		return;
-	}
-	
-	InteractionWidget->UpdateInteractionText(ActionText);
-
-	if (InteractionWidget->IsInViewport()==true) {
-		return;
-	}
-	InteractionWidget->AddToViewport();*/
-}
-
-void ToggleOptions()
-{
-	/*if ((IsValid(PlayerOwner) && IsValid(UInGameOptionsWidget)) == false && IsValid(GameMode) == false) {
-		return;
-	}
-	if (UInGameOptionsWidget->IsInViewport() == true)
-	{
-		UInGameOptionsWidget->RemoveFromViewport();
-		PlayerOwner->bShowMouseCursor = false;
-		PlayerOwner->SetInputMode(FInputModeGameOnly());
-		return;
-	}
-
-	UInGameOptionsWidget->AddToViewport();
-	PlayerOwner->bShowMouseCursor = true;
-	PlayerOwner->SetInputMode(FInputModeUIOnly());*/
-	
-}
-
 void AGameplayHUDBase::Clear()
 {
 	UWidgetLayoutLibrary::RemoveAllWidgets(this);

@@ -5,6 +5,8 @@
 #include "DataTransfers/VisualizationInfos/StatsAndTraitsVisualInfo.h"
 #include "DataTransfers/VisualizationInfos/InventoryVisualInfo.h"
 #include "DataTransfers/VisualizationInfos/EmploymentVisualInfo.h"
+#include "DataTransfers/VisualizationInfos/OptionsVisualInfo.h"
+#include "DataTransfers/VisualizationInfos/BuildingVisualInfo.h"
 #include "GameModes/GameplayModeBase.h"
 #include "Characters/VillageMayor.h"
 #include "WorkSystem/BaseWorkStation.h"
@@ -50,8 +52,11 @@ bool UDataLink::EstablishConnection()
 	if (Initiator->IsA(AVillageMayor::StaticClass()) == true && Target == nullptr)
 	{
 		LinkType = EDataLinkType::PlayerSelf;
-		InitiatorInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Initiator));
-		InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
+		TargetInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Initiator));
+		TargetInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
+		TargetInfo.Add(EVisualiationTypes::Building, UBuildingVisualInfo::CreateVisualInfo(Initiator));
+		TargetInfo.Add(EVisualiationTypes::Options, UOptionsVisualInfo::CreateVisualInfo(Initiator));
+
 		AVillager* Player = Cast<AVillager>(Initiator);
 		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
 		bShouldVisualize = true;
@@ -62,7 +67,7 @@ bool UDataLink::EstablishConnection()
 	{
 		LinkType = EDataLinkType::PlayerVillager;
 
-		InitiatorInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Initiator));
+		//InitiatorInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Initiator));
 		InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
 		AVillager* Player = Cast<AVillager>(Initiator);
 		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
@@ -79,6 +84,14 @@ bool UDataLink::EstablishConnection()
 	if (Initiator->IsA(AVillageMayor::StaticClass()) == true && Target->IsA(ABaseWorkStation::StaticClass()) == true)
 	{
 		LinkType = EDataLinkType::PlayerStation;
+
+		InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
+		AVillager* Player = Cast<AVillager>(Initiator);
+		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
+
+		TargetInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Target));
+		TargetInfo.Add(EVisualiationTypes::Employment, UEmploymentVisualInfo::CreateVisualInfo(Target));
+
 		bShouldVisualize = true;
 		return true;
 	}

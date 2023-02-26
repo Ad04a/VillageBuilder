@@ -28,6 +28,7 @@ void UDataLinkWidgetBase::Init(TMap<TEnumAsByte<EVisualiationTypes>, UVisualizat
 		return;
 	}
 	InitiatorVisualModule->Init(InitiatorVisualizationInfos);
+	InitiatorVisualModule->OnForceClose.AddDynamic(this, &UDataLinkWidgetBase::ButtonClicked);
 	
 
 	UVisualModuleWidgetBase* TargetVisualModule = Cast<UVisualModuleWidgetBase>(CreateWidget<UUserWidget>(World, VisualModuleWidgetClass));
@@ -36,6 +37,7 @@ void UDataLinkWidgetBase::Init(TMap<TEnumAsByte<EVisualiationTypes>, UVisualizat
 		return;
 	}
 	TargetVisualModule->Init(TargetVisualizationInfos);
+	TargetVisualModule->OnForceClose.AddDynamic(this, &UDataLinkWidgetBase::ButtonClicked);
 
 	ModuleWrapBox->AddChild(TargetVisualModule);
 	ModuleWrapBox->AddChild(InitiatorVisualModule);

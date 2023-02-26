@@ -2,14 +2,16 @@
 
 
 #include "UI/Widgets/Gameplay/MainPurpose/InGameOptionsWidgetBase.h"
+#include "DataTransfers/VisualizationInfos/OptionsVisualInfo.h"
+
 #include "Components/Button.h"
 
-void UInGameOptionsWidgetBase::NativeOnInitialized()
+void UInGameOptionsWidgetBase::Init(UVisualizationInfo* VisualInfo)
 {
-	ExitButton->OnClicked.AddDynamic(this, &UInGameOptionsWidgetBase::ExitClicked);
-}
-
-void UInGameOptionsWidgetBase::ExitClicked()
-{
-	OnExitClicked.ExecuteIfBound();
+	UOptionsVisualInfo* OptionsInfo = Cast<UOptionsVisualInfo>(VisualInfo);
+	if (IsValid(OptionsInfo) == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UTraitMenuWidgetBase::Init Given VisualInfo doesnt mach the required type"));
+	}
+	ExitButton->OnClicked.AddDynamic(OptionsInfo, &UOptionsVisualInfo::ExitGame);
 }

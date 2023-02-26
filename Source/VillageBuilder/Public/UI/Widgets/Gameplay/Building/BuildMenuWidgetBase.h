@@ -2,17 +2,14 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/ScrollBox.h"
-#include "Components/Button.h"
+
+#include "UI/Widgets/Gameplay/DataLinks/VisualFragmentWidgetBase.h"
 #include "BuildMenuWidgetBase.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(bool, FBuildingSelectedSignature, FString, BuildingName);
-DECLARE_DYNAMIC_DELEGATE(FCloseSignalSignature);
 
 UCLASS()
-class VILLAGEBUILDER_API UBuildMenuWidgetBase : public UUserWidget
+class VILLAGEBUILDER_API UBuildMenuWidgetBase : public UVisualFragmentWidgetBase
 {
 	GENERATED_BODY()
 protected:
@@ -20,23 +17,16 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UScrollBox* BuildingScrollBox;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* CloseButton;
-
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UBuildingSelectWidgetBase> BuildingSelectClass;
 
 	UFUNCTION()
 	void BuildingSelected(FString SelectedBuildingName);
 
-	UFUNCTION()
-	void CloseClicked();
-
 public:
+	virtual void Init(class UVisualizationInfo* VisualInfo) override;
 
 	FBuildingSelectedSignature OnBuildingSelected;
-	FCloseSignalSignature OnCloseSignal;
 
 	void Init(TArray<FString> Buildings);
-	void NativeOnInitialized() override;
 };

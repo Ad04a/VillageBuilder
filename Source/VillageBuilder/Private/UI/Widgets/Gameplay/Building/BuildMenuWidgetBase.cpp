@@ -3,24 +3,27 @@
 
 #include "UI/Widgets/Gameplay/Building/BuildMenuWidgetBase.h"
 #include "UI/Widgets/Gameplay/Building/BuildingSelectWidgetBase.h"
+#include "DataTransfers/VisualizationInfos/BuildingVisualInfo.h"
 
-void UBuildMenuWidgetBase::NativeOnInitialized()
-{
-	CloseButton->OnClicked.AddDynamic(this, &UBuildMenuWidgetBase::CloseClicked);
-}
+#include "Components/ScrollBox.h"
+#include "Components/Button.h"
 
-void UBuildMenuWidgetBase::Init(TArray<FString> Buildings)
+
+void UBuildMenuWidgetBase::Init(UVisualizationInfo* VisualInfo)
 {
+	UBuildingVisualInfo* BuildingInfo = Cast<UBuildingVisualInfo>(VisualInfo);
+
+	BuildingScrollBox->ClearChildren();
+
 	UWorld* World = GetWorld();
 	if (IsValid(World) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UBuildMenuWidgetBase::Init IsValid(World) == false"));
 		return;
 	}
-	BuildingScrollBox->ClearChildren();
-
+	OnBuildingSelected.BindDynamic(BuildingInfo, &UBuildingVisualInfo::BuildingSelected);
 	UBuildingSelectWidgetBase* BuildingWidget = nullptr;
-	for (FString Name : Buildings)
+	for (FString Name : BuildingInfo->GetBuildingNames())
 	{
 		BuildingWidget = Cast<UBuildingSelectWidgetBase>(CreateWidget<UUserWidget>(World, BuildingSelectClass));
 		if (IsValid(BuildingWidget) == false) {
@@ -33,6 +36,11 @@ void UBuildMenuWidgetBase::Init(TArray<FString> Buildings)
 	}
 }
 
+void UBuildMenuWidgetBase::Init(TArray<FString> Buildings)
+{
+	
+}
+
 void UBuildMenuWidgetBase::BuildingSelected(FString SelectedBuildingName)
 {
 	if (OnBuildingSelected.IsBound() == false)
@@ -41,11 +49,7 @@ void UBuildMenuWidgetBase::BuildingSelected(FString SelectedBuildingName)
 	}
 	if (OnBuildingSelected.Execute(SelectedBuildingName) == false)
 	{
+		return;
 	}
-	OnCloseSignal.ExecuteIfBound();
-}
-
-void UBuildMenuWidgetBase::CloseClicked()
-{
-	OnCloseSignal.ExecuteIfBound();
+	ForceClose();
 }

@@ -6,9 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "VisualizationInfo.generated.h"
 
-/**
- * 
- */
+
 UCLASS(Abstract)
 class VILLAGEBUILDER_API UVisualizationInfo : public UObject
 {

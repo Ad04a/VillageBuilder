@@ -9,11 +9,6 @@
 #include "Components/WrapBox.h"
 #include "Components/WidgetSwitcher.h"
 
-void UVisualModuleWidgetBase::NativeOnInitialized()
-{
-
-}
-
 void UVisualModuleWidgetBase::Init(TMap<TEnumAsByte<EVisualiationTypes>, UVisualizationInfo*> InVisualizationInfos)
 {
 	if (InVisualizationInfos.IsEmpty() == true)
@@ -50,9 +45,15 @@ void UVisualModuleWidgetBase::Init(TMap<TEnumAsByte<EVisualiationTypes>, UVisual
 			continue;
 		}
 		VisualFragment->Init(VisualInfo.Value);
+		VisualFragment->OnForceClose.AddDynamic(this, &UVisualModuleWidgetBase::ForceClose);
 		VisualWidgetSwitcher->AddChild(VisualFragment);
 	}
 
+}
+
+void UVisualModuleWidgetBase::ForceClose()
+{
+	OnForceClose.Broadcast();
 }
 
 void UVisualModuleWidgetBase::VisualButtonClicked(class UVisualButtonWidgetBase* ButtonClicked)

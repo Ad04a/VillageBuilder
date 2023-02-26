@@ -13,5 +13,12 @@ UCLASS()
 class VILLAGEBUILDER_API UOptionsVisualInfo : public UVisualizationInfo
 {
 	GENERATED_BODY()
-	
+
+protected:
+	class AGameplayModeBase* GameMode;
+public:
+	UFUNCTION()
+	void ExitGame();
+	static UVisualizationInfo* CreateVisualInfo(AActor* InActor);
+	virtual void Clear() override;
 };

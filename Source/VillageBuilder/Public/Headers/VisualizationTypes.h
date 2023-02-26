@@ -4,7 +4,10 @@
 
 UENUM(BlueprintType)
 enum EVisualiationTypes {
+	NoVisual	 UMETA(DisplayName = "NoVisual"),
 	StatAndTrait UMETA(DisplayName = "StatAndTrait"),
 	Inventory    UMETA(DisplayName = "Inventory"),
-	Employment 	 UMETA(DisplayName = "Employment")
+	Employment 	 UMETA(DisplayName = "Employment"),
+	Options 	 UMETA(DisplayName = "Options"),
+	Building 	 UMETA(DisplayName = "Building")
 };

@@ -9,7 +9,7 @@ UVisualizationInfo* UStatsAndTraitsVisualInfo::CreateVisualInfo(AActor* InActor)
 	UStatsAndTraitsVisualInfo* Info = NewObject<UStatsAndTraitsVisualInfo>();
 	if (IsValid(Info) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UStatsAndTraitsVisualInfo::CreateVisualInfo Cannot create info for %s of class %s"), *InActor->GetName(), *InActor->GetClass()->GetName());
+		UE_LOG(LogTemp, Error, TEXT("UStatsAndTraitsVisualInfo::CreateVisualInfo Cannot create info"));
 		return nullptr;
 	}
 

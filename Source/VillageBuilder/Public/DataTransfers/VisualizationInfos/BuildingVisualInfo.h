@@ -13,5 +13,14 @@ UCLASS()
 class VILLAGEBUILDER_API UBuildingVisualInfo : public UVisualizationInfo
 {
 	GENERATED_BODY()
-	
+
+protected:
+	class AGameplayModeBase* GameMode;
+public:
+	static UVisualizationInfo* CreateVisualInfo(AActor* InActor);
+	virtual void Clear() override;
+	TArray<FString> GetBuildingNames();
+
+	UFUNCTION()
+	bool BuildingSelected(FString BuildingName);
 };

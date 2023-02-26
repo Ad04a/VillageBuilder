@@ -188,12 +188,13 @@ void AVillager::Equip(AActor* ItemToEquip)
 	}
 	if (CanEquip() == false)
 	{
-		if (Inventory->PlaceItem(NewItem) == false)
+		if (Inventory->PlaceItem(NewItem) == true)
 		{
-			if (Inventory->PlaceItem(ItemSlot) == false)
-			{
-				return;
-			}
+			return;
+		}
+		if (Inventory->PlaceItem(ItemSlot) == false)
+		{
+			return;
 		}
 	}
 	NewItem->SetEnablePhysics(false);

@@ -7,9 +7,8 @@
 #include "Headers/VisualizationTypes.h"
 #include "VisualModuleWidgetBase.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FForceCloseSignalSignature);
+
 UCLASS()
 class VILLAGEBUILDER_API UVisualModuleWidgetBase : public UUserWidget
 {
@@ -35,6 +34,8 @@ protected:
 	void VisualButtonClicked(class UVisualButtonWidgetBase* ButtonClicked);
 
 public:
+	UFUNCTION()
+	void ForceClose();
+	FForceCloseSignalSignature OnForceClose;
 	void Init(TMap<TEnumAsByte<EVisualiationTypes>, class UVisualizationInfo*> InVisualizationInfos);
-	void NativeOnInitialized() override;
 };

@@ -16,11 +16,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* ExitButton;
 
-	UFUNCTION()
-	void ExitClicked();
-
 public:
-	FButtunClickedSignature OnExitClicked;
+	virtual void Init(class UVisualizationInfo* VisualInfo) override;
 
-	void NativeOnInitialized()override;
 };

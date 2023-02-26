@@ -12,6 +12,7 @@
 #include "BaseWorkStation.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FBuildingStateSignature, ABaseWorkStation*, WorkStation);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FConstructionStateSignature, bool, State, ABaseWorkStation*, WorkStation);
 
 USTRUCT(BlueprintType)
 struct FWorkStationData : public FTableRowBase
@@ -114,11 +115,14 @@ protected:
 public:	
 	UPROPERTY(VisibleAnywhere, Category = Identification)
 	unsigned int ID = -1;
-	FBuildingStateSignature OnStartedConstruction;
+
+	FConstructionStateSignature OnStartedConstruction;
 	FBuildingStateSignature OnBuildingReady;
+	FBrakeLinkSignature OnLinkBroken;
 
 	void Init(FWorkStationInfoStruct InLoadInfo = FWorkStationInfoStruct());
 	FWorkStationInfoStruct GetSaveInfo();
+	void StartBuild();
 
 	static ABaseWorkStation* ABaseWorkStation::CreateInstance(UObject* WorldContext, FWorkStationInfoStruct InLoadInfo = FWorkStationInfoStruct());
 

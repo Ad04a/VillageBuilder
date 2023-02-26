@@ -265,7 +265,7 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, int Worker
 void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
 {
 	PlacedBuildings.Add(WorkStation);
-	WorkStation->OnStartedConstruction.BindDynamic(this, &AVillageManager::AknowedgeStartedConstruction);
+	WorkStation->OnStartedConstruction.AddUniqueDynamic(this, &AVillageManager::AknowedgeStartedConstruction);
 	if (WorkStation->ID == -1)
 	{
 		WorkStation->ID = CurrentID++;
@@ -274,10 +274,16 @@ void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
 	GenerateSave();
 }
 
-void AVillageManager::AknowedgeStartedConstruction(ABaseWorkStation* WorkStation)
+void AVillageManager::AknowedgeStartedConstruction(bool State, ABaseWorkStation* WorkStation)
 {
+	if (State == false)
+	{
+		UnderConstruction.Remove(WorkStation);
+		WorkStation->OnBuildingReady.Unbind();
+		AddWorkStationToColony(WorkStation);
+		return;
+	}
 	PlacedBuildings.Remove(WorkStation);
-	WorkStation->OnStartedConstruction.Unbind();
 	UnderConstruction.Add(WorkStation);
 	WorkStation->OnBuildingReady.BindDynamic(this, &AVillageManager::AknowedgeFinishedBuilding);
 	GenerateSave();
@@ -286,6 +292,7 @@ void AVillageManager::AknowedgeStartedConstruction(ABaseWorkStation* WorkStation
 void AVillageManager::AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation)
 {
 	UnderConstruction.Remove(WorkStation);
+	WorkStation->OnStartedConstruction.RemoveDynamic(this, &AVillageManager::AknowedgeStartedConstruction);
 	WorkStation->OnBuildingReady.Unbind();
 	WorkStations.Add(WorkStation, -1);
 }

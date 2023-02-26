@@ -54,6 +54,7 @@ void AGameplayHUDBase::VisualizeDataLink(UDataLink* InDataLink)
 	if (DataLinkWidget->IsInViewport() == true)
 	{
 		DataLinkWidget->RemoveFromViewport();
+		DataLinkWidget->Clear();
 		PlayerOwner->bShowMouseCursor = false;
 		PlayerOwner->SetInputMode(FInputModeGameOnly());
 		return;

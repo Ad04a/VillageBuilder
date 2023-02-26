@@ -41,15 +41,30 @@ void AVillageMayor::EmitChecker()
 
 	World->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_GameTraceChannel1, CQP);
 
-	CheckForInteractables(HitResult.GetActor());
+	CheckForInteractables(HitResult);
 	CheckForDataLinks(HitResult.GetActor());
 }
 
-void AVillageMayor::CheckForInteractables(AActor* HitActor)
+void AVillageMayor::CheckForInteractables(FHitResult HitResult)
 {
+	AActor* HitActor = HitResult.GetActor();
+	UPrimitiveComponent* HitComponent = HitResult.GetComponent();
 	IInteractable* InteractableActor = Cast<IInteractable>(HitActor);
+	IInteractable* InteractableComponent = Cast<IInteractable>(HitComponent);
 
-	if (HitActor == nullptr || InteractableActor == nullptr)
+	if (HitActor == nullptr)
+	{
+		FocusedInteractableObject = nullptr;
+		OnInteraction.Broadcast(FText());
+		return;
+	}
+	if (InteractableComponent != nullptr)
+	{
+		FocusedInteractableObject = HitComponent;
+		OnInteraction.Broadcast(InteractableComponent->Execute_DisplayInteractText(HitComponent));
+		return;
+	}
+	if (InteractableActor == nullptr)
 	{
 		FocusedInteractableObject = nullptr;
 		OnInteraction.Broadcast(FText());

@@ -46,32 +46,14 @@ FBuildingClusterInfoStruct UBuildingClusterComponent::GetSaveInfo()
 	SaveInfo.bIsConstructing = bIsStarted;
 	return SaveInfo;
 }
-
-void UBuildingClusterComponent::InteractRequest_Implementation(class AVillager* InteractingVillager)
+void UBuildingClusterComponent::StartBuild()
 {
-	if (bIsStarted == true)
-	{
-		return;
-	}
-	bIsStarted = true;
-	OnBuildStarted.ExecuteIfBound(true);
+	bIsStarted = !bIsStarted;
+	OnBuildStarted.ExecuteIfBound(bIsStarted);
 	for (UBaseBuildingComponent* Child : GetBuildingComponents())
 	{
-		Child->SetIsActive(true);
+		Child->SetIsActive(bIsStarted);
 	}
-}
-
-FText UBuildingClusterComponent::DisplayInteractText_Implementation()
-{
-	if (bIsStarted == false)
-	{
-		return FText::FromString("Start building");
-	}
-	if (PlacedComponents == AllComponents)
-	{
-		return FText::FromString("Repair: " + FString::FromInt(PlacedComponents) + " / " + FString::FromInt(AllComponents));
-	}
-	return FText::FromString("Building: " + FString::FromInt(PlacedComponents) + " / " + FString::FromInt(AllComponents));
 }
 
 void UBuildingClusterComponent::OnComponentPlaced(int ID, bool State)

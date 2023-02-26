@@ -23,9 +23,9 @@ private:
 
 	void EmitChecker();
 
-	void CheckForInteractables(AActor* HitActor);
+	void CheckForInteractables(FHitResult HitResult);
 
-	AActor* FocusedInteractableObject;
+	UObject* FocusedInteractableObject;
 
 	void CheckForDataLinks(AActor* HitActor);
 

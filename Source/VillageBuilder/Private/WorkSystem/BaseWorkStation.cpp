@@ -78,26 +78,19 @@ FWorkStationInfoStruct ABaseWorkStation::GetSaveInfo()
 	return SaveInfo;
 }
 
+void ABaseWorkStation::StartBuild()
+{
+	BuildingComponent->StartBuild();
+}
+
 void ABaseWorkStation::BreakDataLinks_Implementation()
 {
-	/*if (GetIsBuilt() == false)
-	{
-		return;
-	}
-	AVillageMayor* InteractingPlayer = Cast<AVillageMayor>(InteractingVillager);
-	if (IsValid(InteractingPlayer) == false)
-	{
-		return;
-	}
-	InteractingPlayer->ToggleEmployeeMenu(this);*/
+	OnLinkBroken.Broadcast();
+	OnLinkBroken.RemoveAll(this);
 }
 
 FText ABaseWorkStation::DisplayDataLinkText_Implementation()
 {
-	if (GetIsBuilt() == false)
-	{
-		return FText::FromString(DisplayName.ToString() + " is not ready yet");
-	}
 	return FText::FromString("Open " + DisplayName.ToString());
 }
 
@@ -118,16 +111,13 @@ void ABaseWorkStation::SetIsBuilt(bool State)
 		return;
 	}
 	OnBuildingReady.ExecuteIfBound(this);
+	BreakDataLinks_Implementation();
 }
 
 void ABaseWorkStation::SetIsConstructing(bool State)
 {
 	IsConstructing = State;
-	if (State == false)
-	{
-		return;
-	}
-	OnStartedConstruction.ExecuteIfBound(this);
+	OnStartedConstruction.Broadcast(IsConstructing, this);
 }
 
 class UBaseBuildingComponent* ABaseWorkStation::GetFirstBuildingComponent()

@@ -26,13 +26,13 @@ void UNewSaveWidgetBase::MangeEnteredText(const FText& Text)
 		ErrorText->SetText(FText::FromString("Name should be atleast " + FString::FromInt(MinNameLenght) + " symbols"));
 		return;
 	}
+	bCanCreate = true;
 	if (SaveName->GetText().ToString().Len() < MaxNameLenght)
 	{
-		bCanCreate = true;
 		return;
 	}
 	FString Name = Text.ToString();
-	ErrorText->SetText(FText::FromString(Name.LeftChop(Name.Len() - MaxNameLenght)));
+	SaveName->SetText(FText::FromString(Name.LeftChop(Name.Len() - MaxNameLenght)));
 }
 
 void UNewSaveWidgetBase::CreateClicked()

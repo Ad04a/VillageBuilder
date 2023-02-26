@@ -8,6 +8,7 @@
 #include "GameModes/GameplayModeBase.h"
 #include "Characters/VillageMayor.h"
 #include "WorkSystem/BaseWorkStation.h"
+#include "Headers/DataLinkable.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -51,6 +52,8 @@ bool UDataLink::EstablishConnection()
 		LinkType = EDataLinkType::PlayerSelf;
 		InitiatorInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Initiator));
 		InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
+		AVillager* Player = Cast<AVillager>(Initiator);
+		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
 		bShouldVisualize = true;
 		return true;
 	}
@@ -58,6 +61,17 @@ bool UDataLink::EstablishConnection()
 	if ( Initiator->IsA(AVillageMayor::StaticClass()) == true && Target->IsA(AVillager::StaticClass()) == true)
 	{
 		LinkType = EDataLinkType::PlayerVillager;
+
+		InitiatorInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Initiator));
+		InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
+		AVillager* Player = Cast<AVillager>(Initiator);
+		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
+
+		TargetInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Target));
+		TargetInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Target));
+		AVillager* Villager = Cast<AVillager>(Target);
+		Villager->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
+
 		bShouldVisualize = true;
 		return true;
 	}
@@ -81,6 +95,11 @@ bool UDataLink::EstablishConnection()
 
 void UDataLink::BreakConnection()
 {
+	if (bStartedBreak == true)
+	{
+		return;
+	}
+	bStartedBreak = true;
 	if (LinkType == EDataLinkType::PlayerSelf )
 	{
 		
@@ -107,6 +126,16 @@ void UDataLink::BreakConnection()
 	for(TPair<TEnumAsByte<EVisualiationTypes>, UVisualizationInfo*> Info : TargetInfo)
 	{
 		Info.Value->Clear();
+	}
+	IDataLinkable* DataInitiator = Cast<IDataLinkable>(Initiator);
+	if (DataInitiator != nullptr)
+	{
+		DataInitiator->Execute_BreakDataLinks(Initiator);
+	}
+	IDataLinkable* DataTarget = Cast<IDataLinkable>(Target);
+	if (DataTarget != nullptr)
+	{
+		DataTarget->Execute_BreakDataLinks(Target);
 	}
 	Initiator = nullptr;
 	Target 	  = nullptr;

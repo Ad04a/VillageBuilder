@@ -2,15 +2,13 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "Components/Button.h"
+#include "UI/Widgets/Gameplay/DataLinks/VisualFragmentWidgetBase.h"
 #include "InGameOptionsWidgetBase.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE(FButtunClickedSignature);
 
 UCLASS()
-class VILLAGEBUILDER_API UInGameOptionsWidgetBase : public UUserWidget
+class VILLAGEBUILDER_API UInGameOptionsWidgetBase : public UVisualFragmentWidgetBase
 {
 	GENERATED_BODY()
 protected:
@@ -18,18 +16,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* ExitButton;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* ContinueButton;
-
 	UFUNCTION()
 	void ExitClicked();
 
-	UFUNCTION()
-	void ContinueClicked();
-
 public:
 	FButtunClickedSignature OnExitClicked;
-	FButtunClickedSignature OnContinueClicked;
 
 	void NativeOnInitialized()override;
 };

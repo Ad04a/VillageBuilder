@@ -18,17 +18,11 @@ private:
 	class UDataLink* CurrentDataLink = nullptr;
 protected:
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UInteractionWidgetBase> InteractionWidgetClass;
-
 	UPROPERTY()
-	class UInteractionWidgetBase* InteractionWidget;
+	class UMainPurposeWidgetBase* MainWidget;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UInGameOptionsWidgetBase> InGameOptionsWidgetClass;
-
-	UPROPERTY()
-	class UInGameOptionsWidgetBase* UInGameOptionsWidget;
+	TSubclassOf<class UMainPurposeWidgetBase> MainWidgetClass;
 
 	UPROPERTY()
 	class UDataLinkWidgetBase* DataLinkWidget;
@@ -47,9 +41,6 @@ public:
 	void VisualizeDataLink(class UDataLink* InDataLink);
 
 	UFUNCTION()
-	void ShowInteraction(FText Action);
-
-	UFUNCTION()
-	void ToggleOptions();
+	void ShowMainWidget(class AVillageMayor* Player);
 
 };

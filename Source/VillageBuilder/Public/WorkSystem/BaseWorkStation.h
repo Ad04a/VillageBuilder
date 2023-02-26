@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Headers/Interactable.h"
+#include "Headers/DataLinkable.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "Engine/DataTable.h"
 #include "WorkSystem/BuildProjection.h"
@@ -65,7 +65,7 @@ struct FWorkStationInfoStruct
 };
 
 UCLASS()
-class VILLAGEBUILDER_API ABaseWorkStation : public AActor, public IInteractable
+class VILLAGEBUILDER_API ABaseWorkStation : public AActor, public IDataLinkable
 {
 	GENERATED_BODY()
 	
@@ -96,13 +96,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UBuildingClusterComponent* BuildingComponent = nullptr;
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	void InteractRequest(class AVillager* InteractingVillager);
-	virtual void InteractRequest_Implementation(class AVillager* InteractingVillager);
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "DataLink")
+	void BreakDataLinks();
+	virtual void BreakDataLinks_Implementation();
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interact")
-	FText DisplayInteractText();
-	virtual FText DisplayInteractText_Implementation();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "DataLink")
+	FText DisplayDataLinkText();
+	virtual FText DisplayDataLinkText_Implementation();
 
 	bool IsBuilt = false;
 	bool IsConstructing = false;

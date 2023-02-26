@@ -9,9 +9,7 @@
 #include "VillageMayor.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTraitMenuSignature, AVillager*, Caller);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractingSignature, FText, ActionText);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEmployeeMenuSignature, ABaseWorkStation*, WorkStation);
 
 UCLASS()
 class VILLAGEBUILDER_API AVillageMayor : public AVillager
@@ -23,11 +21,15 @@ public:
 
 private:
 
-	void CheckForInteractables();
+	void EmitChecker();
 
-	UObject* FocusedObject;
+	void CheckForInteractables(AActor* HitActor);
 
-	bool CanInteract = true;
+	AActor* FocusedInteractableObject;
+
+	void CheckForDataLinks(AActor* HitActor);
+
+	AActor* FocusedDataLinkableObject;
 
 protected:
 
@@ -45,22 +47,16 @@ protected:
 public:
 
 	FInteractingSignature OnInteraction;
-	FTraitMenuSignature OnToggleTraitsMenu;
-	FEmployeeMenuSignature OnToggleEmployeeMenu;
-
-	bool bIsInteracting = false;
+	FInteractingSignature OnDataLink;
 
 	UFUNCTION()
 	void ShowTraitMenu();
 
 	UFUNCTION()
-	void ToggleTraitsMenu(AVillager* Caller);
-
-	UFUNCTION()
 	void Interact();
 
 	UFUNCTION()
-	void ToggleEmployeeMenu(ABaseWorkStation* WorkStation);
+	void InitiateLink();
 
 	UCameraComponent* GetCameraComponent()const { return CameraComponent; };
 	

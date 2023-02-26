@@ -175,11 +175,7 @@ void AVillager::RecieveDamage(AActor* DamagedActor, float Damage, const class UD
 void AVillager::Die()
 {
 	OnDeath.Broadcast(this);
-	if (InteractingWith == nullptr)
-	{
-		return;
-	}
-	InteractRequest_Implementation(InteractingWith);
+	BreakDataLinks_Implementation();
 }
 
 void AVillager::Equip(AActor* ItemToEquip)
@@ -307,7 +303,7 @@ void AVillager::PlayItemAnimMontage(UAnimMontage* AnimMontage, FName StartSectio
 {
 	if (IsValid(AnimMontage) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("AVillager::PlayItemAnimMontage IsValid(AnimMontage) == false"));
+		UE_LOG(LogTemp, Warning, TEXT("AVillager::PlayItemAnimMontage IsValid(AnimMontage) == false"));
 		return;
 	}
 	if (IsValid(GetMesh()) == false)
@@ -336,7 +332,6 @@ void AVillager::AddStatValue(EStat StatName, float InValue)
 		UE_LOG(LogTemp, Error, TEXT("AVillager::AddStatValue IsValid(Stat) == false"));
 		return;
 	}
-	UE_LOG(LogTemp, Display, TEXT("UStatsAndTraitsVisualInfo::PassStatUpdate: %s - %f / %f"), *UEnum::GetValueAsString(StatName), Stat->Current, InValue);
 	float NewValue = FMath::Clamp(Stat->Current + InValue, 0, Stat->Max);
 	if (NewValue == Stat->Current)
 	{
@@ -357,23 +352,13 @@ int AVillager::GetTrait(ETrait TraitName)
 	return Trait->Level;
 }
 
-void AVillager::InteractRequest_Implementation(class AVillager* InteractingVillager)
+void AVillager::BreakDataLinks_Implementation()
 {
-	AVillageMayor* InteractingPlayer = Cast<AVillageMayor>(InteractingVillager);
-	if (IsValid(InteractingPlayer) == false)
-	{
-		return;
-	}
-	InteractingPlayer->ToggleTraitsMenu(this);
-	if (InteractingWith == nullptr)
-	{
-		InteractingWith = InteractingPlayer;
-		return;
-	}
-	InteractingWith = nullptr;
+	OnLinkBroken.Broadcast();
+	OnLinkBroken.RemoveAll(this);
 }
 
-FText AVillager::DisplayInteractText_Implementation()
+FText AVillager::DisplayDataLinkText_Implementation()
 {
 	return FText::FromString( "Talk with " + Name);//Add name variable
 }

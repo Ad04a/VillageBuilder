@@ -7,13 +7,14 @@ const FName AVillageBuilderPlayerController::MoveForwardBinding("MoveForward");
 const FName AVillageBuilderPlayerController::MoveRightBinding("MoveRight");
 const FName AVillageBuilderPlayerController::LookUpBinding("LookUp");
 const FName AVillageBuilderPlayerController::TurnRightBinding("TurnRight");
-const FName AVillageBuilderPlayerController::InteractBinding("Interact");
 const FName AVillageBuilderPlayerController::TraitsMenuBinding("TraitsMenu");
 const FName AVillageBuilderPlayerController::ItemPrimaryBinding("ItemPrimary");
 const FName AVillageBuilderPlayerController::ItemSecondaryBinding("ItemSecondary");
 const FName AVillageBuilderPlayerController::DropItemBinding("DropItem");
-const FName AVillageBuilderPlayerController::InGameOptionsBinding("InGameOptions");
-const FName AVillageBuilderPlayerController::OpenBuildMenuBinding("OpenBuildMenu");
+const FName AVillageBuilderPlayerController::InteractBinding("Interact");
+const FName AVillageBuilderPlayerController::DataLinkBinding("DataLink");
+
+
 
 void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	Super::OnPossess(InPawn);
@@ -43,16 +44,11 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	InputComponent->BindAxis(LookUpBinding);
 
 	InputComponent->BindAction(InteractBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::Interact);
+	InputComponent->BindAction(DataLinkBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::InitiateLink);
 	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::ShowTraitMenu);
 	InputComponent->BindAction(DropItemBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::DropItem);
 
-	InputComponent->BindAction(InGameOptionsBinding, IE_Pressed, HUD, &AGameplayHUDBase::ToggleOptions);
-	//InputComponent->BindAction(OpenBuildMenuBinding, IE_Pressed, HUD, &AGameplayHUDBase::ShowBuildMenu);
-
-	//ControlledVillageMayorPawn->OnInteraction.AddDynamic(HUD, &AGameplayHUDBase::ShowInteraction);
-	//ControlledVillageMayorPawn->OnToggleTraitsMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowTraitMenu);
-	//ControlledVillageMayorPawn->OnToggleEmployeeMenu.AddDynamic(HUD, &AGameplayHUDBase::ShowEmployeeMenu);
-	//HUD->ShowStats(ControlledVillageMayorPawn);
+	HUD->ShowMainWidget(ControlledVillageMayorPawn);
 
 	InPawn->bUseControllerRotationYaw = true;
 

@@ -13,6 +13,9 @@ void UConstructionWidgetBase::Init(UVisualizationInfo* VisualInfo)
 	ConstructionInfo->OnStatusChanged.BindDynamic(this, &UConstructionWidgetBase::SetManageText);
 	ManageButton->OnClicked.AddDynamic(ConstructionInfo, &UConstructionVisualInfo::StartBuild);
 	ConstructionInfo->GetInitialState();
+
+	StationName->SetText(ConstructionInfo->GetName());
+
 }
 
 void UConstructionWidgetBase::SetManageText(FText Text)

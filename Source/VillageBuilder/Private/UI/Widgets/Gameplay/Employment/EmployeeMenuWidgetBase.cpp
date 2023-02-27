@@ -10,36 +10,43 @@
 
 void UEmployeeMenuWidgetBase::Init(UVisualizationInfo* VisualInfo)
 {
-	UE_LOG(LogTemp, Display, TEXT(" UEmployeeMenuWidgetBase initialized"));
+	UEmploymentVisualInfo* EmploymentInfo = Cast<UEmploymentVisualInfo>(VisualInfo);
+	if (IsValid(EmploymentInfo) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UEmployeeMenuWidgetBase::Init Givne info type doesnt match"));
+		return;
+	}
+	OnVillagerEmployed.BindDynamic(EmploymentInfo, &UEmploymentVisualInfo::RegisterEmployment);
+	EmploymentInfo->OnVillagersUpdated.BindDynamic(this, &UEmployeeMenuWidgetBase::LoadVillagerWidgets);
+	EmploymentInfo->InvokeInitial();
 }
 
-void UEmployeeMenuWidgetBase::LoadVillagerWidgets()
+void UEmployeeMenuWidgetBase::LoadVillagerWidgets(TArray<FVillagerVisualInfoStruct> Villagers, FStationStruct StationStruct)
 {
-	/*UWorld* World = GetWorld();
+	UWorld* World = GetWorld();
 	if (IsValid(World) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UEmployeeMenuWidgetBase::LoadVillagerWidgets IsValid(World) == false"));
 		return;
 	}
-	if (IsValid(CurrentWorkStation) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("UEmployeeMenuWidgetBase::LoadVillagerWidgets IsValid(CurrentWorkStation) == false"));
-		return;
-	}
+
+	StationName->SetText(StationStruct.StationName);
+
 	VillagerScrollBox->ClearChildren();
 	UEmployeeWidgetBase* EmployeeWidget = nullptr;
-	for (AVillager* Villager : Villagers)
+	int i = 0;
+	for (FVillagerVisualInfoStruct Villager : Villagers)
 	{
 		EmployeeWidget = Cast<UEmployeeWidgetBase>(CreateWidget<UUserWidget>(World, EmployeeWidgetClass));
 		if (IsValid(EmployeeWidget) == false) {
 			UE_LOG(LogTemp, Error, TEXT("UEmployeeMenuWidgetBase::LoadVillagerWidgets IsValid(EmployeeWidget) == false"));
 			continue;
 		}
-		EmployeeWidget->Init(Villager, CurrentWorkStation);
+		EmployeeWidget->Init(Villager, StationStruct.ScalingMap, (i==StationStruct.HiredID));
 		EmployeeWidget->OnManageButtonClicked.BindDynamic(this, &UEmployeeMenuWidgetBase::ManageButtonClicked);
 		VillagerScrollBox->AddChild(EmployeeWidget);
-
-	}*/
+		i++;
+	}
 }
 
 
@@ -47,7 +54,7 @@ void UEmployeeMenuWidgetBase::ManageButtonClicked(UEmployeeWidgetBase* EmitterWi
 {
 	if (IsValid(EmitterWidget) == false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UEmployeeMenuWidgetBase::ManageButtonClicked IsValid(EmitterWidget) == false ChildIndex: %d"), VillagerScrollBox->GetChildIndex(EmitterWidget));
+		UE_LOG(LogTemp, Warning, TEXT("UEmployeeMenuWidgetBase::ManageButtonClicked IsValid(EmitterWidget) == false"));
 	}
 	OnVillagerEmployed.ExecuteIfBound(VillagerScrollBox->GetChildIndex(EmitterWidget));
 }

@@ -17,4 +17,5 @@ UVisualizationInfo* UInventoryVisualInfo::CreateVisualInfo(AActor* InActor)
 
 void UInventoryVisualInfo::Clear()
 {
+	Super::Clear();
 }

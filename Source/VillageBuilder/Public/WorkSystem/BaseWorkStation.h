@@ -127,7 +127,7 @@ public:
 	static ABaseWorkStation* ABaseWorkStation::CreateInstance(UObject* WorldContext, FWorkStationInfoStruct InLoadInfo = FWorkStationInfoStruct());
 
 	FText GetName() { return DisplayName; }
-	float GetModifier(ETrait TraitName);
+	TMap<TEnumAsByte<ETrait>, float> GetModifiers() { return TraitModifiers; }
 	FText GetProfessionName() { return ProfessionName; }
 	bool GetIsBuilt() { return IsBuilt; }
 	bool GetIsConstructing() { return IsConstructing; }

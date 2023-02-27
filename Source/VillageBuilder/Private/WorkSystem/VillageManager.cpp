@@ -135,6 +135,8 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 	FVector Location = Position;
 	FRotator Rotation = FRotator(0, 0, 0);
 	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
 
 	if (LoadInfo != FVillagerLoadInfoStruct())
 	{
@@ -152,8 +154,10 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 	Villager->Init(LoadInfo);
 	if (Villager->ID == -1)
 	{
-		Villager->ID = CurrentID++;
+		Villager->ID = CurrentID;
+		CurrentID += 1;
 	}
+	Villager->SetProfession("Passing");
 	PassingVillagers.Add(Villager);
 	GenerateSave();
 	return Villager;
@@ -184,6 +188,7 @@ void AVillageManager::OnVillagerDeath(AVillager* Villager)
 	{
 		ManageEmployment(Station, -1);
 	}
+	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	Villager->Destroy();
 }
 
@@ -197,7 +202,7 @@ void AVillageManager::AddVillagerToColony(AVillager* Villager)
 
 	PassingVillagers.Remove(Villager);
 	Villagers.Add(Villager);
-
+	Villager->SetProfession("Unemployed");
 	Villager->OnDeath.AddDynamic(this, &AVillageManager::OnVillagerDeath);
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	GenerateSave();
@@ -230,6 +235,7 @@ ABaseWorkStation* AVillageManager::GetWorkPlaceFor(int WorkerID)
 
 void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, int WorkerIndex)
 {
+
 	if (IsValid(WorkStation) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(WorkStation) == false"));
@@ -247,6 +253,10 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, int Worker
 		bWorksHere = (GetWorkerAt(WorkStation)->ID == WorkerID);
 	}
 	ApplyJobBehavior("Unemployed", GetWorkerAt(WorkStation));
+	if (IsValid(GetWorkerAt(WorkStation)) == true)
+	{
+		GetWorkerAt(WorkStation)->SetProfession("Unemployed");
+	}
 
 	if (GetWorkPlaceFor(WorkerID) != nullptr)
 	{
@@ -256,6 +266,7 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, int Worker
 	{
 		WorkStations.Add(WorkStation, WorkerID);
 		ApplyJobBehavior(WorkStation->GetClass()->GetFName(), GetWorkerAt(WorkStation));
+		GetWorkerAt(WorkStation)->SetProfession(WorkStation->GetProfessionName().ToString());
 
 	}
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
@@ -295,6 +306,7 @@ void AVillageManager::AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation)
 	WorkStation->OnStartedConstruction.RemoveDynamic(this, &AVillageManager::AknowedgeStartedConstruction);
 	WorkStation->OnBuildingReady.Unbind();
 	WorkStations.Add(WorkStation, -1);
+	GenerateSave();
 }
 
 void AVillageManager::ApplyJobBehavior(FName StationName, AVillager* Worker)

@@ -32,11 +32,11 @@ private:
 
 	AVillager* InteractingWith = nullptr;
 
-	bool bIsBinding = false;
 protected:
 	virtual void Tick(float DeltaTime) override;
 
 	FString Name = "Name";
+	FString Profession = "Unemployed";
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UDataTable* StatTraitDataTable = nullptr;
@@ -117,14 +117,16 @@ public:
 
 	FString GetName() { return Name; }
 	int GetTrait(ETrait TraitName);
+
 	AItem* GetItem()const { return ItemSlot; }
-	class ABaseWorkStation* GetWorkStation();
-	FText GetProfession();
+
+	void SetProfession(FString ProfessionName) { Profession = ProfessionName; }
+	FString GetProfession() { return Profession; }
 
 	UFUNCTION(BlueprintPure)
 	EItemType GetEquipItemType();
 
 	bool CanEquip() { return !IsValid(ItemSlot); }
 
-	void SetBindingState(bool State) { bIsBinding = State; }
+	FVillagerVisualInfoStruct ExtractVisualInfo();
 };

@@ -13,7 +13,7 @@ void UTraitMenuWidgetBase::Init(UVisualizationInfo* VisualInfo)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UTraitMenuWidgetBase::Init Given VisualInfo doesnt mach the required type"));
 	}
-	TraitWidget->Init(StatAndTraitInfo->Name, StatAndTraitInfo->TraitMap);
+	TraitWidget->Init(StatAndTraitInfo->VisualStruct);
 	StatAndTraitInfo->OnStatUpdated.BindDynamic(StatWidget, &UStatWidgetBase::SetStat);
 	StatAndTraitInfo->NotifyLinked();
 }

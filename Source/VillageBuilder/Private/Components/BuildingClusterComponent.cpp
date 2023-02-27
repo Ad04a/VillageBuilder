@@ -68,7 +68,6 @@ void UBuildingClusterComponent::OnComponentPlaced(int ID, bool State)
 	PlacedIDs.Add(ID);
 	if (PlacedComponents == AllComponents)
 	{
-		OnBuildStarted.ExecuteIfBound(false);
 		OnBuildingFinisehd.ExecuteIfBound(true);
 	}
 }

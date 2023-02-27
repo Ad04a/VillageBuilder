@@ -34,6 +34,7 @@ AActor* ASpawningItem::SpawnActor()
 	FRotator Rotation = GetSpawnRotation();
 	
 	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	AActor* SpawnedActor = World->SpawnActor<AActor>(ActorToSpawn, Location, Rotation, Params);
 	if (IsValid(SpawnedActor) == false)
 	{

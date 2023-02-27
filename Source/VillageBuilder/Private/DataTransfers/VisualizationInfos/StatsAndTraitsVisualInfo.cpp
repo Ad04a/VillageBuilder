@@ -19,12 +19,8 @@ UVisualizationInfo* UStatsAndTraitsVisualInfo::CreateVisualInfo(AActor* InActor)
 		UE_LOG(LogTemp, Error, TEXT("UStatsAndTraitsVisualInfo::CreateVisualInfo Provided Actor is not of class AVillager"));
 		return nullptr;
 	}
-	Info->Name = Villager->GetName();
 	Info->LinkedVillager = Villager;
-	for (ETrait Trait : TEnumRange<ETrait>())
-	{
-		Info->TraitMap.Add(Trait, Villager->GetTrait(Trait));
-	};
+	Info->VisualStruct = Villager->ExtractVisualInfo();
 	Info->LinkedVillager->OnStatUpdated.AddDynamic(Info, &UStatsAndTraitsVisualInfo::PassStatUpdate);
 	return Info;
 }
@@ -41,6 +37,7 @@ void UStatsAndTraitsVisualInfo::NotifyLinked()
 
 void UStatsAndTraitsVisualInfo::Clear()
 {
+	Super::Clear();
 	LinkedVillager->OnStatUpdated.RemoveDynamic(this, &UStatsAndTraitsVisualInfo::PassStatUpdate);
 	OnStatUpdated.Unbind();
 	LinkedVillager = nullptr;

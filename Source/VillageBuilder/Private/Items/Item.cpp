@@ -17,6 +17,7 @@ AItem* AItem::CreateInstance(UObject* WorldContext, FItemInfoStruct InLoadInfo)
 		return nullptr;
 	}
 	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	AItem* Item = World->SpawnActor<AItem>(InLoadInfo.ItemClass, FVector(0, 0, 300), FRotator(0, 0, 0), Params);
 	Item->Init(InLoadInfo);
 	return Item;

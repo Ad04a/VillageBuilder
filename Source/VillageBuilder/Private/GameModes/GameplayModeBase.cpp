@@ -44,6 +44,8 @@ void AGameplayModeBase::StartPlay() {
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(Controller) == false"));
 	}
 	Controller->Possess(Player);
+	Player->SetProfession("Mayor");
+
 	if (LoadedGame->bIsFirstLoad == true)
 	{
 		ASpawningItem* VillageManager = World->SpawnActor<ASpawningItem>(ColonyFlagClass, FVector(0, 0, 100), FRotator(0, 0, 0), Params);
@@ -215,4 +217,13 @@ void AGameplayModeBase::ForceBuildComponents()
 		Station->ForceBuild();
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Builded " + FString::FromInt(Sum) + " stations");
+}
+
+void AGameplayModeBase::SpawnVillager(int Count)
+{
+	for (int i = 0; i < Count; i++)
+	{
+		Village->SpawnVillager(FVector(0, 0, 200 * i));
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Spawned " + FString::FromInt(Count) + " villagers");
 }

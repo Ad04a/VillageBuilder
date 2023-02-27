@@ -90,4 +90,7 @@ public:
 	//---------------------CheatSection-----------------------------------
 	UFUNCTION(Exec, Category = Cheat)
 	void ForceBuildComponents();
+
+	UFUNCTION(Exec, Category = Cheat)
+	void SpawnVillager(int Count);
 };

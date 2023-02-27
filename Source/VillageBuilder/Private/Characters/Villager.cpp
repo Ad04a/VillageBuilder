@@ -114,7 +114,7 @@ FVillagerLoadInfoStruct AVillager::GetSaveInfo()
 	SaveInfo.Transform     = GetActorTransform();
 	SaveInfo.ID			   = ID;
 	SaveInfo.InventoryInfo = Inventory->GetSaveInfo();
-	if (ItemSlot != nullptr)
+	if (IsValid(ItemSlot) == true)
 	{
 		SaveInfo.HoldingItem = ItemSlot->GetSaveInfo();
 	}
@@ -373,34 +373,15 @@ EItemType AVillager::GetEquipItemType()
 	return ItemSlot->GetItemType();
 }
 
-ABaseWorkStation* AVillager::GetWorkStation()
+FVillagerVisualInfoStruct AVillager::ExtractVisualInfo()
 {
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false)
+	FVillagerVisualInfoStruct VisualStruct;
+	VisualStruct.Name = GetName();
+	VisualStruct.Profession = GetProfession();
+	for (ETrait Trait : TEnumRange<ETrait>())
 	{
-		UE_LOG(LogTemp, Error, TEXT("AVillager::GetWorkStation() IsValid(World) == false"));
-		return nullptr;
-	}
-
-	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
-	if (IsValid(GameMode) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillager::GetWorkStation() IsValid(GameMode) == false"));
-		return nullptr;
-	}
-
-	AVillageManager* Village = GameMode->GetCurrentVillage(this);
-	if (IsValid(Village) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillager::GetWorkStation() IsValid(Village) == false"));
-		return nullptr;
-	}
-
-	return Village->GetWorkPlaceFor(ID);
+		VisualStruct.TraitMap.Add(Trait, GetTrait(Trait));
+	};
+	return VisualStruct;
 }
-FText AVillager::GetProfession()
-{
-	if (GetWorkStation() == nullptr)
-	{
-		return FText::FromString("Unemployeed");
-	} 
-	return GetWorkStation()->GetProfessionName();
-}
+

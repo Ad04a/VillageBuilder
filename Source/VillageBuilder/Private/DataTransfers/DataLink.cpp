@@ -87,7 +87,6 @@ bool UDataLink::EstablishConnection()
 	{
 		LinkType = EDataLinkType::PlayerStation;
 
-		InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
 		AVillager* Player = Cast<AVillager>(Initiator);
 		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
 		
@@ -99,6 +98,7 @@ bool UDataLink::EstablishConnection()
 		}
 		else
 		{
+			InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
 			TargetInfo.Add(EVisualiationTypes::Employment, UEmploymentVisualInfo::CreateVisualInfo(Target));
 			TargetInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Target));
 		}
@@ -166,6 +166,7 @@ void UDataLink::BreakConnection()
 	InitiatorInfo.Empty();
 	TargetInfo.Empty();
 	OnLinkBroken.Broadcast(this);
+	ConditionalBeginDestroy();
 }
 
 IDataLinkable* UDataLink::GetInitiator()

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Headers/StatAndTraitEnums.h"
+#include "Headers/LoadInfo.h"
 #include "TraitWidgetBase.generated.h"
 
 UCLASS()
@@ -18,6 +18,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* Name;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* Profession;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* Vitality;
@@ -54,7 +57,7 @@ protected:
 	FSlateColor GetTraitColor(float Modifier);
 
 public:
-	void Init(FString InName, TMap<TEnumAsByte<ETrait>, float> InTraitMap, TMap<TEnumAsByte<ETrait>, float> Scaling = TMap<TEnumAsByte<ETrait>, float>());
+	void Init(FVillagerVisualInfoStruct VisualStruct, TMap<TEnumAsByte<ETrait>, float> Scaling = TMap<TEnumAsByte<ETrait>, float>());
 
 	void NativeOnInitialized() override;
 

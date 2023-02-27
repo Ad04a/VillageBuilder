@@ -3,6 +3,7 @@
 #pragma once
 
 #include "UI/Widgets/Gameplay/DataLinks/VisualFragmentWidgetBase.h"
+#include "DataTransfers/VisualizationInfos/EmploymentVisualInfo.h"
 #include "EmployeeMenuWidgetBase.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FEmploymentButtonSignature, int, VillagerID);
@@ -30,7 +31,7 @@ public:
 	virtual void Init(class UVisualizationInfo* VisualInfo) override;
 
 	UFUNCTION()
-	void LoadVillagerWidgets();
+	void LoadVillagerWidgets(TArray<FVillagerVisualInfoStruct> Villagers, FStationStruct StationStruct);
 
 	FEmploymentButtonSignature OnVillagerEmployed;
 

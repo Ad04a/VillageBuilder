@@ -40,3 +40,18 @@ struct FVillagerLoadInfoStruct
 		return !(other.Name == Name && other.Transform.GetLocation() == Transform.GetLocation());
 	}
 };
+
+USTRUCT(BlueprintType)
+struct FVillagerVisualInfoStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	FString Name;
+
+	UPROPERTY()
+	FString Profession;
+
+	UPROPERTY()
+	TMap<TEnumAsByte<ETrait>, float> TraitMap;
+};

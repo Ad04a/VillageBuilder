@@ -33,7 +33,7 @@ EBTNodeResult::Type UBTT_GetWorkStation::ExecuteTask(UBehaviorTreeComponent& Own
 		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
 		return EBTNodeResult::Failed;
 	}
-	BlackBoard->SetValueAsObject(GetSelectedBlackboardKey(), Cast<UObject>(Villager->GetWorkStation()));
+	//BlackBoard->SetValueAsObject(GetSelectedBlackboardKey(), Cast<UObject>(Villager->GetWorkStation()));
 
 	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
 

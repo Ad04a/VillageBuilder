@@ -20,6 +20,8 @@ ABaseWorkStation* ABaseWorkStation::CreateInstance(UObject* WorldContext, FWorkS
 		return nullptr;
 	}
 	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
 	ABaseWorkStation* WorkStation = World->SpawnActor<ABaseWorkStation>(InLoadInfo.WorkStationClass, FVector(0, 0, 1000), FRotator(0, 0, 0), Params);
 	return WorkStation;
 }
@@ -92,15 +94,6 @@ void ABaseWorkStation::BreakDataLinks_Implementation()
 FText ABaseWorkStation::DisplayDataLinkText_Implementation()
 {
 	return FText::FromString("Open " + DisplayName.ToString());
-}
-
-float ABaseWorkStation::GetModifier(ETrait TraitName) 
-{
-	if (TraitModifiers.Contains(TraitName) == false)
-	{
-		return 0;
-	}
-	return *TraitModifiers.Find(TraitName);
 }
 
 void ABaseWorkStation::SetIsBuilt(bool State)

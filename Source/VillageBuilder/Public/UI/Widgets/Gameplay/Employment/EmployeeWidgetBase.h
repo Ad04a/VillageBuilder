@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Headers/LoadInfo.h"
 #include "EmployeeWidgetBase.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FManageButtonSignature, UEmployeeWidgetBase*, Emitter);
@@ -28,7 +29,7 @@ protected:
 	void ManageButtonCliked();
 
 public:
-	void Init();
+	void Init(FVillagerVisualInfoStruct VillagerInfo, TMap<TEnumAsByte<ETrait>, float> ScalingMap, bool bIsHired);
 
 	void NativeOnInitialized() override;
 

@@ -41,5 +41,6 @@ bool UBuildingVisualInfo::BuildingSelected(FString BuildingName)
 
 void UBuildingVisualInfo::Clear()
 {
+	Super::Clear();
 	GameMode = nullptr;
 }

@@ -110,7 +110,7 @@ protected:
 	void TimedSpawn();
 
 public:	
-
+	
 	void GenerateSave();
 
 	UFUNCTION()
@@ -135,4 +135,7 @@ public:
 	UFUNCTION()
 	void ManageEmployment(ABaseWorkStation* WorkStation, int WorkerIndex);
 	ABaseWorkStation* GetFirstForConstructing();
+
+	//---------------------CheatSection-----------------------------------
+	friend class AGameplayModeBase;
 };

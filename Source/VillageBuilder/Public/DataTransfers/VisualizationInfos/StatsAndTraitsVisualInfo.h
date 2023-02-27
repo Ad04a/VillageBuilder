@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DataTransfers/VisualizationInfo.h"
-#include "Headers/StatAndTraitEnums.h"
+#include "Headers/LoadInfo.h"
 #include "StatsAndTraitsVisualInfo.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FInitiatorStatUpdatedSignature, EStat, StatName, float, Current, float, Max);
@@ -25,8 +25,6 @@ public:
 
 	FInitiatorStatUpdatedSignature OnStatUpdated;
 
-	FString Name;
-	TMap<TEnumAsByte<ETrait>, float> TraitMap;
-
+	FVillagerVisualInfoStruct VisualStruct;
 	void NotifyLinked();
 };

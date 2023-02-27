@@ -36,5 +36,6 @@ void UOptionsVisualInfo::ExitGame()
 
 void UOptionsVisualInfo::Clear()
 {
+	Super::Clear();
 	GameMode = nullptr;
 }

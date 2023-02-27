@@ -123,6 +123,7 @@ void ABuilderItem::SpawnProjection()
 	FRotator Rotation = GetSpawnRotation();
 
 	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	ABuildProjection* SpawnedProjection = World->SpawnActor<ABuildProjection>(BuildProjectionClass, Location, Rotation, Params);
 	if (IsValid(SpawnedProjection) == false)
 	{

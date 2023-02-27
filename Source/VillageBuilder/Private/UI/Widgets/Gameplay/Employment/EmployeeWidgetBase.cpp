@@ -14,9 +14,15 @@ void UEmployeeWidgetBase::NativeOnInitialized()
 	ManageButton->OnClicked.AddDynamic(this, &UEmployeeWidgetBase::ManageButtonCliked);
 }
 
-void UEmployeeWidgetBase::Init()
+void UEmployeeWidgetBase::Init(FVillagerVisualInfoStruct VillagerInfo, TMap<TEnumAsByte<ETrait>, float> ScalingMap, bool bIsHired)
 {
-	//TraitWidget->Init();
+	TraitWidget->Init(VillagerInfo, ScalingMap);
+	if (bIsHired == true)
+	{
+		ManageButtonText->SetText(FText::FromString("Fire"));
+		return;
+	}
+	ManageButtonText->SetText(FText::FromString("Hire"));
 }
 
 

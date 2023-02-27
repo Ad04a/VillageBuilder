@@ -50,6 +50,7 @@ void UConstructionVisualInfo::GetInitialState()
 
 void UConstructionVisualInfo::Clear()
 {
+	Super::Clear();
 	WorkStation->OnStartedConstruction.RemoveDynamic(this, &UConstructionVisualInfo::CaptureState);
 	WorkStation = nullptr;
 	OnStatusChanged.Unbind();

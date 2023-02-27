@@ -23,10 +23,11 @@ void UTraitWidgetBase::NativeOnInitialized()
 
 }
 
-void UTraitWidgetBase::Init(FString InName, TMap<TEnumAsByte<ETrait>, float> InTraitMap, TMap<TEnumAsByte<ETrait>, float> Scaling)
+void UTraitWidgetBase::Init(FVillagerVisualInfoStruct VisualStruct, TMap<TEnumAsByte<ETrait>, float> Scaling)
 {
-	Name->SetText(FText::FromString(InName));
-	for (TPair<ETrait, int> Trait : InTraitMap)
+	Name->SetText(FText::FromString(VisualStruct.Name));
+	Profession->SetText(FText::FromString(VisualStruct.Profession));
+	for (TPair<ETrait, int> Trait : VisualStruct.TraitMap)
 	{
 		float Color = 0;
 		if (Scaling.Contains(Trait.Key))
@@ -49,8 +50,8 @@ void UTraitWidgetBase::SetTrait(ETrait TraitName, int Value, FSlateColor Color)
 		UE_LOG(LogTemp, Error, TEXT("UEmployeeWidgetBase::SetTrait IsValid(Trait) == false"));
 		return;
 	}
-	ValueTextBlock->SetText(FText::FromString(UEnum::GetValueAsString(TraitName)));
-	NameTextBlock->SetText(FText::FromString(FString::FromInt(Value)));
+	NameTextBlock->SetText(FText::FromString(UEnum::GetValueAsString(TraitName)));
+	ValueTextBlock->SetText(FText::FromString(FString::FromInt(Value)));
 	NameTextBlock->SetColorAndOpacity(Color);
 }
 

@@ -24,6 +24,7 @@ void AConsumableItem::Use(AVillager* User, EItemActionType ActionType)
 		return;
 	}
 	User->AddStatValue(StatToUpdate, ConsumeValue);
+	User->DropItem();
 	Destroy();
 }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/DataTable.h"
+//#include "Headers/InventoryInfos.h"
 #include "ItemInfo.generated.h"
 
 UENUM(BlueprintType)
@@ -27,13 +28,19 @@ struct FItemData : public FTableRowBase
 	FText Description;
 
 	UPROPERTY(EditAnywhere)
-	int Slots;
+	FIntPoint Slots;
 
 	UPROPERTY(EditAnywhere)
 	TEnumAsByte<EItemType> ItemType;
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* ItemAnimMontage;
+
+	UPROPERTY(EditAnywhere)
+	class UMaterialInterface* Icon;
+
+	UPROPERTY(EditAnywhere)
+	class UMaterialInterface* IconRotated;
 
 };
 

@@ -19,5 +19,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = DragDrop, meta = (BindWidget))
 	class UBorder* ItemBorder;	
-
+public:
+	void Init(class UMaterialInterface* Icon);
 };

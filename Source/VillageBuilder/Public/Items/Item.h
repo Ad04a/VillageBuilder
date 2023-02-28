@@ -38,7 +38,7 @@ protected:
 	class UDataTable* SecondaryDataTable = nullptr;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
-	int Slots;
+	FIntPoint Slots;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item)
 	FText DisplayName;
@@ -69,7 +69,7 @@ public:
 	virtual FString Init(FItemInfoStruct InLoadInfo = FItemInfoStruct());
 
 	UFUNCTION()
-	FItemInfoStruct GetSaveInfo();
+	virtual FItemInfoStruct GetSaveInfo();
 
 	UFUNCTION()
 	virtual FString SerializetemInfo();
@@ -95,6 +95,8 @@ public:
 	UFUNCTION()
 	UMaterialInterface* GetMaterial();
 
-	int GetSlots() { return Slots; }
+	FIntPoint GetSlots() { return Slots; }
+
+	class UDataTable* GetDataTable() { return MainDataTable; }
 
 };

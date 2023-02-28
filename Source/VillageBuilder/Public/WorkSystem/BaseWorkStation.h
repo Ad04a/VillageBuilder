@@ -97,6 +97,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UBuildingClusterComponent* BuildingComponent = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class UStorageComponent* StorageComponent = nullptr;
+
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "DataLink")
 	void BreakDataLinks();
 	virtual void BreakDataLinks_Implementation();
@@ -132,6 +135,7 @@ public:
 	bool GetIsBuilt() { return IsBuilt; }
 	bool GetIsConstructing() { return IsConstructing; }
 	void ForceBuild();
+	class UStorageComponent* GetStorageComponent() { return StorageComponent; }
 	class UBaseBuildingComponent* GetFirstBuildingComponent(); 
 
 

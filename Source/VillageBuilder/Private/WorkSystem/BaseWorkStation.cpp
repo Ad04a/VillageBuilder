@@ -36,6 +36,8 @@ ABaseWorkStation::ABaseWorkStation()
 	BuildingComponent->SetupAttachment(MeshComponent);
 	BuildingComponent->OnBuildingFinisehd.BindDynamic(this, &ABaseWorkStation::SetIsBuilt);
 	BuildingComponent->OnBuildStarted.BindDynamic(this, &ABaseWorkStation::SetIsConstructing);
+
+	StorageComponent = CreateDefaultSubobject<UStorageComponent>(TEXT("Storage"));
 }
 
 // Called when the game starts or when spawned

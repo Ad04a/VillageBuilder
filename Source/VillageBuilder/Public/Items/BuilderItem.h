@@ -42,4 +42,5 @@ public:
 	UFUNCTION()
 	void BindToPlayer(FName StationName, AVillageMayor* Villager);
 
+	virtual FItemInfoStruct GetSaveInfo() override;
 };

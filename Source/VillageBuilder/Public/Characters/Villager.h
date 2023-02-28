@@ -62,7 +62,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float SaturationForPassiveHealing = 0.5;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Inventory)
 	class UStorageComponent* Inventory;
 
 	FRotator MovementInputRotator;
@@ -77,6 +77,8 @@ protected:
 public:	
 	UPROPERTY(VisibleAnywhere, Category = Identification)
 	unsigned int ID = -1;
+
+	bool bCanInteract = true;
 
 	FStatUpdatedSignature OnStatUpdated;
 	FVillagerPassingSignature OnDeath;
@@ -129,4 +131,6 @@ public:
 	bool CanEquip() { return !IsValid(ItemSlot); }
 
 	FVillagerVisualInfoStruct ExtractVisualInfo();
+
+	class UStorageComponent* GetStorageComponent() { return Inventory; }
 };

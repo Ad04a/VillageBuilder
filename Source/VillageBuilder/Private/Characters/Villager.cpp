@@ -33,6 +33,7 @@ void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
 			Equip(Item);
 		}
 		bIsLoadingFromFile = true;
+		
 	}
 	Inventory->Init(InLoadInfo.InventoryInfo);
 	if (InName != "")
@@ -183,19 +184,23 @@ void AVillager::Equip(AActor* ItemToEquip)
 	AItem* NewItem = Cast<AItem>(ItemToEquip);
 	if (IsValid(NewItem) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("AVillager::Equip IsValid(NewItem) == false"));
+		UE_LOG(LogTemp, Warning, TEXT("AVillager::Equip IsValid(NewItem) == false"));
 		return;
 	}
 	if (CanEquip() == false)
 	{
-		if (Inventory->PlaceItem(NewItem) == true)
+		if (Inventory->TryPlaceItem(UStoredItemInfo::GenerateStorageInfoForItem(NewItem)) == true)
+		{
+			NewItem->Destroy();
+			return;
+		}
+		if (Inventory->TryPlaceItem(UStoredItemInfo::GenerateStorageInfoForItem(ItemSlot)) == false)
 		{
 			return;
 		}
-		if (Inventory->PlaceItem(ItemSlot) == false)
-		{
-			return;
-		}
+		AItem* RefToPrevious = ItemSlot;
+		DropItem();
+		RefToPrevious->Destroy();
 	}
 	NewItem->SetEnablePhysics(false);
 	ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));

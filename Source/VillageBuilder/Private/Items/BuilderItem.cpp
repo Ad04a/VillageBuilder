@@ -15,6 +15,7 @@ void ABuilderItem::BindToPlayer(FName StationName, AVillageMayor* Villager)
 	CurrentStationName = StationName;
 	LoadFromDataTable();
 	UsingVillager = Villager;
+	UsingVillager->bCanInteract = false;
 	Use(UsingVillager, EItemActionType::Primary);
 }
 
@@ -135,6 +136,7 @@ void ABuilderItem::SpawnProjection()
 
 void ABuilderItem::OnDrop()
 {
+	UsingVillager->bCanInteract = true;
 	Super::OnDrop();
 	CurrentProjection->Destroy();
 	Destroy();
@@ -157,4 +159,9 @@ FRotator ABuilderItem::GetSpawnRotation()
 		return FRotator(0, 0, 0);
 	}
 	return CurrentProjection->GetActorRotation();
+}
+
+FItemInfoStruct ABuilderItem::GetSaveInfo()
+{
+	return FItemInfoStruct();
 }

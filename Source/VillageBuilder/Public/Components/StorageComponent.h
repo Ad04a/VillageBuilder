@@ -3,50 +3,28 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Items/Item.h"
+#include "Items/StoredItemInfo.h"
 #include "Engine/DataTable.h"
 #include "StorageComponent.generated.h"
 
-USTRUCT(BlueprintType)
-struct FStorageRow
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, Category = Content)
-	TArray<int> ItemSlots;
-
-	inline bool operator==(const FStorageRow& other) const
-	{
-		return (other.ItemSlots == ItemSlots);
-	}
-	inline bool operator != (const FStorageRow& other) const
-	{
-		return !(other.ItemSlots == ItemSlots);
-	}
-};
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FItemsUpdatedSignature, TArray<UStoredItemInfo*>, Items, TArray<FIntPoint>, Indexes);
 
 USTRUCT(BlueprintType)
 struct FStorageInfoStruct
 {
 	GENERATED_BODY()
 
-	UPROPERTY()
-	TArray<FItemInfoStruct> Items;
+	//UPROPERTY()
+	//TArray<FItemInfoStruct> Items;
 
-	UPROPERTY(EditDefaultsOnly, Category = Content)
-	TArray<int> LockedSlots;
-
-	UPROPERTY(EditAnywhere, Category = Content)
-	TArray<FStorageRow> ItemRows;
-
-	inline bool operator==(const FStorageInfoStruct& other) const
+	/*inline bool operator==(const FStorageInfoStruct& other) const
 	{
-		return (other.Items == Items && other.ItemRows == ItemRows);
+		return (other.Rows == Rows && other.Columns == Columns);
 	}
 	inline bool operator != (const FStorageInfoStruct& other) const
 	{
-		return !(other.Items == Items && other.ItemRows == ItemRows);
-	}
+		return !(other.Rows == Rows && other.Columns == Columns);
+	}*/
 };
 
 USTRUCT(BlueprintType)
@@ -55,7 +33,10 @@ struct FStorageData : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, Category = Content)
-	TArray<FStorageRow> ItemRows;
+	int Rows;
+
+	UPROPERTY(EditAnywhere, Category = Content)
+	int Columns;
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -70,20 +51,36 @@ protected:
 	FName RollToRead = "Station";
 
 	UPROPERTY(VisibleAnywhere, Category = Content)
-	TArray<FItemInfoStruct> Items;
+	TArray<class UStoredItemInfo* > Items;
 
-	UPROPERTY(VisibleAnywhere, Category = Content)
-	TArray<int> LockedSlots;
+	UPROPERTY(EditAnywhere, Category = Content)
+	int Rows;
 
-	UPROPERTY(VisibleAnywhere, Category = Content)
-	TArray<FStorageRow> ItemRows;
+	UPROPERTY(EditAnywhere, Category = Content)
+	int Columns;
 
-	TPair<int, int> CanPlace(AItem* ItemToPlace, TPair<int, int> DesiredPosition = TPair<int, int>());
+	bool IsPositionValid(FIntPoint Position);
+
+	TArray<FIntPoint> GetAllTiles(FIntPoint ItemSlots, int DesiredPosition);
+
+	bool CanPlace(FIntPoint ItemSlots, int DesiredPosition);
+
+	FIntPoint GetTileByIndex(int Index);
+	int GetIndexByTile(FIntPoint InTile);
+
+	TPair<bool, class UStoredItemInfo*> TryGetItem(int ItemIndex);
 
 public:
+
+	FItemsUpdatedSignature OnItemsUpdated;
+
 	void Init(FStorageInfoStruct InLoadInfo = FStorageInfoStruct());
 	FStorageInfoStruct GetSaveInfo();
-	bool PlaceItem(AItem* InItem);
+	bool TryPlaceItem(UStoredItemInfo* InItemInfo);
+	void AddItemAt(UStoredItemInfo* InItemInfo, int PlaceIndex);
+	int GetRows() { return Rows; }
+	int GetColumns() { return Columns; }
+	TMap<UStoredItemInfo*, FIntPoint> GetAllItems();
 
 
 };

@@ -15,8 +15,8 @@ AVillageMayor::AVillageMayor()
 void AVillageMayor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	EmitChecker();
+	
 }
 
 void AVillageMayor::EmitChecker()
@@ -47,6 +47,12 @@ void AVillageMayor::EmitChecker()
 
 void AVillageMayor::CheckForInteractables(FHitResult HitResult)
 {
+	if (bCanInteract == false)
+	{
+		FocusedInteractableObject = nullptr;
+		OnInteraction.Broadcast(FText());
+	}
+
 	AActor* HitActor = HitResult.GetActor();
 	UPrimitiveComponent* HitComponent = HitResult.GetComponent();
 	IInteractable* InteractableActor = Cast<IInteractable>(HitActor);
@@ -76,6 +82,11 @@ void AVillageMayor::CheckForInteractables(FHitResult HitResult)
 
 void AVillageMayor::CheckForDataLinks(AActor* HitActor)
 {
+	if (bCanInteract == false)
+	{
+		FocusedDataLinkableObject = nullptr;
+		OnDataLink.Broadcast(FText());
+	}
 	IDataLinkable* DataLinkableActor = Cast<IDataLinkable>(HitActor);
 
 	if (HitActor == nullptr || DataLinkableActor == nullptr)

@@ -2,17 +2,10 @@
 
 
 #include "Components/StorageComponent.h"
-#include "Characters/VillageMayor.h"
+#include "Items/StoredItemInfo.h"
 
 void UStorageComponent::Init(FStorageInfoStruct InLoadInfo )
 {
-	if (InLoadInfo != FStorageInfoStruct()) 
-	{
-		Items = InLoadInfo.Items;
-		LockedSlots = InLoadInfo.LockedSlots;
-		ItemRows = InLoadInfo.ItemRows;
-		return;
-	}
 	if (IsValid(StorageDataTable) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UStorageComponent::Init IsValid(StorageDataTable) == false from %s"), *GetClass()->GetName());
@@ -27,66 +20,139 @@ void UStorageComponent::Init(FStorageInfoStruct InLoadInfo )
 		return;
 	}
 
-	ItemRows = StorageData->ItemRows;
+	Rows	 = StorageData->Rows;
+	Columns  = StorageData->Columns;
+	Items.Init(nullptr, Rows * Columns);
+	if (false)
+	{
+		Items.Init(nullptr, Rows * Columns);
+		return;
+	}
+	Items.Init(nullptr, Rows * Columns);
 }
+
 
 FStorageInfoStruct UStorageComponent::GetSaveInfo()
 {
 	FStorageInfoStruct SaveInfo;
-	SaveInfo.Items		 = Items;
-	SaveInfo.LockedSlots = LockedSlots;
-	SaveInfo.ItemRows    = ItemRows;
+	//SaveInfo.Items		 = Items;
 
 	return SaveInfo;
 }
 
-TPair<int, int>  UStorageComponent::CanPlace(AItem* ItemToPlace, TPair<int, int> DesiredPosition)
+TPair<bool, UStoredItemInfo*> UStorageComponent::TryGetItem(int ItemIndex)
 {
-	int TargetSlots = ItemToPlace->GetSlots();
-	if (DesiredPosition != TPair<int, int>())
+	TPair<bool, UStoredItemInfo*> Result;
+	Result.Key = Items.IsValidIndex(ItemIndex);
+	if (Result.Key == false)
 	{
-		return TPair<int, int>(-1,-1);
+		return Result;
 	}
-	for (FStorageRow Row : ItemRows)
-	{
-		int Unocupied = 0;
-		for (int i = 0; i<Row.ItemSlots.Num(); i++)
-		{	
-			if (Row.ItemSlots[i] == -1)
-			{
-				Unocupied++;
-			}
-			else
-			{
-				Unocupied = 0;
-			}
-			UE_LOG(LogTemp, Display, TEXT("i: %d, Row.ItemSlots[i]: %d, Unocupied: %d"), i, Row.ItemSlots[i], Unocupied);
-			if (Unocupied == TargetSlots)
-			{
-				return TPair<int, int>(ItemRows.IndexOfByKey(Row), i-Unocupied+1);
-			}
-
-		}
-	}
-	return TPair<int, int>(-1,-1);
+	Result.Value = Items[ItemIndex];
+	return Result;
 }
 
-bool UStorageComponent::PlaceItem(AItem* InItem)
+FIntPoint UStorageComponent::GetTileByIndex(int Index)
 {
-	TPair<int, int> Start = CanPlace(InItem);
-	int StartRow = 0;
-	if (Start == TPair<int, int>(-1,-1))
+	FIntPoint Tile;
+	Tile.X = Index % Columns;
+	Tile.Y = Index / Columns;
+	return Tile;
+}
+
+int UStorageComponent::GetIndexByTile(FIntPoint InTile)
+{
+	return Columns * InTile.Y + InTile.X;
+}
+
+bool UStorageComponent::IsPositionValid(FIntPoint Position)
+{
+	return Position.X > -1 && Position.X < Columns&& Position.Y > -1 && Position.Y < Rows;
+}
+
+TArray<FIntPoint> UStorageComponent::GetAllTiles(FIntPoint ItemSlots, int DesiredPosition)
+{
+	TArray<FIntPoint> Tiles;
+	FIntPoint TargetPosition = GetTileByIndex(DesiredPosition);
+	FIntPoint Tile;
+	for (int X = TargetPosition.X; X < (TargetPosition.X + ItemSlots.X); X++)
 	{
-		UE_LOG(LogTemp, Display, TEXT("No Valid Position to equip %s in %s"), *InItem->GetClass()->GetName(),*GetClass()->GetName());
-		return false;
+		for (int Y = TargetPosition.Y; Y < (TargetPosition.Y + ItemSlots.Y); Y++)
+		{
+			Tile.X = X;
+			Tile.Y = Y;
+			Tiles.Add(Tile);
+		}
 	}
-	FItemInfoStruct ItemInfo = InItem->GetSaveInfo();
-	Items.Add(ItemInfo);
-	for (int i = 0; i < InItem->GetSlots(); i++)
+	return Tiles;
+}
+
+bool  UStorageComponent::CanPlace(FIntPoint ItemSlots, int DesiredPosition)
+{
+	
+	TArray<FIntPoint> Tiles = GetAllTiles(ItemSlots, DesiredPosition);
+	for (FIntPoint Tile : Tiles)
 	{
-		ItemRows[Start.Key].ItemSlots[Start.Value+i] = Items.IndexOfByKey(ItemInfo);
+		if (IsPositionValid(Tile) == false)
+		{
+			return false;
+		}
+		TPair<bool, UStoredItemInfo* > TileState = TryGetItem(GetIndexByTile(Tile));
+		if (TileState.Key == false)
+		{
+			return false;
+		}
+		if (IsValid(TileState.Value) == true)
+		{
+			return false;
+		}
 	}
-	InItem->Destroy();
+	
 	return true;
 }
 
+bool UStorageComponent::TryPlaceItem(UStoredItemInfo* InItemInfo)
+{
+	if (IsValid(InItemInfo) == false)
+	{
+		return false;
+	}
+	for (int i = 0; i < Items.Num(); i++)
+	{
+		if (CanPlace(InItemInfo->GetSlots(), i) == false)
+		{
+			continue;
+		}
+		AddItemAt(InItemInfo, i);
+		return true;
+	}
+	return false;
+}
+
+void UStorageComponent::AddItemAt(UStoredItemInfo* InItemInfo, int PlaceIndex)
+{
+	TArray<FIntPoint> Tiles = GetAllTiles(InItemInfo->GetSlots(), PlaceIndex);
+	for (FIntPoint Tile : Tiles)
+	{
+		Items[GetIndexByTile(Tile)] = InItemInfo;
+	}
+}
+
+
+TMap<UStoredItemInfo*, FIntPoint> UStorageComponent::GetAllItems()
+{
+	TMap<UStoredItemInfo*, FIntPoint> AllItems;
+	for (UStoredItemInfo* Item : Items)
+	{
+		if (IsValid(Item) == false)
+		{
+			continue;
+		}
+		if (AllItems.Contains(Item) == true)
+		{
+			continue;
+		}
+		AllItems.Add(Item, GetTileByIndex(Items.IndexOfByKey(Item)));
+	}
+	return AllItems;
+}

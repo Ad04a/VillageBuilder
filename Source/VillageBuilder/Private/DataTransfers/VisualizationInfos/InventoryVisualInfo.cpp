@@ -54,6 +54,28 @@ void UInventoryVisualInfo::InvokeInitial()
 	RecieveUpdatedItems(Items, Indexes);
 }
 
+UObject* UInventoryVisualInfo::GetItemFromStorage(int Index)
+{
+	return Cast<UObject>(Storage->TakeItemByNumeration(Index));
+}
+
+void UInventoryVisualInfo::OnDragItemDropped(UObject* DroppedObject, int Index)
+{
+	UStoredItemInfo* Item = Cast<UStoredItemInfo>(DroppedObject);
+	if (IsValid(Item) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UInventoryVisualInfo::OnDragItemDropped Given DropInfo is not of type UStoredItemInfo"));
+	}
+	if (Storage->TryPlaceItemAtIndex(Item, Index) == true)
+	{
+		return;
+	}
+	if (Storage->TryPlaceItem(Item) == true)
+	{
+		return;
+	}
+}
+
 void UInventoryVisualInfo::Clear()
 {
 	Super::Clear();

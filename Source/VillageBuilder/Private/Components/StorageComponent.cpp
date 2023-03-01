@@ -3,6 +3,7 @@
 
 #include "Components/StorageComponent.h"
 #include "Items/StoredItemInfo.h"
+#include "Items/Item.h"
 
 void UStorageComponent::Init(FStorageInfoStruct InLoadInfo )
 {
@@ -129,6 +130,26 @@ bool UStorageComponent::TryPlaceItem(UStoredItemInfo* InItemInfo)
 	return false;
 }
 
+bool UStorageComponent::TryPlaceItemAtIndex(UStoredItemInfo* InItemInfo, int Index)
+{
+	if (IsValid(InItemInfo) == false)
+	{
+		return false;
+	}
+	if (Items.IsValidIndex(Index)==false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UStorageComponent::TryPlaceItemAtIndex Items.IsValidIndex(Index = %d)==false"), Index);
+		return false;
+	}
+	if (CanPlace(InItemInfo->GetSlots(), Index) == false)
+	{
+		return false;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("UIndex = %d, Tile: %s"), Index, *GetTileByIndex(Index).ToString());
+	AddItemAt(InItemInfo, Index);
+	return true;
+}
+
 void UStorageComponent::AddItemAt(UStoredItemInfo* InItemInfo, int PlaceIndex)
 {
 	TArray<FIntPoint> Tiles = GetAllTiles(InItemInfo->GetSlots(), PlaceIndex);
@@ -136,6 +157,7 @@ void UStorageComponent::AddItemAt(UStoredItemInfo* InItemInfo, int PlaceIndex)
 	{
 		Items[GetIndexByTile(Tile)] = InItemInfo;
 	}
+	SendUpdatedItems();
 }
 
 
@@ -155,4 +177,50 @@ TMap<UStoredItemInfo*, FIntPoint> UStorageComponent::GetAllItems()
 		AllItems.Add(Item, GetTileByIndex(Items.IndexOfByKey(Item)));
 	}
 	return AllItems;
+}
+
+UStoredItemInfo* UStorageComponent::TakeItemByNumeration(int Numeration)
+{
+	TMap<UStoredItemInfo*, FIntPoint> ItemData = GetAllItems();
+	TArray<UStoredItemInfo*> SearchItems;
+	ItemData.GenerateKeyArray(SearchItems);
+	if (SearchItems.IsValidIndex(Numeration) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UStorageComponent::TakeItemByNumeration SearchItems.IsValidIndex(Numeration = %d) == false"), Numeration);
+		return nullptr;
+	}
+	UStoredItemInfo* Item = SearchItems[Numeration];
+	RemoveItem(Item);
+
+	return Item;
+}
+
+void UStorageComponent::RemoveItem(UStoredItemInfo* ItemToRemove)
+{
+	for (int i = 0; i < Items.Num(); i++)
+	{
+		if (Items[i] == ItemToRemove)
+		{
+			Items[i] = nullptr;
+		}
+	}
+	SendUpdatedItems();
+	ItemToRemove->ConditionalBeginDestroy();
+}
+
+void UStorageComponent::DropItem(UStoredItemInfo* InItemInfo)
+{
+	AItem* Item = AItem::CreateInstance(this, InItemInfo->GetItemInfo());
+	RemoveItem(InItemInfo);
+	Item->SetActorLocation(GetOwner()->GetActorLocation());
+}
+
+void UStorageComponent::SendUpdatedItems()
+{
+	TMap<UStoredItemInfo*, FIntPoint> ItemDataToBroadcast = GetAllItems();
+	TArray<UStoredItemInfo*> ItemsToBroadcast;
+	TArray<FIntPoint> PositionsToBroadcast;
+	ItemDataToBroadcast.GenerateKeyArray(ItemsToBroadcast);
+	ItemDataToBroadcast.GenerateValueArray(PositionsToBroadcast);
+	OnItemsUpdated.ExecuteIfBound(ItemsToBroadcast, PositionsToBroadcast);
 }

@@ -19,6 +19,11 @@ protected:
 	void RecieveUpdatedItems(TArray<class UStoredItemInfo*> Items, TArray<FIntPoint> Indexes);
 
 public:
+	UFUNCTION()
+	UObject* GetItemFromStorage(int Index);
+
+	UFUNCTION()
+	void OnDragItemDropped(UObject* DroppedObject , int Index);
 
 	FSendRecivedItemsSignature OnItemsUpdated;
 

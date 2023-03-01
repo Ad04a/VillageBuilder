@@ -18,13 +18,16 @@ struct FLine
 	FVector2D End;
 };
 
+DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(UObject*, FChildDraged, int, Index);
+DECLARE_DYNAMIC_DELEGATE_TwoParams(FChildDropped, UObject*, Item, int, Index);
+
 UCLASS()
 class VILLAGEBUILDER_API UInventoryWidgetBase : public UVisualFragmentWidgetBase
 {
 	GENERATED_BODY()
 private:
 
-	void GetLinesToDraw(FVector2D Size);
+	//void GetLinesToDraw(FVector2D Size);
 
 protected:
 
@@ -34,30 +37,34 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UCanvasPanel* ContentCanvas;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UBorder* GridBorder;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UCanvasPanel* GridCanvas;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UBorder* DropBorder;
+
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grid)
 	int TileSize = 50;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grid)
-	FLinearColor LineColor;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grid)
-	float LineThickness = 1;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TArray<FLine> Lines;
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UInventoryDragWidgetBase> DragWidgetClass;
 
-	UFUNCTION()
-	void RevieveUpdatedItems(TArray<class UMaterialInterface*> Icons, TArray<FIntPoint> Sizes, TArray<FIntPoint> Indexes);
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UInventorySlotWidgetBase> SlotWidgetClass;
 
+	UFUNCTION()
+	void RecieveUpdatedItems(TArray<class UMaterialInterface*> Icons, TArray<FIntPoint> Sizes, TArray<FIntPoint> Indexes);
+
+	UFUNCTION()
+	UObject* RegisterChiledDraged(UInventoryDragWidgetBase* DragedChild);
+
+	UFUNCTION()
+	void RegisterChiledDropped(UInventorySlotWidgetBase* DropedPoint, UObject* Payload);
+	
 public:
+	FChildDraged OnChildDraged;
+	FChildDropped OnChildDropped;
 	virtual void Init(class UVisualizationInfo* VisualInfo) override;
 };

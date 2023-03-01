@@ -70,6 +70,10 @@ protected:
 
 	TPair<bool, class UStoredItemInfo*> TryGetItem(int ItemIndex);
 
+	void RemoveItem(class UStoredItemInfo* ItemToRemove);
+
+	void SendUpdatedItems();
+
 public:
 
 	FItemsUpdatedSignature OnItemsUpdated;
@@ -77,10 +81,12 @@ public:
 	void Init(FStorageInfoStruct InLoadInfo = FStorageInfoStruct());
 	FStorageInfoStruct GetSaveInfo();
 	bool TryPlaceItem(UStoredItemInfo* InItemInfo);
+	bool TryPlaceItemAtIndex(UStoredItemInfo* InItemInfo, int Index);
+	void DropItem(UStoredItemInfo* InItemInfo);
 	void AddItemAt(UStoredItemInfo* InItemInfo, int PlaceIndex);
 	int GetRows() { return Rows; }
 	int GetColumns() { return Columns; }
 	TMap<UStoredItemInfo*, FIntPoint> GetAllItems();
-
+	UStoredItemInfo* TakeItemByNumeration(int Numeration);
 
 };

@@ -138,7 +138,7 @@ bool UStorageComponent::TryPlaceItemAtIndex(UStoredItemInfo* InItemInfo, int Ind
 	}
 	if (Items.IsValidIndex(Index)==false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UStorageComponent::TryPlaceItemAtIndex Items.IsValidIndex(Index = %d)==false"), Index);
+		UE_LOG(LogTemp, Display, TEXT("UStorageComponent::TryPlaceItemAtIndex Items.IsValidIndex(Index = %d)==false"), Index);
 		return false;
 	}
 	if (CanPlace(InItemInfo->GetSlots(), Index) == false)
@@ -209,9 +209,47 @@ void UStorageComponent::RemoveItem(UStoredItemInfo* ItemToRemove)
 
 void UStorageComponent::DropItem(UStoredItemInfo* InItemInfo)
 {
+	if (IsValid(InItemInfo) == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UStorageComponent::DropItem IsValid(InItemInfo) == false"));
+		return;
+	}
 	AItem* Item = AItem::CreateInstance(this, InItemInfo->GetItemInfo());
 	RemoveItem(InItemInfo);
+	Item->SetEnablePhysics(true);
+	Item->OnDrop();
 	Item->SetActorLocation(GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector()*150);
+}
+
+void UStorageComponent::DropFirst()
+{
+	DropItem(Items[0]);
+}
+
+void UStorageComponent::PlaceItem(AItem* ItemToAdd, FIntPoint Coordinates)
+{
+	if (IsValid(ItemToAdd) == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UStorageComponent::PlaceItem IsValid(ItemToAdd) == false"));
+		return;
+	}
+	UStoredItemInfo* ItemInfo = UStoredItemInfo::GenerateStorageInfoForItem(ItemToAdd);
+	ItemToAdd->Destroy();
+	if (IsValid(ItemInfo) == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UStorageComponent::PlaceItem IsValid(ItemInfo) == false"));
+		return;
+	}
+	if (TryPlaceItemAtIndex(ItemInfo, GetIndexByTile(Coordinates)) == true)
+	{
+		return;
+	}
+	if (TryPlaceItem(ItemInfo) == true)
+	{
+		return;
+	}
+	DropItem(ItemInfo);
+	
 }
 
 void UStorageComponent::SendUpdatedItems()
@@ -222,4 +260,6 @@ void UStorageComponent::SendUpdatedItems()
 	ItemDataToBroadcast.GenerateKeyArray(ItemsToBroadcast);
 	ItemDataToBroadcast.GenerateValueArray(PositionsToBroadcast);
 	OnItemsUpdated.ExecuteIfBound(ItemsToBroadcast, PositionsToBroadcast);
+
+	OnFirstItemUpdated.ExecuteIfBound(Items[0]);
 }

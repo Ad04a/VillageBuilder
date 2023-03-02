@@ -74,6 +74,9 @@ protected:
 	UFUNCTION()
 	void RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
+	UFUNCTION()
+	void Equip(UStoredItemInfo* ItemInfoToEquip);
+
 public:	
 	UPROPERTY(VisibleAnywhere, Category = Identification)
 	unsigned int ID = -1;
@@ -100,8 +103,7 @@ public:
 
 	void AddStatValue(EStat StatName, float InValue);
 
-	UFUNCTION()
-	void Equip(class AActor* ItemToEquip);
+	void PickUp(class AItem* ItemToPickUp);
 
 	UFUNCTION()
 	void DropItem();

@@ -92,7 +92,7 @@ void AItem::LoadFromDataTable()
 void AItem::InteractRequest_Implementation(class AVillager* InteractingVillager)
 {
 	UsingVillager = InteractingVillager;
-	InteractingVillager->Equip(this);
+	InteractingVillager->PickUp(this);
 }
 
 void AItem::Use(AVillager* User, EItemActionType ActionType)

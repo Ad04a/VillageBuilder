@@ -50,7 +50,7 @@ void AGameplayModeBase::StartPlay() {
 	{
 		ASpawningItem* VillageManager = World->SpawnActor<ASpawningItem>(ColonyFlagClass, FVector(0, 0, 100), FRotator(0, 0, 0), Params);
 		
-		Player->Equip(VillageManager);
+		Player->PickUp(VillageManager);
 		World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(0, 0, 100), FRotator(0, 0, 0), Params);
 		LoadedGame->bIsFirstLoad = false;
 		SaveGame();

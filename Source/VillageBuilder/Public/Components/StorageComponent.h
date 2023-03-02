@@ -8,6 +8,7 @@
 #include "StorageComponent.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FItemsUpdatedSignature, TArray<UStoredItemInfo*>, Items, TArray<FIntPoint>, Indexes);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FFirstItemSignature, UStoredItemInfo*, Item);
 
 USTRUCT(BlueprintType)
 struct FStorageInfoStruct
@@ -74,19 +75,24 @@ protected:
 
 	void SendUpdatedItems();
 
+	void AddItemAt(UStoredItemInfo* InItemInfo, int PlaceIndex);
+
 public:
 
 	FItemsUpdatedSignature OnItemsUpdated;
+	FFirstItemSignature OnFirstItemUpdated;
 
 	void Init(FStorageInfoStruct InLoadInfo = FStorageInfoStruct());
 	FStorageInfoStruct GetSaveInfo();
-	bool TryPlaceItem(UStoredItemInfo* InItemInfo);
-	bool TryPlaceItemAtIndex(UStoredItemInfo* InItemInfo, int Index);
-	void DropItem(UStoredItemInfo* InItemInfo);
-	void AddItemAt(UStoredItemInfo* InItemInfo, int PlaceIndex);
 	int GetRows() { return Rows; }
 	int GetColumns() { return Columns; }
 	TMap<UStoredItemInfo*, FIntPoint> GetAllItems();
+
+	bool TryPlaceItem(UStoredItemInfo* InItemInfo);
+	bool TryPlaceItemAtIndex(UStoredItemInfo* InItemInfo, int Index);
 	UStoredItemInfo* TakeItemByNumeration(int Numeration);
 
+	void DropItem(UStoredItemInfo* InItemInfo);
+	void PlaceItem(class AItem* ItemToAdd, FIntPoint Coordinates = FIntPoint(-1,-1));
+	void DropFirst();
 };

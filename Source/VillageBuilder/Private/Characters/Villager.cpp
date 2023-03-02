@@ -14,6 +14,7 @@ AVillager::AVillager()
 	PrimaryActorTick.bCanEverTick = true;
 	OnTakeAnyDamage.AddDynamic(this, &AVillager::RecieveDamage);
 	Inventory = CreateDefaultSubobject<UStorageComponent>(TEXT("Iventory"));
+	Inventory->OnFirstItemUpdated.BindDynamic(this, &AVillager::Equip);
 }
 
 void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
@@ -170,44 +171,51 @@ void AVillager::Die()
 	BreakDataLinks_Implementation();
 }
 
-void AVillager::Equip(AActor* ItemToEquip)
+void AVillager::PickUp(AItem* ItemToPickUp)
 {
-	AItem* NewItem = Cast<AItem>(ItemToEquip);
+	if (IsValid(ItemToPickUp) == false)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AVillager::PickUp IsValid(ItemToPickUp) == false"));
+		return;
+	}
+	Inventory->PlaceItem(ItemToPickUp);
+}
+
+void AVillager::Equip(UStoredItemInfo* ItemInfoToEquip)
+{
+	if (IsValid(ItemInfoToEquip) == false)
+	{
+		if (IsValid(ItemSlot) == true)
+		{
+			ItemSlot->Destroy();
+		}
+		ItemSlot = nullptr;
+		return;
+	}
+	if (IsValid(ItemSlot) == true)
+	{
+		return;
+	}
+	AItem* NewItem = AItem::CreateInstance(this, ItemInfoToEquip->GetItemInfo());
 	if (IsValid(NewItem) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AVillager::Equip IsValid(NewItem) == false"));
 		return;
 	}
-	if (CanEquip() == false)
-	{
-		if (Inventory->TryPlaceItem(UStoredItemInfo::GenerateStorageInfoForItem(NewItem)) == true)
-		{
-			NewItem->Destroy();
-			return;
-		}
-		if (Inventory->TryPlaceItem(UStoredItemInfo::GenerateStorageInfoForItem(ItemSlot)) == false)
-		{
-			return;
-		}
-		AItem* RefToPrevious = ItemSlot;
-		DropItem();
-		RefToPrevious->Destroy();
-	}
+	
 	NewItem->SetEnablePhysics(false);
-	ItemToEquip->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));
+	NewItem->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_l_Socket"));
 	ItemSlot = NewItem;
 }
 
 void AVillager::DropItem()
 {
-	if (IsValid(ItemSlot) == false)
+	if (IsValid(ItemSlot) == true)
 	{
-		return;
+		ItemSlot->Destroy();
 	}
-	ItemSlot->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	ItemSlot->SetEnablePhysics(true);
-	ItemSlot->OnDrop();
 	ItemSlot = nullptr;
+	Inventory->DropFirst();
 }
 
 

@@ -51,6 +51,7 @@ void UInventoryDragWidgetBase::NativeOnDragDetected(const FGeometry& InGeometry,
 	}
 
 	OnDragStarted.Unbind();
+	OnDropStarted.Unbind();
 	RemoveFromParent();
 
 	UDragDropOperation* DragOperation = NewObject<UDragDropOperation>();
@@ -58,4 +59,10 @@ void UInventoryDragWidgetBase::NativeOnDragDetected(const FGeometry& InGeometry,
 	DragOperation->DefaultDragVisual = this;
 	DragOperation->Pivot = EDragPivot::TopLeft;
 	OutOperation = DragOperation;
+}
+
+bool UInventoryDragWidgetBase::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	OnDropStarted.ExecuteIfBound(this, InOperation->Payload);
+	return true;
 }

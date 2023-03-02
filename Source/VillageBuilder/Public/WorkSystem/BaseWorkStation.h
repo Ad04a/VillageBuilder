@@ -9,6 +9,7 @@
 #include "Engine/DataTable.h"
 #include "WorkSystem/BuildProjection.h"
 #include "Components/BuildingClusterComponent.h"
+#include "Components/StorageComponent.h"
 #include "BaseWorkStation.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FBuildingStateSignature, ABaseWorkStation*, WorkStation);
@@ -51,6 +52,9 @@ struct FWorkStationInfoStruct
 
 	UPROPERTY()
 	FBuildingClusterInfoStruct BuildingClusterInfo = FBuildingClusterInfoStruct();
+
+	UPROPERTY()
+	FStorageInfoStruct InventoryInfo = FStorageInfoStruct();
 
 	UPROPERTY()
 	int ID = -1;

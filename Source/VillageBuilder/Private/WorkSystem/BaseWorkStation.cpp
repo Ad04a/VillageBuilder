@@ -2,7 +2,6 @@
 
 
 #include "WorkSystem/BaseWorkStation.h"
-#include "Components/StorageComponent.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "Items/Item.h"
 #include "Characters/VillageMayor.h"
@@ -69,6 +68,7 @@ void ABaseWorkStation::Init(FWorkStationInfoStruct InLoadInfo )
 {
 	SetActorTransform(InLoadInfo.Transform);
 	BuildingComponent->Init(InLoadInfo.BuildingClusterInfo);
+	StorageComponent->Init(InLoadInfo.InventoryInfo);
 	ID = InLoadInfo.ID;
 }
 
@@ -78,6 +78,7 @@ FWorkStationInfoStruct ABaseWorkStation::GetSaveInfo()
 	SaveInfo.Transform		     = GetActorTransform();
 	SaveInfo.WorkStationClass    = GetClass();
 	SaveInfo.BuildingClusterInfo = BuildingComponent->GetSaveInfo();
+	SaveInfo.InventoryInfo		 = StorageComponent->GetSaveInfo();
 	SaveInfo.ID					 = ID;
 	return SaveInfo;
 }

@@ -5,10 +5,13 @@
 #include "DataTransfers/VisualizationInfos/InventoryVisualInfo.h"
 #include "UI/Widgets/Gameplay/Inventory/InventoryDragWidgetBase.h"
 #include "UI/Widgets/Gameplay/Inventory/InventorySlotWidgetBase.h"
+#include "UI/Widgets/Gameplay/Inventory/InventoryDropSpaceWidgetBase.h"
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Border.h"
+#include "Blueprint/DragDropOperation.h"
+
 
 void UInventoryWidgetBase::Init(UVisualizationInfo* VisualInfo)
 {
@@ -24,6 +27,9 @@ void UInventoryWidgetBase::Init(UVisualizationInfo* VisualInfo)
 		UE_LOG(LogTemp, Error, TEXT("UInventoryWidgetBase::RevieveUpdatedItems IsValid(World) == false"));
 		return;
 	}
+
+	DropSpace->OnDropStarted.BindDynamic(this, &UInventoryWidgetBase::RegisterChiledDropped);
+
 	UInventorySlotWidgetBase* SlotWidget = nullptr;
 	for (int Y = 0; Y < InventoryInfo->GetSize().Y; Y++)
 	{
@@ -43,6 +49,7 @@ void UInventoryWidgetBase::Init(UVisualizationInfo* VisualInfo)
 	}
 	OnChildDraged.BindDynamic(InventoryInfo, &UInventoryVisualInfo::GetItemFromStorage);
 	OnChildDropped.BindDynamic(InventoryInfo, &UInventoryVisualInfo::OnDragItemDropped);
+	OnChildDroppedInDropSpace.BindDynamic(InventoryInfo, &UInventoryVisualInfo::DropItem);
 	InventoryInfo->OnItemsUpdated.BindDynamic(this, &UInventoryWidgetBase::RecieveUpdatedItems);
 	InventoryInfo->InvokeInitial();
 	
@@ -68,6 +75,7 @@ void UInventoryWidgetBase::RecieveUpdatedItems(TArray<UMaterialInterface*> Icons
 		}
 		DragWidget->Init(Icons[i]);
 		DragWidget->OnDragStarted.BindDynamic(this, &UInventoryWidgetBase::RegisterChiledDraged);
+		DragWidget->OnDropStarted.BindDynamic(this, &UInventoryWidgetBase::RegisterChiledDropped);
 		UCanvasPanelSlot* ItemSlot = ContentCanvas->AddChildToCanvas(DragWidget);
 		ItemSlot->SetSize(Sizes[i]*TileSize);
 		ItemSlot->SetPosition(Indexes[i]*TileSize);
@@ -89,29 +97,19 @@ UObject* UInventoryWidgetBase::RegisterChiledDraged(UInventoryDragWidgetBase* Dr
 	return Item;
 }
 
-void UInventoryWidgetBase::RegisterChiledDropped(UInventorySlotWidgetBase* DropedPoint, UObject* Payload)
+void UInventoryWidgetBase::RegisterChiledDropped(UWidget* DropedPoint, UObject* Payload)
 {
-	if (OnChildDropped.IsBound() == false)
+	if (DropedPoint == DropSpace)
 	{
+		OnChildDroppedInDropSpace.ExecuteIfBound(Payload);
 		return;
 	}
-	OnChildDropped.Execute(Payload,GridCanvas->GetChildIndex(DropedPoint));
+
+	OnChildDropped.ExecuteIfBound(Payload,GridCanvas->GetChildIndex(DropedPoint));
 }
 
-/*void UInventoryWidgetBase::GetLinesToDraw(FVector2D Size)
+bool UInventoryWidgetBase::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	FLine Line;
-	for (int X = 0; X <= Size.X; X++)
-	{
-		Line.Start = FVector2D(X* TileSize, 0);
-		Line.End = FVector2D(X * TileSize, Size.Y* TileSize);
-		Lines.Add(Line);
-	}
-	for (int Y = 0; Y <= Size.Y; Y++)
-	{
-		Line.Start = FVector2D(0, Y * TileSize);
-		Line.End = FVector2D(Size.X * TileSize, Y * TileSize);
-		Lines.Add(Line);
-	}
-	
-}*/
+	OnChildDroppedInDropSpace.ExecuteIfBound(InOperation->Payload);
+	return true;
+}

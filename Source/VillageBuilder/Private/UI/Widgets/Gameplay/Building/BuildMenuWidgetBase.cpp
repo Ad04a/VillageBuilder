@@ -36,20 +36,12 @@ void UBuildMenuWidgetBase::Init(UVisualizationInfo* VisualInfo)
 	}
 }
 
-void UBuildMenuWidgetBase::Init(TArray<FString> Buildings)
-{
-	
-}
-
 void UBuildMenuWidgetBase::BuildingSelected(FString SelectedBuildingName)
 {
 	if (OnBuildingSelected.IsBound() == false)
 	{
 		return;
 	}
-	if (OnBuildingSelected.Execute(SelectedBuildingName) == false)
-	{
-		return;
-	}
+	OnBuildingSelected.Execute(SelectedBuildingName);
 	ForceClose();
 }

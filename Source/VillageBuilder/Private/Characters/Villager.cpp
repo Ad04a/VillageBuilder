@@ -27,11 +27,6 @@ void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
 		StatsMap  = InLoadInfo.StatsMap;
 		ID		  = InLoadInfo.ID;
 		SetActorTransform(InLoadInfo.Transform);
-		AItem* Item = AItem::CreateInstance(this, InLoadInfo.HoldingItem);
-		if (IsValid(Item) == true)
-		{
-			Equip(Item);
-		}
 		bIsLoadingFromFile = true;
 		
 	}
@@ -115,10 +110,6 @@ FVillagerLoadInfoStruct AVillager::GetSaveInfo()
 	SaveInfo.Transform     = GetActorTransform();
 	SaveInfo.ID			   = ID;
 	SaveInfo.InventoryInfo = Inventory->GetSaveInfo();
-	if (IsValid(ItemSlot) == true)
-	{
-		SaveInfo.HoldingItem = ItemSlot->GetSaveInfo();
-	}
 	return SaveInfo;
 }
 

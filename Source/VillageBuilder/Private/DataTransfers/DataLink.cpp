@@ -12,6 +12,7 @@
 #include "GameModes/GameplayModeBase.h"
 #include "Characters/VillageMayor.h"
 #include "WorkSystem/BaseWorkStation.h"
+#include "Items/BuilderItem.h"
 #include "Headers/DataLinkable.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -56,7 +57,6 @@ bool UDataLink::EstablishConnection()
 		LinkType = EDataLinkType::PlayerSelf;
 		TargetInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Initiator));
 		TargetInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
-		TargetInfo.Add(EVisualiationTypes::Building, UBuildingVisualInfo::CreateVisualInfo(Initiator));
 		TargetInfo.Add(EVisualiationTypes::Options, UOptionsVisualInfo::CreateVisualInfo(Initiator));
 
 		AVillager* Player = Cast<AVillager>(Initiator);
@@ -69,7 +69,6 @@ bool UDataLink::EstablishConnection()
 	{
 		LinkType = EDataLinkType::PlayerVillager;
 
-		//InitiatorInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Initiator));
 		InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
 		AVillager* Player = Cast<AVillager>(Initiator);
 		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
@@ -102,6 +101,19 @@ bool UDataLink::EstablishConnection()
 			TargetInfo.Add(EVisualiationTypes::Employment, UEmploymentVisualInfo::CreateVisualInfo(Target));
 			TargetInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Target));
 		}
+
+		bShouldVisualize = true;
+		return true;
+	}
+
+	if (Initiator->IsA(AVillageMayor::StaticClass()) == true && Target->IsA(ABuilderItem::StaticClass()) == true)
+	{
+		LinkType = EDataLinkType::PlayerBuildTool;
+
+		AVillager* Player = Cast<AVillager>(Initiator);
+		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
+
+		TargetInfo.Add(EVisualiationTypes::Building, UBuildingVisualInfo::CreateVisualInfo(Target));
 
 		bShouldVisualize = true;
 		return true;

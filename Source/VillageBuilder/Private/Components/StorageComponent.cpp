@@ -145,7 +145,6 @@ bool UStorageComponent::TryPlaceItemAtIndex(UStoredItemInfo* InItemInfo, int Ind
 	{
 		return false;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("UIndex = %d, Tile: %s"), Index, *GetTileByIndex(Index).ToString());
 	AddItemAt(InItemInfo, Index);
 	return true;
 }

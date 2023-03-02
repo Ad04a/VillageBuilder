@@ -23,9 +23,6 @@ struct FVillagerLoadInfoStruct
 	FTransform Transform;
 
 	UPROPERTY()
-	FItemInfoStruct HoldingItem = FItemInfoStruct();
-
-	UPROPERTY()
 	FStorageInfoStruct InventoryInfo = FStorageInfoStruct();
 
 	UPROPERTY()

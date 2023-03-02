@@ -21,7 +21,6 @@ private:
 protected:
 	virtual void Use(class AVillager* User, EItemActionType ActionType) override;
 	virtual void Tick(float DeltaTime) override;
-	virtual void OnDrop() override;
 	virtual void LoadFromDataTable() override;
 	virtual void SetIsActive(bool State) override;
 	virtual FVector GetSpawnLocation() override;
@@ -40,7 +39,7 @@ protected:
 
 public:
 	UFUNCTION()
-	void BindToPlayer(FName StationName, AVillageMayor* Villager);
+	void BindProjectionToPlayer(FName StationName);
 
-	virtual FItemInfoStruct GetSaveInfo() override;
+	virtual void OnDrop() override;
 };

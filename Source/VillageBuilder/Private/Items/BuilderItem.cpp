@@ -3,6 +3,8 @@
 
 #include "Items/BuilderItem.h"
 #include "GameModes/GameplayModeBase.h"
+#include "DataTransfers/DataLink.h"
+
 #include "Kismet/GameplayStatics.h"
 
 ABuilderItem::ABuilderItem()
@@ -10,20 +12,19 @@ ABuilderItem::ABuilderItem()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ABuilderItem::BindToPlayer(FName StationName, AVillageMayor* Villager)
+void ABuilderItem::BindProjectionToPlayer(FName StationName)
 {
 	CurrentStationName = StationName;
 	LoadFromDataTable();
-	UsingVillager = Villager;
-	UsingVillager->bCanInteract = false;
-	Use(UsingVillager, EItemActionType::Primary);
+	SpawnProjection();
 }
 
 void ABuilderItem::Use(class AVillager* User, EItemActionType ActionType)
 {
+	UsingVillager = User;
 	if (CurrentProjection == nullptr)
 	{
-		SpawnProjection();
+		UDataLink::CreateDataLink(UsingVillager, this);
 		return;
 	}
 	if (CurrentProjection->GetIsValid() == false && EItemActionType::Primary)
@@ -42,6 +43,10 @@ void ABuilderItem::Tick(float DeltaTime)
 		return;
 	}
 	AVillageMayor* Mayor = Cast<AVillageMayor>(UsingVillager);
+	if (IsValid(Mayor) == false)
+	{
+		return;
+	}
 	FVector StartTrace = Mayor->GetCameraComponent()->GetComponentLocation();
 	FVector EndTrace = Mayor->GetCameraComponent()->GetForwardVector() * Reach + StartTrace;
 	FVector NewLocation = FVector(EndTrace.X, EndTrace.Y, 0);
@@ -54,7 +59,8 @@ void ABuilderItem::SetIsActive(bool State)
 	IsActive = State;
 	if (State == false)
 	{
-		UsingVillager->DropItem();
+		CurrentProjection->Destroy();
+		CurrentProjection = nullptr;
 		return;
 	}
 
@@ -83,13 +89,14 @@ void ABuilderItem::SetIsActive(bool State)
 		return;
 	}
 	Village->AddWorkStationToColony(WorkStation);
-	UsingVillager->DropItem();
+	CurrentProjection->Destroy();
+	CurrentProjection = nullptr;
 }
 
 void ABuilderItem::LoadFromDataTable()
 {
-	if (CurrentStationName == "") {
-
+	if (CurrentStationName == "")
+	{
 		Super::LoadFromDataTable();
 		return;
 	}
@@ -134,14 +141,6 @@ void ABuilderItem::SpawnProjection()
 	CurrentProjection = SpawnedProjection;
 }
 
-void ABuilderItem::OnDrop()
-{
-	UsingVillager->bCanInteract = true;
-	Super::OnDrop();
-	CurrentProjection->Destroy();
-	Destroy();
-}
-
 FVector ABuilderItem::GetSpawnLocation()
 {
 	if (CurrentProjection == nullptr)
@@ -161,7 +160,11 @@ FRotator ABuilderItem::GetSpawnRotation()
 	return CurrentProjection->GetActorRotation();
 }
 
-FItemInfoStruct ABuilderItem::GetSaveInfo()
+void ABuilderItem::OnDrop()
 {
-	return FItemInfoStruct();
+	if (IsValid(CurrentProjection) == true)
+	{
+		CurrentProjection->Destroy();
+		CurrentProjection = nullptr;
+	}
 }

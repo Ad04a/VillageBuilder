@@ -25,6 +25,9 @@ public:
 	UFUNCTION()
 	void OnDragItemDropped(UObject* DroppedObject , int Index);
 
+	UFUNCTION()
+	void DropItem(UObject* DroppedObject);
+
 	FSendRecivedItemsSignature OnItemsUpdated;
 
 	static UVisualizationInfo* CreateVisualInfo(AActor* InActor);

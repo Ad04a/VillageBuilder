@@ -37,6 +37,8 @@ void AVillageManager::Init(FVillageManagerLoadInfoStruct InLoadInfo)
 	bCanGenerateSaves = false;
 	SetActorTransform(InLoadInfo.Transform);
 	
+	CurrentID = InLoadInfo.CurrentID;
+
 	for (FVillagerLoadInfoStruct VillagerInfo : InLoadInfo.PassingVillagers)
 	{
 		SpawnVillager(FVector(), VillagerInfo);
@@ -118,7 +120,7 @@ FVillageManagerLoadInfoStruct AVillageManager::GetSaveInfo()
 		SaveInfo.WorkPlaces.Add(Station.Key->ID, Station.Value);
 	}
 	SaveInfo.WorkStations = WorkStationsInfos;
-
+	SaveInfo.CurrentID = CurrentID;
 
 	return SaveInfo;
 }

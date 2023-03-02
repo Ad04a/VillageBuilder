@@ -21,6 +21,9 @@ struct FVillageManagerLoadInfoStruct
 	TArray<FVillagerLoadInfoStruct> PassingVillagers = TArray<FVillagerLoadInfoStruct>();
 
 	UPROPERTY()
+	int CurrentID;
+
+	UPROPERTY()
 	TArray<FVillagerLoadInfoStruct> Villagers = TArray<FVillagerLoadInfoStruct>();
 
 	UPROPERTY()

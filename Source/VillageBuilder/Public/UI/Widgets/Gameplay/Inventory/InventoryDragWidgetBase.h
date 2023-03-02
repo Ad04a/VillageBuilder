@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Headers/InventoryDropEvent.h"
 #include "InventoryDragWidgetBase.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(UObject*, FDragStaredSignature, UInventoryDragWidgetBase*, DragedChild);
@@ -31,10 +32,12 @@ protected:
 public:
 
 	FDragStaredSignature OnDragStarted;
+	FDropStartedSignature OnDropStarted;
 
 	void Init(class UMaterialInterface* Icon);
 	void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	void NativeOnDragDetected(const FGeometry& InGeometry,  const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

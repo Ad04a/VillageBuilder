@@ -212,7 +212,7 @@ void UStorageComponent::DropItem(UStoredItemInfo* InItemInfo)
 {
 	AItem* Item = AItem::CreateInstance(this, InItemInfo->GetItemInfo());
 	RemoveItem(InItemInfo);
-	Item->SetActorLocation(GetOwner()->GetActorLocation());
+	Item->SetActorLocation(GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector()*150);
 }
 
 void UStorageComponent::SendUpdatedItems()

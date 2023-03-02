@@ -22,7 +22,7 @@ UVisualizationInfo* UInventoryVisualInfo::CreateVisualInfo(AActor* InActor)
 	ABaseWorkStation* WorkStation = Cast<ABaseWorkStation>(InActor);
 	if (IsValid(WorkStation) == true)
 	{
-		Info->Storage = Villager->GetStorageComponent();
+		Info->Storage = WorkStation->GetStorageComponent();
 	}
 	Info->Storage->OnItemsUpdated.BindDynamic(Info, &UInventoryVisualInfo::RecieveUpdatedItems);
 	return Info;
@@ -74,6 +74,17 @@ void UInventoryVisualInfo::OnDragItemDropped(UObject* DroppedObject, int Index)
 	{
 		return;
 	}
+	Storage->DropItem(Item);
+}
+
+void UInventoryVisualInfo::DropItem(UObject* DroppedObject)
+{
+	UStoredItemInfo* Item = Cast<UStoredItemInfo>(DroppedObject);
+	if (IsValid(Item) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UInventoryVisualInfo::DropItem Given DropInfo is not of type UStoredItemInfo"));
+	}
+	Storage->DropItem(Item);
 }
 
 void UInventoryVisualInfo::Clear()

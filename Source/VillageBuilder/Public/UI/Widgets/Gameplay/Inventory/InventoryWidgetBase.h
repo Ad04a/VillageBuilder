@@ -6,28 +6,16 @@
 #include "Components/ScrollBox.h"
 #include "InventoryWidgetBase.generated.h"
 
-USTRUCT(BlueprintType)
-struct FLine
-{
-	GENERATED_BODY()
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FVector2D Start;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	FVector2D End;
-};
 
 DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(UObject*, FChildDraged, int, Index);
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FChildDropped, UObject*, Item, int, Index);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FChildDroppedInDropSpace, UObject*, Item);
 
 UCLASS()
 class VILLAGEBUILDER_API UInventoryWidgetBase : public UVisualFragmentWidgetBase
 {
 	GENERATED_BODY()
 private:
-
-	//void GetLinesToDraw(FVector2D Size);
 
 protected:
 
@@ -41,9 +29,8 @@ protected:
 	class UCanvasPanel* GridCanvas;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	class UBorder* DropBorder;
+	class UInventoryDropSpaceWidgetBase* DropSpace;
 
-	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Grid)
 	int TileSize = 50;
@@ -53,7 +40,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UInventorySlotWidgetBase> SlotWidgetClass;
-
+	
 	UFUNCTION()
 	void RecieveUpdatedItems(TArray<class UMaterialInterface*> Icons, TArray<FIntPoint> Sizes, TArray<FIntPoint> Indexes);
 
@@ -61,10 +48,12 @@ protected:
 	UObject* RegisterChiledDraged(UInventoryDragWidgetBase* DragedChild);
 
 	UFUNCTION()
-	void RegisterChiledDropped(UInventorySlotWidgetBase* DropedPoint, UObject* Payload);
+	void RegisterChiledDropped(UWidget* DropedPoint, UObject* Payload);
 	
 public:
 	FChildDraged OnChildDraged;
 	FChildDropped OnChildDropped;
+	FChildDroppedInDropSpace OnChildDroppedInDropSpace;
 	virtual void Init(class UVisualizationInfo* VisualInfo) override;
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

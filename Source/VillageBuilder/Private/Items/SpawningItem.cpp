@@ -7,7 +7,7 @@
 void ASpawningItem::Use(class AVillager* User, EItemActionType ActionType)
 {
 	Super::Use(User, ActionType);
-	//SetIsActive(true);//to be removed when animation is ready
+	UsingVillager = User;
 }
 
 void ASpawningItem::SetIsActive(bool State)

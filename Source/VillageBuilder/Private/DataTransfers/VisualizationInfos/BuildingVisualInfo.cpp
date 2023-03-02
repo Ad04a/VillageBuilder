@@ -2,6 +2,7 @@
 
 
 #include "DataTransfers/VisualizationInfos/BuildingVisualInfo.h"
+#include "Items/BuilderItem.h"
 #include "GameMOdes/GameplayModeBase.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -14,33 +15,49 @@ UVisualizationInfo* UBuildingVisualInfo::CreateVisualInfo(AActor* InActor)
 		UE_LOG(LogTemp, Error, TEXT("UBuildingVisualInfo::CreateVisualInfo Cannot create info"));
 		return nullptr;
 	}
-	UWorld* World = InActor->GetWorld();
-	if (IsValid(World) == false)
+	
+	ABuilderItem* Item = Cast<ABuilderItem>(InActor);
+	if (IsValid(Item) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBuildingVisualInfo::CreateVisualInfo IsValid(World) == false"));
+		UE_LOG(LogTemp, Error, TEXT("UBuildingVisualInfo::CreateVisualInfo Cannot create info IsValid(Item) == false"));
 		return nullptr;
 	}
 
-	Info->GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
-	if (IsValid(Info->GameMode) == false) {
-		UE_LOG(LogTemp, Error, TEXT("UBuildingVisualInfo::CreateVisualInfo IsValid(GameMode) == false"));
-		return nullptr;
-	}
+	Info->Item = Item;
+
 	return Info;
 }
 
 TArray<FString> UBuildingVisualInfo::GetBuildingNames()
 {
+	UWorld* World = Item->GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UBuildingVisualInfo::CreateVisualInfo IsValid(World) == false"));
+		return TArray<FString>();
+	}
+
+	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
+	if (IsValid(GameMode) == false) {
+		UE_LOG(LogTemp, Error, TEXT("UBuildingVisualInfo::CreateVisualInfo IsValid(GameMode) == false"));
+		return TArray<FString>();
+	}
+	BuildingsInfo = GameMode->GetBuildingsInfo();
 	return GameMode->GetAllBuildingNames();
 }
 
-bool UBuildingVisualInfo::BuildingSelected(FString BuildingName)
+void UBuildingVisualInfo::BuildingSelected(FString BuildingName)
 {
-	return GameMode->GivePlayerBuildItem(BuildingName);
+	if (BuildingsInfo.Contains(BuildingName) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UBuildingVisualInfo::BuildingSelected BuildingsInfo.Contains(BuildingName) == false"));
+		return;
+	}
+	Item->BindProjectionToPlayer(*BuildingsInfo.Find(BuildingName));
 }
 
 void UBuildingVisualInfo::Clear()
 {
 	Super::Clear();
-	GameMode = nullptr;
+	Item = nullptr;
 }

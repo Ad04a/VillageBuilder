@@ -15,6 +15,7 @@ enum EDataLinkType {
 	PlayerSelf			UMETA(DisplayName = "PlayerSelf"),
 	PlayerVillager      UMETA(DisplayName = "PlayerVillager"),
 	PlayerStation 		UMETA(DisplayName = "PlayerStation"),
+	PlayerBuildTool		UMETA(DisplayName = "PlayerBuildTool"),
 	VillagerStation		UMETA(DisplayName = "VillagerStation")
 };
 

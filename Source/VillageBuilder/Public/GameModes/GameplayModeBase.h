@@ -56,7 +56,7 @@ protected:
 
 	TMap<FString, FName> BuildingsInfo;
 
-	void GetBuildingsInfo();
+	void LoadBuildingsInfo();
 
 	UFUNCTION()
 	void ReleaseDataLink(class UDataLink* InDataLink);
@@ -71,9 +71,6 @@ public:
 	TArray<FString> GetAllBuildingNames();
 
 	UFUNCTION()
-	bool GivePlayerBuildItem(FString StationName);
-
-	UFUNCTION()
 	void SaveGame();
 
 	UFUNCTION()
@@ -86,6 +83,8 @@ public:
 	void EndGame();
 
 	void LockDataLink(class UDataLink* InDataLink);
+
+	TMap<FString, FName> GetBuildingsInfo() { return BuildingsInfo; }
 
 	//---------------------CheatSection-----------------------------------
 	UFUNCTION(Exec, Category = Cheat)

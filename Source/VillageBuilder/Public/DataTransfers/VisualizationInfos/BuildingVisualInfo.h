@@ -15,12 +15,13 @@ class VILLAGEBUILDER_API UBuildingVisualInfo : public UVisualizationInfo
 	GENERATED_BODY()
 
 protected:
-	class AGameplayModeBase* GameMode;
+	class ABuilderItem* Item;
+	TMap<FString, FName> BuildingsInfo;
 public:
 	static UVisualizationInfo* CreateVisualInfo(AActor* InActor);
 	virtual void Clear() override;
 	TArray<FString> GetBuildingNames();
 
 	UFUNCTION()
-	bool BuildingSelected(FString BuildingName);
+	void BuildingSelected(FString BuildingName);
 };

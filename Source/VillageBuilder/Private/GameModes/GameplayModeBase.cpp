@@ -26,7 +26,7 @@ void AGameplayModeBase::StartPlay() {
 		OnErrorLoadingData.Broadcast();
 		return;
 	}
-	GetBuildingsInfo();
+	LoadBuildingsInfo();
 
 	SaveSlotName = GameInstane->SaveSlotName;
 	if (UGameplayStatics::DoesSaveGameExist(SaveSlotName, 0) == false)
@@ -49,9 +49,9 @@ void AGameplayModeBase::StartPlay() {
 	if (LoadedGame->bIsFirstLoad == true)
 	{
 		ASpawningItem* VillageManager = World->SpawnActor<ASpawningItem>(ColonyFlagClass, FVector(0, 0, 100), FRotator(0, 0, 0), Params);
-
+		
 		Player->Equip(VillageManager);
-
+		World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(0, 0, 100), FRotator(0, 0, 0), Params);
 		LoadedGame->bIsFirstLoad = false;
 		SaveGame();
 		return;
@@ -72,26 +72,6 @@ void AGameplayModeBase::StartPlay() {
 	}
 	Village->Init(LoadedGame->VillageInfo);
 	SaveGame();
-}
-
-bool AGameplayModeBase::GivePlayerBuildItem(FString StationName)
-{
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::GivePlayerBuildItem IsValid(World) == false"));
-		return false;
-	}
-	if (Player->CanEquip() == false)
-	{
-		return false;
-	}
-	FActorSpawnParameters Params;
-	ABuilderItem* BuilderItem = World->SpawnActor<ABuilderItem>(BuilderItemClass, FVector(0, 0, 300), FRotator(0, 0, 0), Params);
-	FName Name = *BuildingsInfo.Find(StationName);
-	BuilderItem->BindToPlayer(Name, Player);
-	Player->Equip(BuilderItem);
-	return true;
 }
 
 void AGameplayModeBase::SaveGame()
@@ -151,11 +131,11 @@ AVillageManager* AGameplayModeBase::GetCurrentVillage(AActor* Entity)
 	return Village;
 }
 
-void AGameplayModeBase::GetBuildingsInfo()
+void AGameplayModeBase::LoadBuildingsInfo()
 {
 	if (IsValid(BuildingDataTable) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::GetBuildingsInfo IsValid(StationDataTable) == false"));
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::LoadBuildingsInfo IsValid(StationDataTable) == false"));
 		return;
 	}
 	for (FName Row : BuildingDataTable->GetRowNames())
@@ -165,10 +145,10 @@ void AGameplayModeBase::GetBuildingsInfo()
 
 		if (StationData == nullptr)
 		{
-			UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::GetBuildingsInfo FWorkStationData == nullptr from %s"), *Row.ToString());
+			UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::LoadBuildingsInfo FWorkStationData == nullptr from %s"), *Row.ToString());
 			return;
 		}
-		UE_LOG(LogTemp, Display, TEXT("AGameplayModeBase::GetBuildingsInfo  %s : %s"), *StationData->DisplayName.ToString() , *Row.ToString());
+		UE_LOG(LogTemp, Display, TEXT("AGameplayModeBase::LoadBuildingsInfo  %s : %s"), *StationData->DisplayName.ToString() , *Row.ToString());
 		BuildingsInfo.Add(StationData->DisplayName.ToString(), Row);
 	}
 }

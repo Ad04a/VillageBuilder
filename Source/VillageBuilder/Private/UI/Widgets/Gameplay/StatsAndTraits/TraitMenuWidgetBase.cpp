@@ -12,6 +12,7 @@ void UTraitMenuWidgetBase::Init(UVisualizationInfo* VisualInfo)
 	if (IsValid(StatAndTraitInfo) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UTraitMenuWidgetBase::Init Given VisualInfo doesnt mach the required type"));
+		return;
 	}
 	TraitWidget->Init(StatAndTraitInfo->VisualStruct);
 	StatAndTraitInfo->OnStatUpdated.BindDynamic(StatWidget, &UStatWidgetBase::SetStat);

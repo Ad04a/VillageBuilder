@@ -6,7 +6,7 @@
 #include "UI/Widgets/Gameplay/DataLinks/VisualFragmentWidgetBase.h"
 #include "BuildMenuWidgetBase.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(bool, FBuildingSelectedSignature, FString, BuildingName);
+DECLARE_DYNAMIC_DELEGATE_OneParam( FBuildingSelectedSignature, FString, BuildingName);
 
 UCLASS()
 class VILLAGEBUILDER_API UBuildMenuWidgetBase : public UVisualFragmentWidgetBase
@@ -27,6 +27,4 @@ public:
 	virtual void Init(class UVisualizationInfo* VisualInfo) override;
 
 	FBuildingSelectedSignature OnBuildingSelected;
-
-	void Init(TArray<FString> Buildings);
 };

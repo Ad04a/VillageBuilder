@@ -2,7 +2,6 @@
 
 #include "Headers/StatAndTraitStructure.h"
 #include "Headers/ItemInfo.h"
-#include "Components/StorageComponent.h"
 #include "LoadInfo.generated.h"
 
 USTRUCT(BlueprintType)
@@ -23,7 +22,7 @@ struct FVillagerLoadInfoStruct
 	FTransform Transform;
 
 	UPROPERTY()
-	FStorageInfoStruct InventoryInfo = FStorageInfoStruct();
+	TMap<FIntPoint, FItemInfoStruct> InventoryInfo;
 
 	UPROPERTY()
 	int ID = -1;

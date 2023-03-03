@@ -6,18 +6,6 @@
 #include "Headers/ItemInfo.h"
 #include "StoredItemInfo.generated.h"
 
-USTRUCT(BlueprintType)
-struct FStoredItemInfoStruct
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, Category = Content)
-	FItemInfoStruct ItemInfo;
-
-	UPROPERTY(EditAnywhere, Category = Content)
-	FIntPoint Slots;
-};
-
 UCLASS(BlueprintType)
 class VILLAGEBUILDER_API UStoredItemInfo : public UObject
 {

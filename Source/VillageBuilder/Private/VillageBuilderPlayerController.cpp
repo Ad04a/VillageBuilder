@@ -46,7 +46,7 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	InputComponent->BindAction(InteractBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::Interact);
 	InputComponent->BindAction(DataLinkBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::InitiateLink);
 	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::ShowTraitMenu);
-	InputComponent->BindAction(DropItemBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::DropItem);
+	InputComponent->BindAction(DropItemBinding, IE_Pressed, this, &AVillageBuilderPlayerController::CaptureDrop);
 
 	HUD->ShowMainWidget(ControlledVillageMayorPawn);
 
@@ -54,6 +54,11 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 
 	InputComponent->BindAction(ItemPrimaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ItemPrimary);
 	InputComponent->BindAction(ItemSecondaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ItemSecondary);
+}
+
+void AVillageBuilderPlayerController::CaptureDrop()
+{
+	ControlledVillageMayorPawn->DropItem();
 }
 
 void AVillageBuilderPlayerController::Tick(float DeltaTime)

@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Headers/DataLinkable.h"
 #include "Headers/StatAndTraitEnums.h"
+#include "Headers/ItemInfo.h"
 #include "Engine/DataTable.h"
 #include "WorkSystem/BuildProjection.h"
 #include "Components/BuildingClusterComponent.h"
@@ -54,7 +55,7 @@ struct FWorkStationInfoStruct
 	FBuildingClusterInfoStruct BuildingClusterInfo = FBuildingClusterInfoStruct();
 
 	UPROPERTY()
-	FStorageInfoStruct InventoryInfo = FStorageInfoStruct();
+	TMap<FIntPoint, FItemInfoStruct> InventoryInfo;
 
 	UPROPERTY()
 	int ID = -1;

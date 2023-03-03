@@ -46,6 +46,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Camera)
 	float MouseTurnRate = 20;
 
+	UFUNCTION()
+	void CaptureDrop();
+
 public:
 
 	void Tick(float DeltaTime);

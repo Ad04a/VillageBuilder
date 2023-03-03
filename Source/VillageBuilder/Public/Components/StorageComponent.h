@@ -4,29 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Items/StoredItemInfo.h"
+#include "Headers/ItemInfo.h"
 #include "Engine/DataTable.h"
 #include "StorageComponent.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FItemsUpdatedSignature, TArray<UStoredItemInfo*>, Items, TArray<FIntPoint>, Indexes);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FFirstItemSignature, UStoredItemInfo*, Item);
-
-USTRUCT(BlueprintType)
-struct FStorageInfoStruct
-{
-	GENERATED_BODY()
-
-	//UPROPERTY()
-	//TArray<FItemInfoStruct> Items;
-
-	/*inline bool operator==(const FStorageInfoStruct& other) const
-	{
-		return (other.Rows == Rows && other.Columns == Columns);
-	}
-	inline bool operator != (const FStorageInfoStruct& other) const
-	{
-		return !(other.Rows == Rows && other.Columns == Columns);
-	}*/
-};
 
 USTRUCT(BlueprintType)
 struct FStorageData : public FTableRowBase
@@ -39,6 +22,7 @@ struct FStorageData : public FTableRowBase
 	UPROPERTY(EditAnywhere, Category = Content)
 	int Columns;
 };
+
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VILLAGEBUILDER_API UStorageComponent : public UActorComponent
@@ -82,8 +66,8 @@ public:
 	FItemsUpdatedSignature OnItemsUpdated;
 	FFirstItemSignature OnFirstItemUpdated;
 
-	void Init(FStorageInfoStruct InLoadInfo = FStorageInfoStruct());
-	FStorageInfoStruct GetSaveInfo();
+	void Init(TMap<FIntPoint, FItemInfoStruct> SavedItems);
+	TMap<FIntPoint, FItemInfoStruct> GetSaveInfo();
 	int GetRows() { return Rows; }
 	int GetColumns() { return Columns; }
 	TMap<UStoredItemInfo*, FIntPoint> GetAllItems();
@@ -92,7 +76,7 @@ public:
 	bool TryPlaceItemAtIndex(UStoredItemInfo* InItemInfo, int Index);
 	UStoredItemInfo* TakeItemByNumeration(int Numeration);
 
-	void DropItem(UStoredItemInfo* InItemInfo);
+	class AItem* DropItem(UStoredItemInfo* InItemInfo);
 	void PlaceItem(class AItem* ItemToAdd, FIntPoint Coordinates = FIntPoint(-1,-1));
-	void DropFirst();
+	class AItem* DropFirst();
 };

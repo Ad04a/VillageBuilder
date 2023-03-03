@@ -208,14 +208,14 @@ void AVillager::Equip(UStoredItemInfo* ItemInfoToEquip)
 	ItemSlot = NewItem;
 }
 
-void AVillager::DropItem()
+AItem* AVillager::DropItem()
 {
 	if (IsValid(ItemSlot) == true)
 	{
 		ItemSlot->Destroy();
 	}
 	ItemSlot = nullptr;
-	Inventory->DropFirst();
+	return Inventory->DropFirst();
 }
 
 

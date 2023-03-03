@@ -106,7 +106,7 @@ public:
 	void PickUp(class AItem* ItemToPickUp);
 
 	UFUNCTION()
-	void DropItem();
+	class AItem* DropItem();
 
 	UFUNCTION()
 	void UseItem(EItemActionType ActionType);

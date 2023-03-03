@@ -5,7 +5,7 @@
 #include "Items/StoredItemInfo.h"
 #include "Items/Item.h"
 
-void UStorageComponent::Init(FStorageInfoStruct InLoadInfo )
+void UStorageComponent::Init(TMap<FIntPoint, FItemInfoStruct> SavedItems)
 {
 	if (IsValid(StorageDataTable) == false)
 	{
@@ -30,14 +30,27 @@ void UStorageComponent::Init(FStorageInfoStruct InLoadInfo )
 		return;
 	}
 	Items.Init(nullptr, Rows * Columns);
+
+	AItem* TempItem = nullptr;
+	for (TPair<FIntPoint, FItemInfoStruct> Item : SavedItems)
+	{
+		TempItem = AItem::CreateInstance(this, Item.Value);
+		if (IsValid(TempItem) == false)
+		{
+			continue;
+		}
+		PlaceItem(TempItem, Item.Key);
+	}
 }
 
 
-FStorageInfoStruct UStorageComponent::GetSaveInfo()
+TMap<FIntPoint, FItemInfoStruct> UStorageComponent::GetSaveInfo()
 {
-	FStorageInfoStruct SaveInfo;
-	//SaveInfo.Items		 = Items;
-
+	TMap<FIntPoint, FItemInfoStruct> SaveInfo;
+	for (TPair<UStoredItemInfo*, FIntPoint> Item : GetAllItems())
+	{
+		SaveInfo.Add(Item.Value, Item.Key->GetItemInfo());
+	}
 	return SaveInfo;
 }
 
@@ -207,23 +220,24 @@ void UStorageComponent::RemoveItem(UStoredItemInfo* ItemToRemove)
 	ItemToRemove->ConditionalBeginDestroy();
 }
 
-void UStorageComponent::DropItem(UStoredItemInfo* InItemInfo)
+AItem* UStorageComponent::DropItem(UStoredItemInfo* InItemInfo)
 {
 	if (IsValid(InItemInfo) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UStorageComponent::DropItem IsValid(InItemInfo) == false"));
-		return;
+		return nullptr;
 	}
 	AItem* Item = AItem::CreateInstance(this, InItemInfo->GetItemInfo());
 	RemoveItem(InItemInfo);
 	Item->SetEnablePhysics(true);
 	Item->OnDrop();
 	Item->SetActorLocation(GetOwner()->GetActorLocation() + GetOwner()->GetActorForwardVector()*150);
+	return Item;
 }
 
-void UStorageComponent::DropFirst()
+AItem* UStorageComponent::DropFirst()
 {
-	DropItem(Items[0]);
+	return DropItem(Items[0]);
 }
 
 void UStorageComponent::PlaceItem(AItem* ItemToAdd, FIntPoint Coordinates)

@@ -35,10 +35,7 @@ protected:
 	TSubclassOf<AVillageMayor> PlayerClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameStart")
-	TSubclassOf<ASpawningItem> ColonyFlagClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameStart")
-	TSubclassOf<ABuilderItem> BuilderItemClass;
+	TArray<TSubclassOf<AItem>> StartingItems;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GameStart")
 	TSubclassOf<AVillageManager> VillageClass;

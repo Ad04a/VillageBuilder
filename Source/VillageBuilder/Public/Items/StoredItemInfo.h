@@ -20,9 +20,13 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	class UMaterialInterface* IconRotated;
+
 public:
+	bool bRotated = false;
+
 	static UStoredItemInfo* GenerateStorageInfoForItem(class AItem* InItem);
 	FItemInfoStruct GetItemInfo() {return ItemInfo;}
+	void SetSlots(FIntPoint Dimensions) { Slots = Dimensions; }
 	FIntPoint GetSlots() { return Slots; }
-	UMaterialInterface* GetIcon() { return Icon; }
+	UMaterialInterface* GetIcon() { return bRotated ? IconRotated : Icon; }
 };

@@ -103,7 +103,7 @@ public:
 
 	void AddStatValue(EStat StatName, float InValue);
 
-	void PickUp(class AItem* ItemToPickUp);
+	void PickUp(class AItem* ItemToPickUp, bool TryRotating = false);
 
 	UFUNCTION()
 	class AItem* DropItem();

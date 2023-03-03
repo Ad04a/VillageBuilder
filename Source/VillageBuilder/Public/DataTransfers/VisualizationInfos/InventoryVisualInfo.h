@@ -15,18 +15,26 @@ class VILLAGEBUILDER_API UInventoryVisualInfo : public UVisualizationInfo
 protected:
 	class UStorageComponent* Storage;
 
+	class UDragDropOperation* CurrentOperation;
+
 	UFUNCTION()
 	void RecieveUpdatedItems(TArray<class UStoredItemInfo*> Items, TArray<FIntPoint> Indexes);
 
+	UFUNCTION()
+	void ClearDragOperation(UDragDropOperation* Operation);
+
 public:
 	UFUNCTION()
-	UObject* GetItemFromStorage(int Index);
+	UObject* GetItemFromStorage(int Index, class UDragDropOperation* InOperation);
 
 	UFUNCTION()
 	void OnDragItemDropped(UObject* DroppedObject , int Index);
 
 	UFUNCTION()
 	void DropItem(UObject* DroppedObject);
+
+	UFUNCTION()
+	UDragDropOperation* RotateDragOperation(UMaterialInterface*& OutIcon, FIntPoint& OutSize);
 
 	FSendRecivedItemsSignature OnItemsUpdated;
 

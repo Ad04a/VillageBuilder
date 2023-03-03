@@ -6,11 +6,13 @@
 
 #include "Components/Image.h"
 #include "Components/Border.h"
+#include "Components/SizeBox.h"
 #include "Blueprint/DragDropOperation.h"
 
-void UInventoryDragWidgetBase::Init(UMaterialInterface* Icon)
+void UInventoryDragWidgetBase::Init(UMaterialInterface* Icon, FVector2D InSize)
 {
 	ItemIcon->SetBrushFromMaterial(Icon);
+	SetMinimumDesiredSize(InSize);
 }
 
 void UInventoryDragWidgetBase::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
@@ -43,7 +45,8 @@ void UInventoryDragWidgetBase::NativeOnDragDetected(const FGeometry& InGeometry,
 	ItemBorder->SetBrushColor(DragingColor);
 	
 
-	UObject* Payload = Cast<UObject>(OnDragStarted.Execute(this));
+	UDragDropOperation* DragOperation = NewObject<UDragDropOperation>();
+	UObject* Payload = Cast<UObject>(OnDragStarted.Execute(this, DragOperation));
 	if (IsValid(Payload) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UInventoryDragWidgetBase::NativeOnDragDetected IsValid(Payload) == false"));
@@ -52,12 +55,12 @@ void UInventoryDragWidgetBase::NativeOnDragDetected(const FGeometry& InGeometry,
 
 	OnDragStarted.Unbind();
 	OnDropStarted.Unbind();
-	RemoveFromParent();
 
-	UDragDropOperation* DragOperation = NewObject<UDragDropOperation>();
 	DragOperation->Payload = Payload;
 	DragOperation->DefaultDragVisual = this;
+	Cast<UUserWidget>(DragOperation->DefaultDragVisual)->SetDesiredSizeInViewport(GetMinimumDesiredSize());
 	DragOperation->Pivot = EDragPivot::TopLeft;
+	
 	OutOperation = DragOperation;
 }
 

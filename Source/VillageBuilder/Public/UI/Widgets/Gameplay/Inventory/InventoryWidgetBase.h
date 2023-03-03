@@ -7,16 +7,16 @@
 #include "InventoryWidgetBase.generated.h"
 
 
-DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(UObject*, FChildDraged, int, Index);
+DECLARE_DYNAMIC_DELEGATE_RetVal_TwoParams(UObject*, FChildDraged, int, Index, class UDragDropOperation*, InOperation);
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FChildDropped, UObject*, Item, int, Index);
 DECLARE_DYNAMIC_DELEGATE_OneParam(FChildDroppedInDropSpace, UObject*, Item);
+DECLARE_DYNAMIC_DELEGATE_RetVal_TwoParams(class UDragDropOperation*,FRotationSignature, UMaterialInterface*&, OutIcon, FIntPoint&, OutSize);
 
 UCLASS()
 class VILLAGEBUILDER_API UInventoryWidgetBase : public UVisualFragmentWidgetBase
 {
 	GENERATED_BODY()
 private:
-
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
@@ -45,7 +45,7 @@ protected:
 	void RecieveUpdatedItems(TArray<class UMaterialInterface*> Icons, TArray<FIntPoint> Sizes, TArray<FIntPoint> Indexes);
 
 	UFUNCTION()
-	UObject* RegisterChiledDraged(UInventoryDragWidgetBase* DragedChild);
+	UObject* RegisterChiledDraged(UInventoryDragWidgetBase* DragedChild, class UDragDropOperation* InOperation);
 
 	UFUNCTION()
 	void RegisterChiledDropped(UWidget* DropedPoint, UObject* Payload);
@@ -54,6 +54,8 @@ public:
 	FChildDraged OnChildDraged;
 	FChildDropped OnChildDropped;
 	FChildDroppedInDropSpace OnChildDroppedInDropSpace;
+	FRotationSignature OnRotateRequested;
 	virtual void Init(class UVisualizationInfo* VisualInfo) override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	FReply NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
 };

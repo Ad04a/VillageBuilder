@@ -171,14 +171,14 @@ void AVillager::Die()
 	BreakDataLinks_Implementation();
 }
 
-void AVillager::PickUp(AItem* ItemToPickUp)
+void AVillager::PickUp(AItem* ItemToPickUp, bool TryRotating)
 {
 	if (IsValid(ItemToPickUp) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AVillager::PickUp IsValid(ItemToPickUp) == false"));
 		return;
 	}
-	Inventory->PlaceItem(ItemToPickUp);
+	Inventory->PlaceItem(ItemToPickUp,FIntPoint(0,0), TryRotating);
 }
 
 void AVillager::Equip(UStoredItemInfo* ItemInfoToEquip)

@@ -50,6 +50,8 @@ void UInventoryWidgetBase::Init(UVisualizationInfo* VisualInfo)
 	OnChildDraged.BindDynamic(InventoryInfo, &UInventoryVisualInfo::GetItemFromStorage);
 	OnChildDropped.BindDynamic(InventoryInfo, &UInventoryVisualInfo::OnDragItemDropped);
 	OnChildDroppedInDropSpace.BindDynamic(InventoryInfo, &UInventoryVisualInfo::DropItem);
+	OnRotateRequested.BindDynamic(InventoryInfo, &UInventoryVisualInfo::RotateDragOperation);
+	
 	InventoryInfo->OnItemsUpdated.BindDynamic(this, &UInventoryWidgetBase::RecieveUpdatedItems);
 	InventoryInfo->InvokeInitial();
 	
@@ -73,7 +75,7 @@ void UInventoryWidgetBase::RecieveUpdatedItems(TArray<UMaterialInterface*> Icons
 			UE_LOG(LogTemp, Error, TEXT("UInventoryWidgetBase::RevieveUpdatedItems IsValid(DragWidget) == false"));
 			continue;
 		}
-		DragWidget->Init(Icons[i]);
+		DragWidget->Init(Icons[i], Sizes[i] * TileSize);
 		DragWidget->OnDragStarted.BindDynamic(this, &UInventoryWidgetBase::RegisterChiledDraged);
 		DragWidget->OnDropStarted.BindDynamic(this, &UInventoryWidgetBase::RegisterChiledDropped);
 		UCanvasPanelSlot* ItemSlot = ContentCanvas->AddChildToCanvas(DragWidget);
@@ -82,13 +84,13 @@ void UInventoryWidgetBase::RecieveUpdatedItems(TArray<UMaterialInterface*> Icons
 	}
 }
 
-UObject* UInventoryWidgetBase::RegisterChiledDraged(UInventoryDragWidgetBase* DragedChild)
+UObject* UInventoryWidgetBase::RegisterChiledDraged(UInventoryDragWidgetBase* DragedChild, UDragDropOperation* InOperation)
 {
 	if (OnChildDraged.IsBound() == false)
 	{
 		return nullptr;
 	}
-	UObject* Item = OnChildDraged.Execute(ContentCanvas->GetChildIndex(DragedChild));
+	UObject* Item = OnChildDraged.Execute(ContentCanvas->GetChildIndex(DragedChild), InOperation);
 	if (IsValid(Item) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UInventoryWidgetBase::RegisterChiledDraged IsValid(Item) == false"));
@@ -112,4 +114,27 @@ bool UInventoryWidgetBase::NativeOnDrop(const FGeometry& InGeometry, const FDrag
 {
 	OnChildDroppedInDropSpace.ExecuteIfBound(InOperation->Payload);
 	return true;
+}
+
+FReply UInventoryWidgetBase::NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+
+	FReply Reply = Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
+	if (InKeyEvent.GetKey() != EKeys::R)
+	{
+		return Reply;
+	}
+	if (OnRotateRequested.IsBound() == false)
+	{
+		return Reply;
+	}
+
+	UMaterialInterface* Icon = nullptr;
+	FIntPoint Dimensions;
+	UDragDropOperation* DragOperation = OnRotateRequested.Execute(Icon, Dimensions);
+	UInventoryDragWidgetBase* Drag = Cast<UInventoryDragWidgetBase>(DragOperation->DefaultDragVisual);
+	Drag->Init(Icon, Dimensions*TileSize);
+	DragOperation->DefaultDragVisual = Drag;
+	Cast<UUserWidget>(DragOperation->DefaultDragVisual)->SetDesiredSizeInViewport(Dimensions * TileSize);
+	return Reply;
 }

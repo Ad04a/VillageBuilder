@@ -75,8 +75,9 @@ public:
 	bool TryPlaceItem(UStoredItemInfo* InItemInfo);
 	bool TryPlaceItemAtIndex(UStoredItemInfo* InItemInfo, int Index);
 	UStoredItemInfo* TakeItemByNumeration(int Numeration);
+	void RotateItem(UStoredItemInfo* InItemInfo);
 
 	class AItem* DropItem(UStoredItemInfo* InItemInfo);
-	void PlaceItem(class AItem* ItemToAdd, FIntPoint Coordinates = FIntPoint(-1,-1));
+	void PlaceItem(class AItem* ItemToAdd, FIntPoint Coordinates = FIntPoint(-1,-1), bool TryRotating=false);
 	class AItem* DropFirst();
 };

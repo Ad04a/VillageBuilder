@@ -7,13 +7,14 @@
 #include "Headers/InventoryDropEvent.h"
 #include "InventoryDragWidgetBase.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_RetVal_OneParam(UObject*, FDragStaredSignature, UInventoryDragWidgetBase*, DragedChild);
+DECLARE_DYNAMIC_DELEGATE_RetVal_TwoParams(UObject*, FDragStaredSignature, UInventoryDragWidgetBase*, DragedChild, class UDragDropOperation*, InOperation);
 
 UCLASS()
 class VILLAGEBUILDER_API UInventoryDragWidgetBase : public UUserWidget
 {
 	GENERATED_BODY()
 protected:
+
 	UPROPERTY(EditDefaultsOnly, Category = DragDrop, meta = (BindWidget))
 	class UImage* ItemIcon;
 
@@ -34,7 +35,7 @@ public:
 	FDragStaredSignature OnDragStarted;
 	FDropStartedSignature OnDropStarted;
 
-	void Init(class UMaterialInterface* Icon);
+	void Init(class UMaterialInterface* Icon, FVector2D InSize = FVector2D(55,55));
 	void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

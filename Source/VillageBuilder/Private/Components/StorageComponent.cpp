@@ -84,6 +84,13 @@ bool UStorageComponent::IsPositionValid(FIntPoint Position)
 	return Position.X > -1 && Position.X < Columns&& Position.Y > -1 && Position.Y < Rows;
 }
 
+void UStorageComponent::RotateItem(UStoredItemInfo* InItemInfo)
+{
+	InItemInfo->bRotated = !InItemInfo->bRotated;
+	FIntPoint CurrentDimensions = InItemInfo->GetSlots();
+	InItemInfo->SetSlots(FIntPoint(CurrentDimensions.Y, CurrentDimensions.X));
+}
+
 TArray<FIntPoint> UStorageComponent::GetAllTiles(FIntPoint ItemSlots, int DesiredPosition)
 {
 	TArray<FIntPoint> Tiles;
@@ -240,7 +247,7 @@ AItem* UStorageComponent::DropFirst()
 	return DropItem(Items[0]);
 }
 
-void UStorageComponent::PlaceItem(AItem* ItemToAdd, FIntPoint Coordinates)
+void UStorageComponent::PlaceItem(AItem* ItemToAdd, FIntPoint Coordinates, bool TryRotating)
 {
 	if (IsValid(ItemToAdd) == false)
 	{
@@ -258,9 +265,26 @@ void UStorageComponent::PlaceItem(AItem* ItemToAdd, FIntPoint Coordinates)
 	{
 		return;
 	}
+	if (TryRotating == true)
+	{
+		RotateItem(ItemInfo);
+		if (TryPlaceItemAtIndex(ItemInfo, GetIndexByTile(Coordinates)) == true)
+		{
+			return;
+		}
+		RotateItem(ItemInfo);
+	}
 	if (TryPlaceItem(ItemInfo) == true)
 	{
 		return;
+	}
+	if (TryRotating == true)
+	{
+		RotateItem(ItemInfo);
+		if (TryPlaceItem(ItemInfo) == true)
+		{
+			return;
+		}
 	}
 	DropItem(ItemInfo);
 	

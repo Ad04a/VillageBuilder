@@ -5,6 +5,7 @@
 #include "Characters/Villager.h"
 #include "WorkSystem/BaseWorkStation.h"
 #include "Components/StorageComponent.h"
+#include "Blueprint/DragDropOperation.h"
 
 UVisualizationInfo* UInventoryVisualInfo::CreateVisualInfo(AActor* InActor)
 {
@@ -54,9 +55,38 @@ void UInventoryVisualInfo::InvokeInitial()
 	RecieveUpdatedItems(Items, Indexes);
 }
 
-UObject* UInventoryVisualInfo::GetItemFromStorage(int Index)
+UObject* UInventoryVisualInfo::GetItemFromStorage(int Index, UDragDropOperation* InOperation)
 {
+	CurrentOperation = InOperation;
+	CurrentOperation->OnDragCancelled.AddDynamic(this, &UInventoryVisualInfo::ClearDragOperation);
 	return Cast<UObject>(Storage->TakeItemByNumeration(Index));
+}
+
+UDragDropOperation* UInventoryVisualInfo::RotateDragOperation(UMaterialInterface*& OutIcon, FIntPoint& OutSize)
+{
+	if (CurrentOperation == nullptr)
+	{
+		return nullptr;
+	}
+	UStoredItemInfo* Item = Cast<UStoredItemInfo>(CurrentOperation->Payload);
+	if (IsValid(Item) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UInventoryVisualInfo::RotateDragOperation Given DropInfo is not of type UStoredItemInfo"));
+	}
+	Storage->RotateItem(Item);
+	OutIcon = Item->GetIcon();
+	OutSize = Item->GetSlots();
+	return CurrentOperation;
+}
+
+void UInventoryVisualInfo::ClearDragOperation(UDragDropOperation* Operation)
+{
+	if (CurrentOperation == nullptr)
+	{
+		return;
+	}
+	CurrentOperation->OnDragCancelled.RemoveAll(this);
+	OnDragItemDropped(CurrentOperation->Payload, 0);
 }
 
 void UInventoryVisualInfo::OnDragItemDropped(UObject* DroppedObject, int Index)
@@ -66,6 +96,7 @@ void UInventoryVisualInfo::OnDragItemDropped(UObject* DroppedObject, int Index)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UInventoryVisualInfo::OnDragItemDropped Given DropInfo is not of type UStoredItemInfo"));
 	}
+	CurrentOperation = nullptr;
 	if (Storage->TryPlaceItemAtIndex(Item, Index) == true)
 	{
 		return;
@@ -83,12 +114,19 @@ void UInventoryVisualInfo::DropItem(UObject* DroppedObject)
 	if (IsValid(Item) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UInventoryVisualInfo::DropItem Given DropInfo is not of type UStoredItemInfo"));
+		return;
 	}
 	Storage->DropItem(Item);
+	CurrentOperation = nullptr;
 }
 
 void UInventoryVisualInfo::Clear()
 {
 	Super::Clear();
+	
+	if (CurrentOperation != nullptr)
+	{
+		CurrentOperation->DragCancelled(FPointerEvent());
+	}
 	Storage = nullptr;
 }

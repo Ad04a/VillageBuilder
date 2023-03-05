@@ -351,5 +351,10 @@ void UStorageComponent::SendUpdatedItems()
 	ItemDataToBroadcast.GenerateValueArray(PositionsToBroadcast);
 	OnItemsUpdated.ExecuteIfBound(ItemsToBroadcast, PositionsToBroadcast);
 
-	OnFirstItemUpdated.ExecuteIfBound(Items[0]);
+	if (Items.IsEmpty() == false)
+	{
+		OnFirstItemUpdated.ExecuteIfBound(Items[0]);
+		return;
+	}
+	OnFirstItemUpdated.ExecuteIfBound(nullptr);
 }

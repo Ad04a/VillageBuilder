@@ -178,7 +178,7 @@ void AVillager::PickUp(AItem* ItemToPickUp, bool TryRotating)
 		UE_LOG(LogTemp, Warning, TEXT("AVillager::PickUp IsValid(ItemToPickUp) == false"));
 		return;
 	}
-	Inventory->PlaceItem(ItemToPickUp,FIntPoint(0,0), TryRotating);
+	Inventory->PlaceItem(ItemToPickUp,FIntPoint(0,0), true);
 }
 
 void AVillager::Equip(UStoredItemInfo* ItemInfoToEquip)

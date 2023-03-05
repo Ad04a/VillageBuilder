@@ -33,8 +33,8 @@ ABaseWorkStation::ABaseWorkStation()
 	SetRootComponent(MeshComponent);
 	BuildingComponent = CreateDefaultSubobject<UBuildingClusterComponent>(TEXT("BuildingComponent"));
 	BuildingComponent->SetupAttachment(MeshComponent);
-	BuildingComponent->OnBuildingFinisehd.BindDynamic(this, &ABaseWorkStation::SetIsBuilt);
-	BuildingComponent->OnBuildStarted.BindDynamic(this, &ABaseWorkStation::SetIsConstructing);
+	BuildingComponent->OnBuildingFinisehd.AddDynamic(this, &ABaseWorkStation::SetIsBuilt);
+	BuildingComponent->OnBuildStarted.AddDynamic(this, &ABaseWorkStation::SetIsConstructing);
 
 	StorageComponent = CreateDefaultSubobject<UStorageComponent>(TEXT("Storage"));
 }
@@ -61,6 +61,8 @@ void ABaseWorkStation::BeginPlay()
 	DisplayName    = StationData->DisplayName;
 	TraitModifiers = StationData->TraitModifiers;
 	ProfessionName = StationData->ProfessionName;
+
+	StorageComponent->Init();
 
 }
 
@@ -107,6 +109,8 @@ void ABaseWorkStation::SetIsBuilt(bool State)
 		return;
 	}
 	OnBuildingReady.ExecuteIfBound(this);
+	BuildingComponent->OnBuildingFinisehd.RemoveAll(this);
+	BuildingComponent->OnBuildStarted.RemoveAll(this);
 	BreakDataLinks_Implementation();
 }
 
@@ -114,11 +118,6 @@ void ABaseWorkStation::SetIsConstructing(bool State)
 {
 	IsConstructing = State;
 	OnStartedConstruction.Broadcast(IsConstructing, this);
-}
-
-class UBaseBuildingComponent* ABaseWorkStation::GetFirstBuildingComponent()
-{
-	return BuildingComponent->GetFirstBuildingComponent();
 }
 
 

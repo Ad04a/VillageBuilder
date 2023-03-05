@@ -18,9 +18,8 @@ void ASpawningItem::SetIsActive(bool State)
 		return;
 	}
 	SpawnActor();
-	AItem* Copy = UsingVillager->DropItem();
+	UsingVillager->DropItem()->Destroy();
 	Destroy();
-	Copy->Destroy();
 }
 
 AActor* ASpawningItem::SpawnActor()

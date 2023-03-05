@@ -132,7 +132,7 @@ bool  UStorageComponent::CanPlace(FIntPoint ItemSlots, int DesiredPosition)
 	return true;
 }
 
-bool UStorageComponent::TryPlaceItem(UStoredItemInfo* InItemInfo)
+bool UStorageComponent::TryPlaceItem(UStoredItemInfo* InItemInfo, bool bTryRotating)
 {
 	if (IsValid(InItemInfo) == false)
 	{
@@ -140,12 +140,21 @@ bool UStorageComponent::TryPlaceItem(UStoredItemInfo* InItemInfo)
 	}
 	for (int i = 0; i < Items.Num(); i++)
 	{
-		if (CanPlace(InItemInfo->GetSlots(), i) == false)
+		if (CanPlace(InItemInfo->GetSlots(), i) == true)
 		{
-			continue;
+			AddItemAt(InItemInfo, i);
+			return true;
 		}
-		AddItemAt(InItemInfo, i);
-		return true;
+		if (bTryRotating == true)
+		{
+			RotateItem(InItemInfo);
+			if (CanPlace(InItemInfo->GetSlots(), i) == true)
+			{
+				AddItemAt(InItemInfo, i);
+				return true;
+			}
+			RotateItem(InItemInfo);
+		}
 	}
 	return false;
 }
@@ -198,6 +207,22 @@ TMap<UStoredItemInfo*, FIntPoint> UStorageComponent::GetAllItems()
 	return AllItems;
 }
 
+UStoredItemInfo* UStorageComponent::TakeItemByClass(TSubclassOf<class AItem> ItemClass)
+{
+	for (TPair<UStoredItemInfo*, FIntPoint> ItemInfo : GetAllItems())
+	{
+		UStoredItemInfo* Item = ItemInfo.Key;
+		if (Item->GetItemInfo().ItemClass == ItemClass)
+		{
+			
+			RemoveItem(Item);
+
+			return Item;
+		}
+	}
+	return nullptr;
+}
+
 UStoredItemInfo* UStorageComponent::TakeItemByNumeration(int Numeration)
 {
 	TMap<UStoredItemInfo*, FIntPoint> ItemData = GetAllItems();
@@ -224,7 +249,7 @@ void UStorageComponent::RemoveItem(UStoredItemInfo* ItemToRemove)
 		}
 	}
 	SendUpdatedItems();
-	ItemToRemove->ConditionalBeginDestroy();
+	OnItemRemoved.ExecuteIfBound(ItemToRemove);
 }
 
 AItem* UStorageComponent::DropItem(UStoredItemInfo* InItemInfo)
@@ -274,20 +299,47 @@ void UStorageComponent::PlaceItem(AItem* ItemToAdd, FIntPoint Coordinates, bool 
 		}
 		RotateItem(ItemInfo);
 	}
-	if (TryPlaceItem(ItemInfo) == true)
+	if (TryPlaceItem(ItemInfo, TryRotating) == true)
 	{
 		return;
 	}
-	if (TryRotating == true)
-	{
-		RotateItem(ItemInfo);
-		if (TryPlaceItem(ItemInfo) == true)
-		{
-			return;
-		}
-	}
 	DropItem(ItemInfo);
 	
+}
+
+void UStorageComponent::Sort(UStoredItemInfo* DesiredEquip)
+{
+	TArray<UStoredItemInfo*> CurrentItems;
+	for (int i = 0; i < GetAllItems().Num(); i++)
+	{
+		UStoredItemInfo* TempItem = TakeItemByNumeration(i);
+		if (DesiredEquip == TempItem)
+		{
+			continue;
+		}
+		CurrentItems.Add(TempItem);
+	}
+	if (DesiredEquip != nullptr)
+	{
+		TryPlaceItemAtIndex(DesiredEquip, 0);
+	}
+
+	CurrentItems.Sort([](UStoredItemInfo& Item1, UStoredItemInfo& Item2) {
+		return (Item1.GetSlots().X * Item1.GetSlots().Y) > (Item2.GetSlots().X * Item2.GetSlots().Y);
+		});
+
+	while (CurrentItems.IsEmpty() == false)
+	{
+		TArray<UStoredItemInfo*> TempArray;
+		for (UStoredItemInfo* Item : CurrentItems)
+		{
+			if (TryPlaceItem(Item,true) == false)
+			{
+				TempArray.Add(Item);
+			}
+		}
+		CurrentItems = TempArray;
+	}
 }
 
 void UStorageComponent::SendUpdatedItems()

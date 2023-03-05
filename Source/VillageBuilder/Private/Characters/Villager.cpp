@@ -187,6 +187,7 @@ void AVillager::Equip(UStoredItemInfo* ItemInfoToEquip)
 	{
 		if (IsValid(ItemSlot) == true)
 		{
+			ItemSlot->OnDrop();
 			ItemSlot->Destroy();
 		}
 		ItemSlot = nullptr;
@@ -212,6 +213,7 @@ AItem* AVillager::DropItem()
 {
 	if (IsValid(ItemSlot) == true)
 	{
+		ItemSlot->OnDrop();
 		ItemSlot->Destroy();
 	}
 	ItemSlot = nullptr;

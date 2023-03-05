@@ -139,9 +139,9 @@ public:
 	FText GetProfessionName() { return ProfessionName; }
 	bool GetIsBuilt() { return IsBuilt; }
 	bool GetIsConstructing() { return IsConstructing; }
-	void ForceBuild();
 	class UStorageComponent* GetStorageComponent() { return StorageComponent; }
-	class UBaseBuildingComponent* GetFirstBuildingComponent(); 
+	class UBuildingClusterComponent* GetBuildingComponent() {return BuildingComponent ;	}
 
-
+	//------------------CheatSection---------------
+	void ForceBuild();
 };

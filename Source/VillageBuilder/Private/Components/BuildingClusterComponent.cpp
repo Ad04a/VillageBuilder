@@ -10,7 +10,7 @@ void UBuildingClusterComponent::BeginPlay()
 	for (UBaseBuildingComponent* Child : GetBuildingComponents())
 	{
 		Child->SetMaterial(0, MainMaterial);
-		Child->OnComponentStateChange.BindDynamic(this, &UBuildingClusterComponent::OnComponentPlaced);
+		Child->OnComponentStateChange.BindDynamic(this, &UBuildingClusterComponent::ComponentPlaced);
 		Child->SetIsActive(false);
 		Child->ID = AllComponents;
 		AllComponents++;
@@ -26,7 +26,7 @@ void UBuildingClusterComponent::Init(FBuildingClusterInfoStruct InLoadInfo)
 	if (InLoadInfo.bIsConstructing == true)
 	{
 		bIsStarted = InLoadInfo.bIsConstructing;
-		OnBuildStarted.ExecuteIfBound(bIsStarted);
+		OnBuildStarted.Broadcast(bIsStarted);
 	}
 	PlacedIDs = InLoadInfo.PlacedIDs;
 	for (UBaseBuildingComponent* Child : GetBuildingComponents())
@@ -49,14 +49,14 @@ FBuildingClusterInfoStruct UBuildingClusterComponent::GetSaveInfo()
 void UBuildingClusterComponent::StartBuild()
 {
 	bIsStarted = !bIsStarted;
-	OnBuildStarted.ExecuteIfBound(bIsStarted);
+	OnBuildStarted.Broadcast(bIsStarted);
 	for (UBaseBuildingComponent* Child : GetBuildingComponents())
 	{
 		Child->SetIsActive(bIsStarted);
 	}
 }
 
-void UBuildingClusterComponent::OnComponentPlaced(int ID, bool State)
+void UBuildingClusterComponent::ComponentPlaced(int ID, bool State)
 {
 	if (State == false)
 	{
@@ -68,8 +68,9 @@ void UBuildingClusterComponent::OnComponentPlaced(int ID, bool State)
 	PlacedIDs.Add(ID);
 	if (PlacedComponents == AllComponents)
 	{
-		OnBuildingFinisehd.ExecuteIfBound(true);
+		OnBuildingFinisehd.Broadcast(true);
 	}
+	OnComponentPlaced.Broadcast(GetBuildingComponents());
 }
 
 TArray<class UBaseBuildingComponent*> UBuildingClusterComponent::GetBuildingComponents()

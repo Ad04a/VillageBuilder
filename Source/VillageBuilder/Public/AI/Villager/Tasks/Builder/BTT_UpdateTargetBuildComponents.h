@@ -5,20 +5,21 @@
 #include "CoreMinimal.h"
 
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BehaviorTree/BlackboardComponent.h"
 
-#include "AI/Villager/VillagerAIController.h"
-
-#include "BTT_GetWorkStation.generated.h"
+#include "BTT_UpdateTargetBuildComponents.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VILLAGEBUILDER_API UBTT_GetWorkStation : public UBTTask_BlackboardBase
+class VILLAGEBUILDER_API UBTT_UpdateTargetBuildComponents : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
+protected:
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	struct FBlackboardKeySelector BuilderService;
+
 public:
-	UBTT_GetWorkStation();
+	UBTT_UpdateTargetBuildComponents();
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) override;
 };

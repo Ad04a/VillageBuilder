@@ -11,7 +11,6 @@ UBTS_ResetBackboard::UBTS_ResetBackboard()
 
 void UBTS_ResetBackboard::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("STANA"));
 	AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
 	if (IsValid(Controller) == false)
 	{
@@ -22,12 +21,6 @@ void UBTS_ResetBackboard::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponen
 	if (IsValid(BlackBoard) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UBTT_GetWorkStation::ExecuteTask IsValid(BlackBoard) == false"));
-		return;
-	}
-	AVillager* Villager = Controller->GetControlledVillager();
-	if (IsValid(Villager) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("UBTT_GetWorkStation::ExecuteTask IsValid(Villager) == false"));
 		return;
 	}
 	for (FBlackboardKeySelector Key : KeysToClear)

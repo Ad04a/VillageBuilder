@@ -7,7 +7,9 @@
 #include "Headers/Interactable.h"
 #include "BuildingClusterComponent.generated.h"
 
-DECLARE_DYNAMIC_DELEGATE_OneParam(FBuildingClusterStateSignature, bool, State);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBuildingClusterStateSignature, bool, State);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FComponentPacedSignature, TArray<class UBaseBuildingComponent*>, CurrentComponents);
+
 
 USTRUCT(BlueprintType)
 struct FBuildingClusterInfoStruct
@@ -47,11 +49,12 @@ protected:
 	UMaterialInterface* MainMaterial;
 
 	UFUNCTION()
-	void OnComponentPlaced(int ID, bool State);
+	void ComponentPlaced(int ID, bool State);
 public:
 	void StartBuild();
 	FBuildingClusterStateSignature OnBuildingFinisehd;
 	FBuildingClusterStateSignature OnBuildStarted;
+	FComponentPacedSignature OnComponentPlaced;
 	void Init(FBuildingClusterInfoStruct InLoadInfo = FBuildingClusterInfoStruct());
 	FBuildingClusterInfoStruct GetSaveInfo();
 	TArray<class UBaseBuildingComponent*> GetBuildingComponents();

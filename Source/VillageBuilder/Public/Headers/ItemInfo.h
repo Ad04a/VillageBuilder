@@ -50,7 +50,7 @@ struct FItemInfoStruct
 	GENERATED_BODY()
 
 	UPROPERTY()
-	TSubclassOf<AActor> ItemClass;
+	TSubclassOf<class AItem> ItemClass;
 
 	UPROPERTY()
 	FString SerializedItem = "";

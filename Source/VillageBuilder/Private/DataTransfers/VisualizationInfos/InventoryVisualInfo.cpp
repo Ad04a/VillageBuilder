@@ -126,7 +126,7 @@ void UInventoryVisualInfo::Clear()
 	
 	if (CurrentOperation != nullptr)
 	{
-		CurrentOperation->DragCancelled(FPointerEvent());
+		//CurrentOperation->DragCancelled(FPointerEvent());
 	}
 	Storage = nullptr;
 }

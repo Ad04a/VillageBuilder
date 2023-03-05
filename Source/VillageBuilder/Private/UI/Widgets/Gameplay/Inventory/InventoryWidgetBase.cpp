@@ -132,6 +132,11 @@ FReply UInventoryWidgetBase::NativeOnPreviewKeyDown(const FGeometry& InGeometry,
 	UMaterialInterface* Icon = nullptr;
 	FIntPoint Dimensions;
 	UDragDropOperation* DragOperation = OnRotateRequested.Execute(Icon, Dimensions);
+	if (IsValid(DragOperation) == false)
+	{
+		return Reply;
+	}
+
 	UInventoryDragWidgetBase* Drag = Cast<UInventoryDragWidgetBase>(DragOperation->DefaultDragVisual);
 	Drag->Init(Icon, Dimensions*TileSize);
 	DragOperation->DefaultDragVisual = Drag;

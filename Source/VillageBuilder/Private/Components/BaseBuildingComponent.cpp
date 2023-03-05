@@ -26,8 +26,8 @@ void UBaseBuildingComponent::InteractRequest_Implementation(class AVillager* Int
 		return;
 	}
 
-	InteractingVillager->DropItem();
-	UsingItem->Destroy();
+	InteractingVillager->DropItem()->Destroy();
+	//UsingItem->Destroy();
 	Build();
 }
 

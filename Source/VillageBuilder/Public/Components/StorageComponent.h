@@ -9,7 +9,7 @@
 #include "StorageComponent.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FItemsUpdatedSignature, TArray<UStoredItemInfo*>, Items, TArray<FIntPoint>, Indexes);
-DECLARE_DYNAMIC_DELEGATE_OneParam(FFirstItemSignature, UStoredItemInfo*, Item);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FItemSignature, UStoredItemInfo*, Item);
 
 USTRUCT(BlueprintType)
 struct FStorageData : public FTableRowBase
@@ -64,19 +64,22 @@ protected:
 public:
 
 	FItemsUpdatedSignature OnItemsUpdated;
-	FFirstItemSignature OnFirstItemUpdated;
+	FItemSignature OnFirstItemUpdated;
+	FItemSignature OnItemRemoved;
 
-	void Init(TMap<FIntPoint, FItemInfoStruct> SavedItems);
+	void Init(TMap<FIntPoint, FItemInfoStruct> SavedItems = TMap<FIntPoint, FItemInfoStruct>());
 	TMap<FIntPoint, FItemInfoStruct> GetSaveInfo();
 	int GetRows() { return Rows; }
 	int GetColumns() { return Columns; }
 	TMap<UStoredItemInfo*, FIntPoint> GetAllItems();
 
-	bool TryPlaceItem(UStoredItemInfo* InItemInfo);
+	bool TryPlaceItem(UStoredItemInfo* InItemInfo, bool bTryRotating = false);
 	bool TryPlaceItemAtIndex(UStoredItemInfo* InItemInfo, int Index);
 	UStoredItemInfo* TakeItemByNumeration(int Numeration);
+	UStoredItemInfo* TakeItemByClass(TSubclassOf<class AItem> ItemClass);
 	void RotateItem(UStoredItemInfo* InItemInfo);
 
+	void Sort(UStoredItemInfo* DesiredEquip = nullptr);
 	class AItem* DropItem(UStoredItemInfo* InItemInfo);
 	void PlaceItem(class AItem* ItemToAdd, FIntPoint Coordinates = FIntPoint(-1,-1), bool TryRotating=false);
 	class AItem* DropFirst();

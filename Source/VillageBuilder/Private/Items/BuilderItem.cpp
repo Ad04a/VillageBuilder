@@ -59,8 +59,7 @@ void ABuilderItem::SetIsActive(bool State)
 	IsActive = State;
 	if (State == false)
 	{
-		CurrentProjection->Destroy();
-		CurrentProjection = nullptr;
+		OnDrop();
 		return;
 	}
 
@@ -89,8 +88,7 @@ void ABuilderItem::SetIsActive(bool State)
 		return;
 	}
 	Village->AddWorkStationToColony(WorkStation);
-	CurrentProjection->Destroy();
-	CurrentProjection = nullptr;
+	OnDrop();
 }
 
 void ABuilderItem::LoadFromDataTable()

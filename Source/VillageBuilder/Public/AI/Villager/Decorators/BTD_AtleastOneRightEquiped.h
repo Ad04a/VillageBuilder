@@ -14,8 +14,6 @@ class VILLAGEBUILDER_API UBTD_AtleastOneRightEquiped : public UBTDecorator
 {
 	GENERATED_BODY()
 protected:
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	struct FBlackboardKeySelector WorkService;
 
 public:
 	UBTD_AtleastOneRightEquiped();

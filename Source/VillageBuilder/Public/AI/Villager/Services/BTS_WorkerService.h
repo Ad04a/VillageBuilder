@@ -15,25 +15,18 @@ class VILLAGEBUILDER_API UBTS_WorkerService : public UBTService
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	struct FBlackboardKeySelector WorkService;
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	struct FBlackboardKeySelector WorkStation;
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	struct FBlackboardKeySelector HasWorkCheck;
+	TArray<struct FBlackboardKeySelector> KeysToPassToManager;
 
-	class AVillageManager* Village;
-	class UBlackboardComponent* BlackBoard;
-
-	UPROPERTY(VisibleAnywhere)
-	TArray<TSubclassOf<class AItem>> NededItemClasses;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UWorkerManager> ManagerClass;
 
 public:
 	UBTS_WorkerService();
 
 	void OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) override;
-
-	TArray<TSubclassOf<class AItem>> GetNededItemClasses() { return NededItemClasses; }
 };

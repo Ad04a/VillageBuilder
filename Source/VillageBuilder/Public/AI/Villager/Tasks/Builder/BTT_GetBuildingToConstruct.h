@@ -15,9 +15,6 @@ class VILLAGEBUILDER_API UBTT_GetBuildingToConstruct : public UBTTask_Blackboard
 	GENERATED_BODY()
 protected:
 
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	struct FBlackboardKeySelector BuilderService;
-
 public:
 	UBTT_GetBuildingToConstruct();
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) override;

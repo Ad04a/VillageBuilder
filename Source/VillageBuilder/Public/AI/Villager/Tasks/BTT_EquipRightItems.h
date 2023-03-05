@@ -14,8 +14,6 @@ class VILLAGEBUILDER_API UBTT_EquipRightItems : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 protected:
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	struct FBlackboardKeySelector WorkService;
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	struct FBlackboardKeySelector WorkStation;

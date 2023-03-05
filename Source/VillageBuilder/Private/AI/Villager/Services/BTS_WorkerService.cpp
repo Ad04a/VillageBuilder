@@ -3,6 +3,7 @@
 
 #include "AI/Villager/Services/BTS_WorkerService.h"
 #include "AI/Villager/VillagerAIController.h"
+#include "AI/Villager/Managements/WorkerManager.h"
 #include "GameModes/GameplayModeBase.h"
 #include "WorkSystem/VillageManager.h"
 #include "WorkSystem/BaseWorkStation.h"
@@ -23,7 +24,7 @@ void UBTS_WorkerService::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponent
 		UE_LOG(LogTemp, Error, TEXT("UBTS_WorkerService::OnBecomeRelevant IsValid(Controller) == false"));
 		return;
 	}
-	BlackBoard = Controller->GetBlackboard();
+	UBlackboardComponent*  BlackBoard = Controller->GetBlackboard();
 	if (IsValid(BlackBoard) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UBTS_WorkerService::OnBecomeRelevant IsValid(BlackBoard) == false"));
@@ -45,7 +46,7 @@ void UBTS_WorkerService::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponent
 
 	AVillager* Self = Controller->GetControlledVillager();
 
-	Village = GameMode->GetCurrentVillage(Self);
+	AVillageManager* Village = GameMode->GetCurrentVillage(Self);
 	if (IsValid(Village) == false) {
 		UE_LOG(LogTemp, Error, TEXT("UBTS_WorkerService::OnBecomeRelevant IsValid(Village) == false"));
 		return;
@@ -56,6 +57,6 @@ void UBTS_WorkerService::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponent
 		return;
 	}
 
-	BlackBoard->SetValueAsObject(WorkService.SelectedKeyName, this);
+	Controller->WorkManager = UWorkerManager::CreateInstance(this, ManagerClass, Village, BlackBoard, KeysToPassToManager);
 	BlackBoard->SetValueAsObject(WorkStation.SelectedKeyName, WorkStationActor);
 }

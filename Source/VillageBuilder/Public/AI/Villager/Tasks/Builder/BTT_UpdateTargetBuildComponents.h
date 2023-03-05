@@ -16,8 +16,6 @@ class VILLAGEBUILDER_API UBTT_UpdateTargetBuildComponents : public UBTTask_Black
 {
 	GENERATED_BODY()
 protected:
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	struct FBlackboardKeySelector BuilderService;
 
 public:
 	UBTT_UpdateTargetBuildComponents();

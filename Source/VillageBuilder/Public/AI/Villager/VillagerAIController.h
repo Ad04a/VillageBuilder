@@ -23,6 +23,9 @@ private:
 	TArray<AActor*> RememberedActors;
 
 public:
+	UPROPERTY(VisibleAnywhere, Category = Blackboard)
+	class UWorkerManager* WorkManager;
+
 	AVillager* GetControlledVillager()const;
 	void AddRememberdActor(AActor* InActor);
 	AActor* GetFirstRememebred();

@@ -2,7 +2,7 @@
 
 
 #include "AI/Villager/Tasks/BTT_EquipRightItems.h"
-#include "AI/Villager/Services/BTS_WorkerService.h"
+#include "AI/Villager/Managements/WorkerManager.h"
 #include "AI/Villager/VillagerAIController.h"
 #include "Characters/Villager.h"
 #include "WorkSystem/BaseWorkStation.h"
@@ -32,10 +32,10 @@ EBTNodeResult::Type UBTT_EquipRightItems::ExecuteTask(UBehaviorTreeComponent& Ow
 		return EBTNodeResult::Failed;
 	}
 
-	UBTS_WorkerService* WorerkService = Cast<UBTS_WorkerService>(BlackBoard->GetValueAsObject(WorkService.SelectedKeyName));
+	UWorkerManager* WorerkService = Controller->WorkManager;
 	if (IsValid(WorerkService) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTT_EquipRightItems::ExecuteTask IsValid(WorkService) == false"));
+		UE_LOG(LogTemp, Error, TEXT("UBTT_EquipRightItems::ExecuteTask IsValid(WorkService) == falses"));
 		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
 		return EBTNodeResult::Failed;
 	}
@@ -62,7 +62,7 @@ EBTNodeResult::Type UBTT_EquipRightItems::ExecuteTask(UBehaviorTreeComponent& Ow
 	TArray<UStoredItemInfo*> BufferedItems;
 
 	TMap<UStoredItemInfo*, FIntPoint> VillagerItems = VillagerStorage->GetAllItems();
-	TArray<TSubclassOf<AItem >> NeededClasses = WorerkService->GetNededItemClasses();
+	TArray<TSubclassOf<AItem >> NeededClasses = WorerkService->GetNeededItemClasses();
 
 	for (int i = 0; i < VillagerItems.Num(); i++)
 	{
@@ -98,7 +98,7 @@ EBTNodeResult::Type UBTT_EquipRightItems::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	VillagerStorage->Sort();
 	WorkStationStorage->Sort();
-	NeededClasses = WorerkService->GetNededItemClasses();
+	NeededClasses = WorerkService->GetNeededItemClasses();
 
 	for (UStoredItemInfo* Item : BufferedItems)
 	{

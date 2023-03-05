@@ -2,7 +2,7 @@
 
 
 #include "AI/Villager/Decorators/BTD_AtleastOneRightEquiped.h"
-#include "AI/Villager/Services/BTS_WorkerService.h"
+#include "AI/Villager/Managements/WorkerManager.h"
 #include "AI/Villager/VillagerAIController.h"
 #include "Characters/Villager.h"
 #include "WorkSystem/BaseWorkStation.h"
@@ -24,31 +24,31 @@ bool UBTD_AtleastOneRightEquiped::CalculateRawConditionValue(UBehaviorTreeCompon
 	AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
 	if (IsValid(Controller) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTT_EquipRightItems::ExecuteTask IsValid(Controller) == false"));
+		UE_LOG(LogTemp, Error, TEXT("UBTD_AtleastOneRightEquiped::CalculateRawConditionValue IsValid(Controller) == false"));
 		return false;
 	}
 	UBlackboardComponent* BlackBoard = Controller->GetBlackboard();
 	if (IsValid(BlackBoard) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTT_EquipRightItems::ExecuteTask IsValid(BlackBoard) == false"));
+		UE_LOG(LogTemp, Error, TEXT("UBTD_AtleastOneRightEquiped::CalculateRawConditionValue IsValid(BlackBoard) == false"));
 		return false;
 	}
 
-	UBTS_WorkerService* WorerkService = Cast<UBTS_WorkerService>(BlackBoard->GetValueAsObject(WorkService.SelectedKeyName));
+	UWorkerManager* WorerkService = Controller->WorkManager;
 	if (IsValid(WorerkService) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTT_EquipRightItems::ExecuteTask IsValid(WorkService) == false"));
+		UE_LOG(LogTemp, Error, TEXT("UBTD_AtleastOneRightEquiped::CalculateRawConditionValue IsValid(WorkService) == false"));
 		return false;
 	}
 
 	AVillager* Villager = Controller->GetControlledVillager();
 	if (IsValid(Villager) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTT_EquipRightItems::ExecuteTask IsValid(Villager) == false"));
+		UE_LOG(LogTemp, Error, TEXT("UBTD_AtleastOneRightEquiped::CalculateRawConditionValue IsValid(Villager) == false"));
 		return false;
 	}
 	UStorageComponent* VillagerStorage = Villager->GetStorageComponent();
-	TArray<TSubclassOf<AItem >> NeededClasses = WorerkService->GetNededItemClasses();
+	TArray<TSubclassOf<AItem >> NeededClasses = WorerkService->GetNeededItemClasses();
 
 	for (TSubclassOf<AItem > ItemClass : NeededClasses)
 	{

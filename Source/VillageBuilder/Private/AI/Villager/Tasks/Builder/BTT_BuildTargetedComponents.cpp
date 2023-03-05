@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AI/Villager/Tasks/Builder/BTT_BuildTargetedComponents.h"
-#include "AI/Villager/Services/BTS_BuilderService.h"
+#include "AI/Villager/Managements/BuilderManager.h"
 #include "AI/Villager/VillagerAIController.h"
 #include "Characters/Villager.h"
 #include "Components/BaseBuildingComponent.h"
@@ -32,10 +32,11 @@ EBTNodeResult::Type UBTT_BuildTargetedComponents::ExecuteTask(UBehaviorTreeCompo
 		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
 		return EBTNodeResult::Failed;
 	}
-	UBTS_BuilderService* Service = Cast<UBTS_BuilderService>(BlackBoard->GetValueAsObject(BuilderService.SelectedKeyName));
+
+	UBuilderManager* Service = Cast<UBuilderManager>(Controller->WorkManager);
 	if (IsValid(Service) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTT_BuildTargetedComponents::ExecuteTask IsValid(Service) == false Service not of class UBTS_BuilderService"));
+		UE_LOG(LogTemp, Error, TEXT("UBTT_BuildTargetedComponents::ExecuteTask IsValid(Service) == false Service not of class UBuilderManager"));
 		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
 		return EBTNodeResult::Failed;
 	}
@@ -51,7 +52,7 @@ EBTNodeResult::Type UBTT_BuildTargetedComponents::ExecuteTask(UBehaviorTreeCompo
 	UStorageComponent* VillagerStorage = Villager->GetStorageComponent();
 
 	TMap<UBaseBuildingComponent*, TSubclassOf<AItem>> TargetBuildComponents = Service->UpdateNeededClasses();
-	TArray<TSubclassOf<AItem >> NeededClasses = Service->GetNededItemClasses();
+	TArray<TSubclassOf<AItem >> NeededClasses = Service->GetNeededItemClasses();
 
 	for (TPair<UStoredItemInfo*, FIntPoint> Item : VillagerStorage->GetAllItems())
 	{
@@ -60,7 +61,12 @@ EBTNodeResult::Type UBTT_BuildTargetedComponents::ExecuteTask(UBehaviorTreeCompo
 		{
 			continue;
 		}
-		UBaseBuildingComponent* BuildComponent = *TargetBuildComponents.FindKey(ItemClass);
+		UBaseBuildingComponent*const* FoundBuildComp = TargetBuildComponents.FindKey(ItemClass);
+		if (FoundBuildComp == nullptr)
+		{
+			continue;
+		}
+		UBaseBuildingComponent* BuildComponent = *FoundBuildComp;
 		if (IsValid(BuildComponent) == false)
 		{
 			continue;
@@ -77,7 +83,7 @@ EBTNodeResult::Type UBTT_BuildTargetedComponents::ExecuteTask(UBehaviorTreeCompo
 		InteractableObject->Execute_InteractRequest(BuildComponent, Villager);
 
 		TargetBuildComponents = Service->UpdateNeededClasses();
-		NeededClasses = Service->GetNededItemClasses();
+		NeededClasses = Service->GetNeededItemClasses();
 	}
 
 	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);

@@ -26,6 +26,6 @@ protected:
 public:
 	static UWorkerManager* CreateInstance(UObject* Outer, TSubclassOf< UWorkerManager> ManagerClass, class AVillageManager* InVillage, class UBlackboardComponent* InBlackboard, TArray<struct FBlackboardKeySelector> InKeys);
 	virtual bool CheckGivenKeys() { return true; }
-	void SetNededItemClasses(TArray<TSubclassOf<class AItem>> Classes = TArray<TSubclassOf<class AItem>>()) { NededItemClasses = Classes; }
+	void SetNededItemClasses(TArray<TSubclassOf<class AItem>> Classes = TArray<TSubclassOf<class AItem>>()) { NededItemClasses.Empty(); NededItemClasses = Classes; }
 	TArray<TSubclassOf<class AItem>> GetNeededItemClasses() { return NededItemClasses; }
 };

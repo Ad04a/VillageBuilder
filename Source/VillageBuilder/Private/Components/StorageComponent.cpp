@@ -272,6 +272,14 @@ AItem* UStorageComponent::DropFirst()
 	return DropItem(Items[0]);
 }
 
+void UStorageComponent::DropAllItems()
+{
+	for (TPair<UStoredItemInfo*, FIntPoint> ItemInfo : GetAllItems())
+	{
+		DropItem(ItemInfo.Key);
+	}
+}
+
 void UStorageComponent::PlaceItem(AItem* ItemToAdd, FIntPoint Coordinates, bool TryRotating)
 {
 	if (IsValid(ItemToAdd) == false)

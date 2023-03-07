@@ -7,19 +7,17 @@
 #include "BehaviorTree/Decorators/BTDecorator_ConditionalLoop.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-#include "AI/GeneralAIController.h"
-
-#include "BTD_ConditionalLoopForClassCompare.generated.h"
+#include "BTD_ConditionalLoopForVectorCompare.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VILLAGEBUILDER_API UBTD_ConditionalLoopForClassCompare : public UBTDecorator_ConditionalLoop
+class VILLAGEBUILDER_API UBTD_ConditionalLoopForVectorCompare : public UBTDecorator_ConditionalLoop
 {
 	GENERATED_BODY()
 public:
-	UBTD_ConditionalLoopForClassCompare();
+	UBTD_ConditionalLoopForVectorCompare();
 protected:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	struct FBlackboardKeySelector CompareWith;

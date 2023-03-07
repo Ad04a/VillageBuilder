@@ -167,6 +167,7 @@ void AVillager::RecieveDamage(AActor* DamagedActor, float Damage, const class UD
 
 void AVillager::Die()
 {
+	Inventory->DropAllItems();
 	OnDeath.Broadcast(this);
 	BreakDataLinks_Implementation();
 }
@@ -191,6 +192,7 @@ void AVillager::Equip(UStoredItemInfo* ItemInfoToEquip)
 			ItemSlot->Destroy();
 		}
 		ItemSlot = nullptr;
+		StopAnimMontage(GetCurrentMontage());
 		return;
 	}
 	if (IsValid(ItemSlot) == true)
@@ -217,6 +219,7 @@ AItem* AVillager::DropItem()
 		ItemSlot->Destroy();
 	}
 	ItemSlot = nullptr;
+	StopAnimMontage(GetCurrentMontage());
 	return Inventory->DropFirst();
 }
 

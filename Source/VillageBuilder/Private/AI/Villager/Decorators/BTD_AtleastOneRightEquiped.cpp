@@ -60,6 +60,5 @@ bool UBTD_AtleastOneRightEquiped::CalculateRawConditionValue(UBehaviorTreeCompon
 		VillagerStorage->TryPlaceItem(Item);
 		return true;
 	}
-
 	return false;
 }

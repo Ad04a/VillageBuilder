@@ -71,12 +71,15 @@ TMap<UBaseBuildingComponent*, TSubclassOf<AItem>> UBuilderManager::UpdateNeededC
 
 	if (TargetBuildingCluster == nullptr)
 	{
+		SetNededItemClasses(ItemClasses);
 		return ComponentClasses;
 	}
 	for (UBaseBuildingComponent* BuildComp : TargetBuildingCluster->GetBuildingComponents())
 	{
 		ComponentClasses.Add(BuildComp, BuildComp->GetNeededClass());
-		NededItemClasses.Add(BuildComp->GetNeededClass());
+		ItemClasses.Add(BuildComp->GetNeededClass());
 	}
+
+	SetNededItemClasses(ItemClasses);
 	return ComponentClasses;
 }

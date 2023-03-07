@@ -81,6 +81,7 @@ public:
 
 	void Sort(UStoredItemInfo* DesiredEquip = nullptr);
 	class AItem* DropItem(UStoredItemInfo* InItemInfo);
+	void DropAllItems();
 	void PlaceItem(class AItem* ItemToAdd, FIntPoint Coordinates = FIntPoint(-1,-1), bool TryRotating=false);
 	class AItem* DropFirst();
 };

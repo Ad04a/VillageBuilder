@@ -280,38 +280,39 @@ void UStorageComponent::DropAllItems()
 	}
 }
 
-void UStorageComponent::PlaceItem(AItem* ItemToAdd, FIntPoint Coordinates, bool TryRotating)
+bool UStorageComponent::PlaceItem(AItem* ItemToAdd, FIntPoint Coordinates, bool TryRotating)
 {
 	if (IsValid(ItemToAdd) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UStorageComponent::PlaceItem IsValid(ItemToAdd) == false"));
-		return;
+		return false;
 	}
 	UStoredItemInfo* ItemInfo = UStoredItemInfo::GenerateStorageInfoForItem(ItemToAdd);
 	ItemToAdd->Destroy();
 	if (IsValid(ItemInfo) == false)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UStorageComponent::PlaceItem IsValid(ItemInfo) == false"));
-		return;
+		return false;
 	}
 	if (TryPlaceItemAtIndex(ItemInfo, GetIndexByTile(Coordinates)) == true)
 	{
-		return;
+		return true;
 	}
 	if (TryRotating == true)
 	{
 		RotateItem(ItemInfo);
 		if (TryPlaceItemAtIndex(ItemInfo, GetIndexByTile(Coordinates)) == true)
 		{
-			return;
+			return true;
 		}
 		RotateItem(ItemInfo);
 	}
 	if (TryPlaceItem(ItemInfo, TryRotating) == true)
 	{
-		return;
+		return true;
 	}
 	DropItem(ItemInfo);
+	return false;
 	
 }
 

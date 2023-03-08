@@ -14,7 +14,7 @@ bool UBuilderManager::CheckGivenKeys()
 {
 	if (GivenKeys.Num() != 2)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBuilderManager::CheckGivenKeys Not given enough keys"));
+		UE_LOG(LogTemp, Error, TEXT("UBuilderManager::CheckGivenKeys Number of needed keys is 2 but %d were given"), GivenKeys.Num());
 		return false;
 	}
 	if (GivenKeys[0].SelectedKeyType == UBlackboardKeyType_Bool::StaticClass())
@@ -82,4 +82,10 @@ TMap<UBaseBuildingComponent*, TSubclassOf<AItem>> UBuilderManager::UpdateNeededC
 
 	SetNededItemClasses(ItemClasses);
 	return ComponentClasses;
+}
+
+void UBuilderManager::Clear()
+{
+	ResetBuildingCluster(false);
+	Super::Clear();
 }

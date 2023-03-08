@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/Villager/Tasks/BTT_FindClosestOfFoliage.h"
+#include "AI/Villager/Tasks/Gatherer/BTT_FindClosestOfFoliage.h"
 #include "AI/Villager/VillagerAIController.h"
 #include "Characters/Villager.h"
 

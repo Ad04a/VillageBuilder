@@ -64,7 +64,7 @@ EBTNodeResult::Type UBTT_EquipRightItems::ExecuteTask(UBehaviorTreeComponent& Ow
 	TMap<UStoredItemInfo*, FIntPoint> VillagerItems = VillagerStorage->GetAllItems();
 	TArray<TSubclassOf<AItem >> NeededClasses = WorerkService->GetNeededItemClasses();
 
-	for (int i = 0; i < VillagerItems.Num(); i++)
+	for (int i = VillagerItems.Num()-1; i >= 0 ; i--)
 	{
 		UStoredItemInfo* Item = VillagerStorage->TakeItemByNumeration(i);
 		if (IsValid(Item) == false)
@@ -118,6 +118,18 @@ EBTNodeResult::Type UBTT_EquipRightItems::ExecuteTask(UBehaviorTreeComponent& Ow
 		VillagerStorage->TryPlaceItem(Item, true);
 		
 	}
+	if (NotifyIfFull == false)
+	{
+		FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
+		return EBTNodeResult::Succeeded;
+	}
+	bool IsInventorySame = !VillagerItems.IsEmpty();
+	TMap<UStoredItemInfo*, FIntPoint> NewItems = VillagerStorage->GetAllItems();
+	for (TPair<UStoredItemInfo*, FIntPoint> Item : VillagerItems)
+	{
+		IsInventorySame = IsInventorySame && NewItems.Contains(Item.Key);
+	}
+	BlackBoard->SetValueAsBool(IsFull.SelectedKeyName, IsInventorySame);
 
 	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;

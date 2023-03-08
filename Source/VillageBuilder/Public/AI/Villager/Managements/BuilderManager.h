@@ -23,6 +23,7 @@ protected:
 public:
 
 	virtual bool CheckGivenKeys() override;
+	virtual void Clear() override;
 
 	void SetTargetBuildingCluster();
 	TMap<class UBaseBuildingComponent*, TSubclassOf<class AItem>> UpdateNeededClasses();

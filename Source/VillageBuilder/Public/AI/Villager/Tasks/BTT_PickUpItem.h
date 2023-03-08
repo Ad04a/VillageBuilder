@@ -4,27 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTT_EquipRightItems.generated.h"
+#include "BTT_PickUpItem.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VILLAGEBUILDER_API UBTT_EquipRightItems : public UBTTask_BlackboardBase
+class VILLAGEBUILDER_API UBTT_PickUpItem : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 protected:
-
 	UPROPERTY(EditAnywhere, Category = Blackboard)
-	struct FBlackboardKeySelector WorkStation;
+	struct FBlackboardKeySelector TargetItem;
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	struct FBlackboardKeySelector IsFull;
 
-	UPROPERTY(EditAnywhere, Category = Blackboard)
-	bool NotifyIfFull;
-
 public:
-	UBTT_EquipRightItems();
+	UBTT_PickUpItem();
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) override;
 };

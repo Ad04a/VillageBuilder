@@ -15,7 +15,7 @@ UWorkerManager* UWorkerManager::CreateInstance(UObject* Outer, TSubclassOf<UWork
 
 	if (IsValid(ManagerClass) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTS_WorkerService::OnBecomeRelevant No Class Specified"));
+		UE_LOG(LogTemp, Warning, TEXT("UBTS_WorkerService::OnBecomeRelevant No Class Specified"));
 		return nullptr;
 	}
 

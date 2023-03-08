@@ -56,7 +56,10 @@ void UBTS_WorkerService::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponent
 		UE_LOG(LogTemp, Error, TEXT("UBTS_WorkerService::OnBecomeRelevant IsValid(WorkStation) == false"));
 		return;
 	}
-
+	if (IsValid(Controller->WorkManager) == true)
+	{
+		Controller->WorkManager->Clear();
+	}
 	Controller->WorkManager = UWorkerManager::CreateInstance(this, ManagerClass, Village, BlackBoard, KeysToPassToManager);
 	BlackBoard->SetValueAsObject(WorkStation.SelectedKeyName, WorkStationActor);
 }

@@ -28,4 +28,5 @@ public:
 	virtual bool CheckGivenKeys() { return true; }
 	void SetNededItemClasses(TArray<TSubclassOf<class AItem>> Classes = TArray<TSubclassOf<class AItem>>()) { NededItemClasses.Empty(); NededItemClasses = Classes; }
 	TArray<TSubclassOf<class AItem>> GetNeededItemClasses() { return NededItemClasses; }
+	virtual void Clear() { Village = nullptr;  BlackBoard = nullptr; ConditionalBeginDestroy();}
 };

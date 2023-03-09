@@ -23,6 +23,31 @@ AItem* AItem::CreateInstance(UObject* WorldContext, FItemInfoStruct InLoadInfo)
 	return Item;
 }
 
+AItem* AItem::SpawnItem(UObject* WorldContext, TSubclassOf<AItem> SpecificClass)
+{
+	if (IsValid(WorldContext) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AItem::SpawnItem IsValid(WorldContext) == false"));
+		return nullptr;
+	}
+	if (IsValid(SpecificClass) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AItem::SpawnItem IsValid(SpecificClass) == false"));
+		return nullptr;
+	}
+	FActorSpawnParameters Params;
+	UWorld* World = WorldContext->GetWorld();
+	AItem* Item = World->SpawnActor<AItem>(SpecificClass, FVector(0, 0, 100), FRotator(0, 0, 0), Params);
+	if (IsValid(Item) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AItem::SpawnItem IsValid(Item) == false"));
+		return nullptr;
+	}
+	Item->ID = CurrentID;
+	CurrentID++;
+	return Item;
+}
+
 AItem::AItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -40,6 +65,7 @@ FString AItem::Init(FItemInfoStruct InLoadInfo)
 	{
 		return "";
 	}
+	ID = InLoadInfo.ID;
 	SetActorTransform(InLoadInfo.Transform);
 	return InLoadInfo.SerializedItem;
 }
@@ -60,6 +86,7 @@ FString AItem::SerializetemInfo()
 FItemInfoStruct AItem::GetSaveInfo()
 {
 	FItemInfoStruct SaveInfo;
+	SaveInfo.ID				= ID;
 	SaveInfo.ItemClass      = GetClass();
 	SaveInfo.SerializedItem = SerializetemInfo();
 	SaveInfo.Transform		= GetActorTransform();

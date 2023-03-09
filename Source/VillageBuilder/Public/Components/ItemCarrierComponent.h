@@ -21,6 +21,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Content)
 	TMap<TSubclassOf<AItem>, int> Content;
 
+	UPROPERTY(EditAnywhere, Category = Content)
+	float DropHeigh;
+
 public:	
 
 	void AddItem(AItem* Item);

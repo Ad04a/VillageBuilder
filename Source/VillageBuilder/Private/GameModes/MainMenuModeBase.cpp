@@ -23,7 +23,7 @@ void AMainMenuModeBase::StartGame(FString SlotName)
 		return;
 	}
 	GameInstane->SaveSlotName = SlotName;
-	UGameplayStatics::OpenLevel(World, "NewWorld");
+	UGameplayStatics::OpenLevel(World, Gameplay);
 }
 
 

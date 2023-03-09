@@ -167,7 +167,7 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 
 void AVillageManager::TimedSpawn()
 {
-	AddVillagerToColony(SpawnVillager(FVector(FMath::RandRange(-500,500), FMath::RandRange(-500, 500), 100)));
+	AddVillagerToColony(SpawnVillager(GetActorLocation() + FVector(FMath::RandRange(-Range, Range), FMath::RandRange(-Range, Range), 100)));
 	float SpawnTime = FMath::RandRange(MinTimeBetweenSpawn, MaxTimeBetweenSpawn);
 	GetWorldTimerManager().SetTimer(SpawnHandle, this, &AVillageManager::TimedSpawn, SpawnTime, false);
 }

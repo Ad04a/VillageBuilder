@@ -37,6 +37,7 @@ void AGameplayModeBase::StartPlay() {
 	LoadedGame = Cast<UVillageBuilderSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
 
 	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	Player = World->SpawnActor<AVillageMayor>(PlayerClass, FVector(0,0,0), FRotator(0,0,0), Params);
 	Player->Init(LoadedGame->PlayerInfo, SaveSlotName);
 	APlayerController* Controller = UGameplayStatics::GetPlayerController(World, 0);
@@ -50,7 +51,7 @@ void AGameplayModeBase::StartPlay() {
 	{
 		for (TSubclassOf<AItem > ItemClass : StartingItems)
 		{
-			Player->PickUp(World->SpawnActor<AItem>(ItemClass, FVector(0, 0, 100), FRotator(0, 0, 0), Params), true);
+			Player->PickUp(AItem::SpawnItem(World, ItemClass), true);
 		}
 		
 		LoadedGame->bIsFirstLoad = false;
@@ -115,7 +116,7 @@ void AGameplayModeBase::EndGame()
 	}
 	OnGameEnd.Broadcast();
 	SaveGame();
-	UGameplayStatics::OpenLevel(World, "MainMenu");
+	UGameplayStatics::OpenLevel(World, MainMenu);
 }
 
 void AGameplayModeBase::SetVillage(AVillageManager* VillageManager)

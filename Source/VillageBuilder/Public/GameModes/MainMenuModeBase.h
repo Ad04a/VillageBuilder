@@ -13,6 +13,10 @@ class VILLAGEBUILDER_API AMainMenuModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Levels")
+	FName Gameplay = "NewWorld";
+
 public:
 
 	FSaveSlotsFoundSignature OnSaveSlotsFound;

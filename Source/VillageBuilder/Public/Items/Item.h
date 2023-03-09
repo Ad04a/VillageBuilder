@@ -64,6 +64,10 @@ public:
 
 	UFUNCTION()
 	static AItem* CreateInstance(UObject* WorldContext, FItemInfoStruct InLoadInfo = FItemInfoStruct());
+	static AItem* SpawnItem(UObject* WorldContext, TSubclassOf<AItem> SpecificClass);
+	inline static unsigned int CurrentID = 0;
+
+	unsigned int ID = -1;
 
 	UFUNCTION()
 	virtual FString Init(FItemInfoStruct InLoadInfo = FItemInfoStruct());

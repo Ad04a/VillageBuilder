@@ -38,7 +38,7 @@ AItem* UItemCarrierComponent::DropItem(TSubclassOf<AItem> ItemClass)
 		UE_LOG(LogTemp, Error, TEXT("UItemCarrierComponent::DropItem IsValid(Owner) == false"));
 		return nullptr;
 	}
-	FVector  SpawnLocation = Owner->GetActorLocation();
+	FVector  SpawnLocation = Owner->GetActorLocation() + FVector(0,0,DropHeigh);
 	FRotator SpawnRotation = Owner->GetActorRotation();
 	if (Content.Contains(ItemClass) == false)
 	{
@@ -49,7 +49,10 @@ AItem* UItemCarrierComponent::DropItem(TSubclassOf<AItem> ItemClass)
 	{
 		Content.FindAndRemoveChecked(ItemClass);
 	}
-	return World->SpawnActor<AItem>(ItemClass, SpawnLocation, SpawnRotation);
+	AItem* Item = AItem::SpawnItem(World, ItemClass);
+	Item->SetActorLocation(SpawnLocation);
+	Item->SetActorRotation(SpawnRotation);
+	return Item;
 }
 
 void UItemCarrierComponent::DropAllItems()

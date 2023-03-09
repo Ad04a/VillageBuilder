@@ -50,6 +50,9 @@ struct FItemInfoStruct
 	GENERATED_BODY()
 
 	UPROPERTY()
+	unsigned int ID;
+
+	UPROPERTY()
 	TSubclassOf<class AItem> ItemClass;
 
 	UPROPERTY()

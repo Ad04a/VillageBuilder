@@ -88,7 +88,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* MeshComponent = nullptr;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = VillageProperties)
+	float Range = 500.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = VillageProperties)
 	TSubclassOf<AVillager> VillagerClass;
 
 	UFUNCTION()

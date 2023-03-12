@@ -8,6 +8,7 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Headers/AIStates.h"
 #include "GeneralAIController.generated.h"
 
 /**
@@ -39,4 +40,7 @@ protected:
 
 	UFUNCTION()
 	virtual void ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus);
+
+	UFUNCTION()
+	void UpdateAIState(class APawn* ControlledPawn, EAIState State);
 };

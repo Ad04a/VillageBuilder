@@ -56,7 +56,10 @@ EBTNodeResult::Type UBTTask_GetLocationOfObject::ExecuteTask(UBehaviorTreeCompon
 	FNavLocation TargetLocation;
 	if (NavigationSystem->GetRandomPointInNavigableRadius(ObjectLocation, 0, TargetLocation, nullptr) == false) {
 		if (NavigationSystem->GetRandomPointInNavigableRadius(ObjectLocation, SearchRadius, TargetLocation, nullptr) == false) {
-			UE_LOG(LogTemp, Error, TEXT("UBTTask_GetLocationOfObject::ExecuteTask GetRandomPointInNavigableRadius == false"));
+			if (bNotifyOnFail == true)
+			{
+				UE_LOG(LogTemp, Error, TEXT("UBTTask_GetLocationOfObject::ExecuteTask GetRandomPointInNavigableRadius == false"));
+			}
 			FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
 			return EBTNodeResult::Failed;
 		}

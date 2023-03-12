@@ -3,24 +3,39 @@
 
 #include "AI/Animals/AnimalAIController.h"
 #include "Characters/Villager.h"
+#include "Characters/Animal.h"
 
 
-void AAnimalAIController::BeginPlay()
+void AAnimalAIController::OnPossess(APawn* const InPawn)
 {
-	if (IsValid(BehaviorDataTable) == false)
+	Super::OnPossess(InPawn);
+	if (IsValid(InPawn) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("AAnimalAIController::BeginPlay IsValid(DataTable) == false from %s"), *GetPawn()->GetClass()->GetName());
+		UE_LOG(LogTemp, Error, TEXT("AAnimalAIController::OnPossess IsValid(GetPawn()) == false"));
 		return;
 	}
 
-	FAnimalBehaviorData* BehaviorData = BehaviorDataTable->FindRow<FAnimalBehaviorData>(GetClass()->GetFName(), "");
+	if (IsValid(BehaviorDataTable) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AAnimalAIController::OnPossess IsValid(DataTable) == false from %s"), *InPawn->GetClass()->GetName());
+		return;
+	}
+
+	FAnimalBehaviorData* BehaviorData = BehaviorDataTable->FindRow<FAnimalBehaviorData>(InPawn->GetClass()->GetFName(), "");
 
 	if (BehaviorData == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("AAnimalAIController::BeginPlay ItemData == nullptr from %s"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Error, TEXT("AAnimalAIController::OnPossess BehaviorDataa == nullptr from %s"), *InPawn->GetClass()->GetName());
 		return;
 	}
 	SetBehavior(BehaviorData->BehaviorTree);
+	AAnimal* Animal = Cast<AAnimal>(InPawn);
+	if (IsValid(Animal) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AAnimalAIController::OnPossess IsVlaid(Animal) == false"));
+		return;
+	}
+	Animal->OnStateChanged.AddDynamic(this, &AAnimalAIController::UpdateAIState);
 }
 
 void AAnimalAIController::ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus)

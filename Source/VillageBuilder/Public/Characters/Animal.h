@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Components/SceneComponent.h"
-#include "Components/SkeletalMeshComponent.h"
+#include "Headers/AIStates.h"
+#include "SignificanceManager.h"
 #include "Animal.generated.h"
 
 UCLASS()
@@ -21,8 +21,37 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	bool bIsAcitve = true;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UItemCarrierComponent* ItemCarrierComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float LifeTime = 5;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float CurrentLifeTime = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Health = 30;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float DespawnDistance = 6000;
+
+	UFUNCTION()
+	void RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
+	void Die();
+
+	float CalculateSignificance(USignificanceManager::FManagedObjectInfo* ObjectInfo, const FTransform& Viewpoint);
+	void PostSignificanceCalculation(USignificanceManager::FManagedObjectInfo* ObjectInfo, float OldSignificance, float Signifcance, bool bFinal);
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	FAIStateSignature OnStateChanged;
+
+	void Init(float InLifeTime, float InDespawnDistance);
+	void Activate();
+	void Disable();
 };

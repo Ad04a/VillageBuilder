@@ -101,7 +101,7 @@ void UInventoryVisualInfo::OnDragItemDropped(UObject* DroppedObject, int Index)
 	{
 		return;
 	}
-	if (Storage->TryPlaceItem(Item) == true)
+	if (Storage->TryPlaceItem(Item,true) == true)
 	{
 		return;
 	}

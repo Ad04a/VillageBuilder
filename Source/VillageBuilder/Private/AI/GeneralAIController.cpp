@@ -6,7 +6,6 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Components/SphereComponent.h"
-#include "Headers/VillagerBBKeys.h"
 
 
 AGeneralAIController::AGeneralAIController()
@@ -25,6 +24,7 @@ void AGeneralAIController::BeginPlay()
 void AGeneralAIController::SetBehavior(UBehaviorTree* InBehaviorTree)
 {
 	if (IsValid(InBehaviorTree) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("AGeneralAIController::SetBehavior IsValid(BehaviorTree) == false"));
 		return;
 	}
 	BehaviorTree = InBehaviorTree;
@@ -37,9 +37,14 @@ void AGeneralAIController::OnPossess(APawn* const InPawn)
 	Super::OnPossess(InPawn);
 	if (IsValid(Blackboard) == false) {
 		UE_LOG(LogTemp, Error, TEXT("AGeneralAIController::OnPossess IsValid(Blackboard) == false"));
+		return;
+	}
+	if (IsValid(BehaviorTree) == false) {
+		UE_LOG(LogTemp, Warning, TEXT("AGeneralAIController::OnPossess IsValid(BehaviorTree) == false"));
+		return;
 	}
 	Blackboard->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
-	InPawn->bUseControllerRotationYaw = false;
+	InPawn->bUseControllerRotationYaw = true;
 }
 
 void AGeneralAIController::ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus)
@@ -53,6 +58,11 @@ void AGeneralAIController::ActorDetected(AActor* Actor, struct FAIStimulus const
 		UE_LOG(LogTemp, Error, TEXT("AGeneralAIController::ActorDetected IsValid(BlackBoard) == false"));
 		return;
 	}
+}
+
+void AGeneralAIController::UpdateAIState(class APawn* ControlledPawn, EAIState State)
+{
+	Blackboard->SetValueAsEnum("AIState", State);
 }
 
 UBlackboardComponent* AGeneralAIController::GetBlackboard()const

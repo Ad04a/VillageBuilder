@@ -25,6 +25,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Blackboard)
 	float SearchRadius;
 
+	UPROPERTY(EditAnywhere, Category = Blackboard)
+	bool bNotifyOnFail = false;
+
 public:
 	UBTTask_GetLocationOfObject();
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComponent, uint8* NodeMemory) override;

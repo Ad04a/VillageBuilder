@@ -49,6 +49,7 @@ protected:
 	UPROPERTY()
 	AVillageManager* Village; //TArray Villages for multicolony feature
 
+	TArray<class APlayerController*> PlayerControllers;
 	AVillageMayor* Player;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Building")
@@ -62,6 +63,8 @@ protected:
 	void ReleaseDataLink(class UDataLink* InDataLink);
 
 public:
+	AGameplayModeBase();
+
 	FErrorHandleSignature OnErrorLoadingData;
 	FErrorHandleSignature OnSaveStarted;
 	FErrorHandleSignature OnSaveEnded;
@@ -69,6 +72,8 @@ public:
 	FVisualizeLinkSignature OnLinkNeedsVisualization;
 
 	TArray<FString> GetAllBuildingNames();
+
+	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
 	void SaveGame();

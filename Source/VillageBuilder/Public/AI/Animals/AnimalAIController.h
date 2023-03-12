@@ -24,7 +24,7 @@ class VILLAGEBUILDER_API AAnimalAIController : public AGeneralAIController
 {
 	GENERATED_BODY()
 protected:
-	void BeginPlay() override;
+	void OnPossess(APawn* const InPawn) override;
 	virtual void ActorDetected(AActor* Actor, struct FAIStimulus const Stimulus) override;
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

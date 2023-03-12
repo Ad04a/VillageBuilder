@@ -8,6 +8,13 @@
 #include "DataTransfers/DataLink.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "SignificanceManager.h"
+
+AGameplayModeBase::AGameplayModeBase()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
 
 void AGameplayModeBase::StartPlay() {
 
@@ -74,6 +81,34 @@ void AGameplayModeBase::StartPlay() {
 	}
 	Village->Init(LoadedGame->VillageInfo);
 	SaveGame();
+}
+
+void AGameplayModeBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::Tick IsValid(World) == false"));
+		return;
+	}
+	USignificanceManager* SignificanceManager = FSignificanceManagerModule::Get(World);
+	if (IsValid(SignificanceManager) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::Tick IsValid(SignificanceManager) == false"));
+		return;
+	}
+	TArray<FTransform> PlayerViepoints;
+	FVector Location;
+	FRotator Rotation;
+	for (int i = 0; i < UGameplayStatics::GetNumPlayerControllers(World); i++)
+	{
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World, i);
+		PlayerController->GetPlayerViewPoint(Location, Rotation);
+		PlayerViepoints.Emplace(Rotation, Location, FVector::OneVector);
+	}
+	SignificanceManager->Update(PlayerViepoints);
+
 }
 
 void AGameplayModeBase::SaveGame()

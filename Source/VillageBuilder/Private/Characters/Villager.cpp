@@ -12,7 +12,7 @@
 AVillager::AVillager()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	OnTakeAnyDamage.AddDynamic(this, &AVillager::RecieveDamage);
+	OnTakeAnyDamage.AddDynamic(this, &AVillager::OnDamageTaken);
 	Inventory = CreateDefaultSubobject<UStorageComponent>(TEXT("Iventory"));
 	Inventory->OnFirstItemUpdated.BindDynamic(this, &AVillager::Equip);
 }
@@ -160,7 +160,7 @@ void AVillager::Tick(float DeltaTime)
 	
 }
 
-void AVillager::RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
+void AVillager::OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
 	AddStatValue(EStat::Health, -Damage);
 }

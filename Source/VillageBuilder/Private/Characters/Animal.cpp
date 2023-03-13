@@ -11,6 +11,7 @@ AAnimal::AAnimal()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	ItemCarrierComponent = CreateDefaultSubobject<UItemCarrierComponent>(TEXT("ItemCarriage"));
+	OnTakeAnyDamage.AddDynamic(this, &AAnimal::OnDamageTaken);
 }
 
 void AAnimal::Init(float InLifeTime, float InDespawnDistance)
@@ -62,12 +63,26 @@ void AAnimal::Tick(float DeltaTime)
 
 void AAnimal::Die()
 {
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AAnimal::Die IsValid(World) == false"));
+		return;
+	}
+	USignificanceManager* SignificanceManager = FSignificanceManagerModule::Get(World);
+	if (IsValid(SignificanceManager) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AAnimal::Die IsValid(SignificanceManager) == false"));
+		return;
+	}
+
+	SignificanceManager->UnregisterObject(this);
 	ItemCarrierComponent->DropAllItems();
 	OnStateChanged.Broadcast(this, EAIState::Dead);
 	Destroy();
 }
 
-void AAnimal::RecieveDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
+void AAnimal::OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser)
 {
 	Health -= Damage;
 	if (Health <= 0)
@@ -110,7 +125,7 @@ void AAnimal::PostSignificanceCalculation(USignificanceManager::FManagedObjectIn
 void AAnimal::Activate()
 {
 	GetCharacterMovement()->SetComponentTickEnabled(true);
-	SetActorTickEnabled(false);
+	SetActorTickEnabled(true);
 	bIsAcitve = true;
 	CurrentLifeTime = 0;
 	OnStateChanged.Broadcast(this, EAIState::Active);

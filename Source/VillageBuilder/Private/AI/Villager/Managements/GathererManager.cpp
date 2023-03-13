@@ -80,15 +80,12 @@ void UGathererManager::Tick(float DeltaTime)
 		return;
 	}
 	BlackBoard->SetValueAsObject(GivenKeys[0].SelectedKeyName, RememberedItems[0]);
-	UE_LOG(LogTemp, Warning, TEXT("Pochvame"));
 	for (AActor* Actor : RememberedItems)
 	{
 		if (IsValid(Actor) == false)
 		{
-			UE_LOG(LogTemp, Error, TEXT(" Ima null"));
 			continue;
 		}
-		UE_LOG(LogTemp, Display, TEXT(" %s"), *Actor->GetClass()->GetName());
 	}
 }
 

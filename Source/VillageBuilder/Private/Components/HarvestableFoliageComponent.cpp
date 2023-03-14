@@ -19,6 +19,25 @@ void UHarvestableFoliageComponent::BeginPlay()
 	}
 }
 
+void UHarvestableFoliageComponent::Init(FHarvestableFoliageInfoStruct InLoadInfo)
+{
+	RemovedIndexes = InLoadInfo.RemovedIndexes;
+	for (int Index : RemovedIndexes)
+	{
+		RemoveInstance(Index);
+	}
+	PerInstanceHealth = InLoadInfo.PerInstanceHealth;
+}
+
+FHarvestableFoliageInfoStruct UHarvestableFoliageComponent::GetSaveInfo()
+{
+	FHarvestableFoliageInfoStruct SaveInfo;
+	SaveInfo.RemovedIndexes = RemovedIndexes;
+	SaveInfo.PerInstanceHealth = PerInstanceHealth;
+
+	return SaveInfo;
+}
+
 void UHarvestableFoliageComponent::TakeDamage(int32 InstanceIndex, float Damage, class AController* InstigatedBy, FVector HitLocation, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser)
 {
 	PerInstanceHealth[InstanceIndex] = PerInstanceHealth[InstanceIndex] - Damage;
@@ -36,7 +55,14 @@ void UHarvestableFoliageComponent::TakeDamage(int32 InstanceIndex, float Damage,
 		UE_LOG(LogTemp, Error, TEXT("UItemCarrierComponent::DropItem IsValid(World) == false"));
 		return;
 	}
+	if (PerInstanceHealth.IsValidIndex(InstanceIndex) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UItemCarrierComponent::DropItem PerInstanceHealth.IsValidIndex(InstanceIndex) == false"));
+		return;
+	}
+	PerInstanceHealth.RemoveAt(InstanceIndex);
 	RemoveInstance(InstanceIndex);
+	RemovedIndexes.Add(InstanceIndex);
 	World->SpawnActor<AHarvestableActor>(HarvestableActorClass, InstanceTransform.GetLocation(), FRotator(InstanceTransform.GetRotation()));
 	
 		

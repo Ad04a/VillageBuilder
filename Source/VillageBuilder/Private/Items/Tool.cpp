@@ -74,9 +74,9 @@ void ATool::Tick(float DeltaTime)
 	}
 }
 
-void ATool::Use(class AVillager* User, EItemActionType ActionType)
+void ATool::SetIsActive(bool State)
 {
-	Super::Use(User, ActionType);
+	Super::SetIsActive(State);
 	DamagedActors.Empty();
 }
 

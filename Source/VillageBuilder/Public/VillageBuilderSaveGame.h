@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
 #include "Headers/LoadInfo.h"
+#include "Headers/FoliageSaving.h"
 #include "WorkSystem/VillageManager.h"
 #include "VillageBuilderSaveGame.generated.h"
 
@@ -28,4 +29,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
 	FVillageManagerLoadInfoStruct VillageInfo = FVillageManagerLoadInfoStruct();
+
+	UPROPERTY(VisibleAnywhere, Category = Basic)
+	TArray<FHarvestableFoliageInfoStruct> FoliageInfo;
 };

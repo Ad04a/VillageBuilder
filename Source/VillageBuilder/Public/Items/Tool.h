@@ -31,7 +31,7 @@ protected:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	virtual void Use(class AVillager* User, EItemActionType ActionType) override;
+	virtual void SetIsActive(bool State) override;
 	virtual void LoadFromDataTable() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Tool )

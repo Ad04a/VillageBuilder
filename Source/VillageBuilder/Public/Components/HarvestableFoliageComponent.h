@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "FoliageInstancedStaticMeshComponent.h"
 #include "Enviroment/HarvestableActor.h"
+#include "Headers/FoliageSaving.h"
 #include "HarvestableFoliageComponent.generated.h"
 
 /**
@@ -33,4 +34,11 @@ protected:
 	TSubclassOf<AHarvestableActor> HarvestableActorClass;
 
 	TArray<float> PerInstanceHealth;
+
+	TArray<int> RemovedIndexes;
+
+public:
+	void Init(FHarvestableFoliageInfoStruct InLoadInfo);
+
+	FHarvestableFoliageInfoStruct GetSaveInfo();
 };

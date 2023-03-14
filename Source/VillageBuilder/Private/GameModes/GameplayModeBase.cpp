@@ -5,10 +5,13 @@
 #include "VillageBuilderSaveGame.h"
 #include "VillageBuilderPlayerController.h"
 #include "Components/BaseBuildingComponent.h"
+#include "Components/HarvestableFoliageComponent.h"
 #include "DataTransfers/DataLink.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "SignificanceManager.h"
+#include "EngineUtils.h"
+#include "Runtime/Foliage/Public/InstancedFoliageActor.h"
 
 AGameplayModeBase::AGameplayModeBase()
 {
@@ -71,8 +74,21 @@ void AGameplayModeBase::StartPlay() {
 	}
 	LoadedGame->UnequipedItems.Empty();
 
+	for (TActorIterator<AInstancedFoliageActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		AInstancedFoliageActor* FoliageMesh = *ActorItr;
+		TArray<UActorComponent*> FoliageComponents;
+		FoliageMesh->GetComponents(UHarvestableFoliageComponent::StaticClass(), FoliageComponents);
+		for (int i = 0; i < FoliageComponents.Num(); i++)
+		{
+			UHarvestableFoliageComponent* FoliageComponent = Cast<UHarvestableFoliageComponent>(FoliageComponents[i]);
+			FoliageComponent->Init(LoadedGame->FoliageInfo[i]);
+		}
+	}
+
 	if (LoadedGame->VillageInfo == FVillageManagerLoadInfoStruct())
 	{
+		SaveGame();
 		return;
 	}
 	Village = World->SpawnActor<AVillageManager>(VillageClass, FVector(0, 0, 500), FRotator(0, 0, 0), Params);
@@ -134,6 +150,19 @@ void AGameplayModeBase::SaveGame()
 	if (IsValid(Village) == true)
 	{
 		LoadedGame->VillageInfo = Village->GetSaveInfo();
+	}
+
+	LoadedGame->FoliageInfo.Empty();
+
+	for (TActorIterator<AInstancedFoliageActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		AInstancedFoliageActor* FoliageMesh = *ActorItr;
+		auto FoliageComponents = FoliageMesh->GetComponentsByClass(UHarvestableFoliageComponent::StaticClass());
+		for (auto& Comp : FoliageComponents)
+		{
+			UHarvestableFoliageComponent* FoliageComponent = Cast<UHarvestableFoliageComponent>(Comp);
+			LoadedGame->FoliageInfo.Add(FoliageComponent->GetSaveInfo());
+		}
 	}
 
 	UGameplayStatics::SaveGameToSlot(LoadedGame, SaveSlotName, 0);

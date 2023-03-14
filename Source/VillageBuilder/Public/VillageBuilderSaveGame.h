@@ -6,6 +6,7 @@
 #include "GameFramework/SaveGame.h"
 #include "Headers/LoadInfo.h"
 #include "Headers/FoliageSaving.h"
+#include "Headers/AnimalSaving.h"
 #include "WorkSystem/VillageManager.h"
 #include "VillageBuilderSaveGame.generated.h"
 
@@ -32,4 +33,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
 	TArray<FHarvestableFoliageInfoStruct> FoliageInfo;
+
+	UPROPERTY(VisibleAnywhere, Category = Basic)
+	FAnimalSpawnerInfoStruct GlobalAnimalSpawner = FAnimalSpawnerInfoStruct();
 };

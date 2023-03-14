@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Headers/AIStates.h"
+#include "Headers/AnimalSaving.h"
 #include "AnimalSpawner.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSpawnSignature);
@@ -80,5 +81,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	void Init(FAnimalSpawnerInfoStruct InLoadInfo);
+	FAnimalSpawnerInfoStruct GetSaveInfo();
 };

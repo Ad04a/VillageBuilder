@@ -14,10 +14,25 @@ AAnimal::AAnimal()
 	OnTakeAnyDamage.AddDynamic(this, &AAnimal::OnDamageTaken);
 }
 
-void AAnimal::Init(float InLifeTime, float InDespawnDistance)
+void AAnimal::Init(float InLifeTime, float InDespawnDistance, FAnimalInfoStruct InLoadInfo)
 {
 	LifeTime = InLifeTime;
 	DespawnDistance = InDespawnDistance;
+
+	if (InLoadInfo == FAnimalInfoStruct())
+	{
+		return;
+	}
+	Health = InLoadInfo.Health;
+	SetActorTransform(InLoadInfo.Position);
+}
+
+FAnimalInfoStruct AAnimal::GetSaveInfo()
+{
+	FAnimalInfoStruct SaveInfo;
+	SaveInfo.Health = Health;
+	SaveInfo.Position = GetActorTransform();
+	return SaveInfo;
 }
 
 // Called when the game starts or when spawned

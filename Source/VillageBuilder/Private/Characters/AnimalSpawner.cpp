@@ -13,6 +13,34 @@ AAnimalSpawner::AAnimalSpawner()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
+void AAnimalSpawner::Init(FAnimalSpawnerInfoStruct InLoadInfo)
+{
+	CurrentSpawnTime = InLoadInfo.CurrentSpawnTime;
+
+	int i = 0;
+	 
+	for (FAnimalInfoStruct AnimalInfo : InLoadInfo.Animals)
+	{
+		i++;
+		SpawnAnimal(FVector(50000, 50000, 50000))->Init(LifeTime, DisableDistance, AnimalInfo);
+	}
+	for (; i < MaxAnimals; i++)
+	{
+		SpawnAnimal(FVector(50000, 50000, 50000));
+	}
+}
+
+FAnimalSpawnerInfoStruct AAnimalSpawner::GetSaveInfo()
+{
+	FAnimalSpawnerInfoStruct SaveInfo;
+	SaveInfo.CurrentSpawnTime = CurrentSpawnTime;
+	for (AAnimal* Animal : ActiveAnimals)
+	{
+		SaveInfo.Animals.Add(Animal->GetSaveInfo());
+	}
+	return SaveInfo;
+}
+
 // Called when the game starts or when spawned
 void AAnimalSpawner::BeginPlay()
 {
@@ -46,10 +74,6 @@ void AAnimalSpawner::BeginPlay()
 			OnSpawnEmited.AddDynamic(NewGridElement, &USpawningGridComponent::CaptureSpawn);
 		}
 
-	}
-	for (int i = 0; i < MaxAnimals; i++)
-	{
-		SpawnAnimal(FVector(50000, 50000, 50000));
 	}
 }
 

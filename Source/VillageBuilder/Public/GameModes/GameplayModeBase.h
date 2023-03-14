@@ -31,6 +31,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Saving")
 	float SaveTime = 1;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Saving")
+	FName SpawnerTag = "GlobalAnimalSpawner";
+
 	UPROPERTY(EditDefaultsOnly, Category = "Levels")
 	FName MainMenu = "MainMenu";
 

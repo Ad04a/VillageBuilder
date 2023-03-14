@@ -7,6 +7,7 @@
 #include "Components/BaseBuildingComponent.h"
 #include "Components/HarvestableFoliageComponent.h"
 #include "DataTransfers/DataLink.h"
+#include "Characters/AnimalSpawner.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "SignificanceManager.h"
@@ -86,6 +87,22 @@ void AGameplayModeBase::StartPlay() {
 		}
 	}
 
+	TArray<AActor*> Spawners;
+	UGameplayStatics::GetAllActorsWithTag(World, SpawnerTag, Spawners);
+	if (Spawners.IsEmpty() == true)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::StartPlay No Global Animal Spawner Found"));
+		return;
+	}
+	AAnimalSpawner* AnimalSpawner = Cast<AAnimalSpawner>(Spawners[0]);
+	if (IsValid(AnimalSpawner) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::StartPlay IsValid(AnimalSpawner) == false"));
+		return;
+	}
+
+	AnimalSpawner->Init(LoadedGame->GlobalAnimalSpawner);
+
 	if (LoadedGame->VillageInfo == FVillageManagerLoadInfoStruct())
 	{
 		SaveGame();
@@ -157,13 +174,35 @@ void AGameplayModeBase::SaveGame()
 	for (TActorIterator<AInstancedFoliageActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
 	{
 		AInstancedFoliageActor* FoliageMesh = *ActorItr;
-		auto FoliageComponents = FoliageMesh->GetComponentsByClass(UHarvestableFoliageComponent::StaticClass());
-		for (auto& Comp : FoliageComponents)
+		TArray<UActorComponent*> FoliageComponents;
+		FoliageMesh->GetComponents(UHarvestableFoliageComponent::StaticClass(), FoliageComponents);
+		for (int i = 0; i < FoliageComponents.Num(); i++)
 		{
-			UHarvestableFoliageComponent* FoliageComponent = Cast<UHarvestableFoliageComponent>(Comp);
+			UHarvestableFoliageComponent* FoliageComponent = Cast<UHarvestableFoliageComponent>(FoliageComponents[i]);
 			LoadedGame->FoliageInfo.Add(FoliageComponent->GetSaveInfo());
 		}
+		
 	}
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SaveGame IsValid(World) == false"));
+		return;
+	}
+	TArray<AActor*> Spawners;
+	UGameplayStatics::GetAllActorsWithTag(World, SpawnerTag, Spawners);
+	if (Spawners.IsEmpty() == true)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SaveGame No Global Animal Spawner Found"));
+		return;
+	}
+	AAnimalSpawner* AnimalSpawner = Cast<AAnimalSpawner>(Spawners[0]);
+	if (IsValid(AnimalSpawner) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SaveGame IsValid(AnimalSpawner) == false"));
+		return;
+	}
+	LoadedGame->GlobalAnimalSpawner = AnimalSpawner->GetSaveInfo();
 
 	UGameplayStatics::SaveGameToSlot(LoadedGame, SaveSlotName, 0);
 	LoadedGame->UnequipedItems.Empty();

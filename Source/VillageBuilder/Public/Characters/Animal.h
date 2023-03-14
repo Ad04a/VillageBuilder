@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Headers/AIStates.h"
+#include "Headers/AnimalSaving.h"
 #include "SignificanceManager.h"
 #include "Animal.generated.h"
 
@@ -51,7 +52,8 @@ public:
 
 	FAIStateSignature OnStateChanged;
 
-	void Init(float InLifeTime, float InDespawnDistance);
+	void Init(float InLifeTime, float InDespawnDistance, FAnimalInfoStruct InLoadInfo = FAnimalInfoStruct());
+	FAnimalInfoStruct GetSaveInfo();
 	void Activate();
 	void Disable();
 };

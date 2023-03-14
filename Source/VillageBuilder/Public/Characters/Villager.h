@@ -7,6 +7,7 @@
 #include "Items/Item.h"
 #include "Headers/DataLinkable.h"
 #include "Headers/LoadInfo.h"
+#include "Headers/AIStates.h"
 #include "Headers/ItemActionEnums.h"
 #include "Villager.generated.h"
 
@@ -57,6 +58,9 @@ protected:
 	int TraitsCap = 50;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float HungerTreshold = 0.33;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
 	float StatDepletionInterval = 1;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
@@ -86,6 +90,7 @@ public:
 	FStatUpdatedSignature OnStatUpdated;
 	FVillagerPassingSignature OnDeath;
 	FBrakeLinkSignature OnLinkBroken;
+	FAIStateSignature OnAIStateChanged;
 
 	void UpdateMovement(float MoveForwardValue, float MoveRightValue);
 	void TurnAtRate(float Rate);

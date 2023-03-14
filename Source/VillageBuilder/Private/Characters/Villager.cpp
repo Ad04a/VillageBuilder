@@ -138,6 +138,16 @@ void AVillager::Tick(float DeltaTime)
 	FStatInfoStruct* Hunger = StatsMap.Find(EStat::Hunger);
 	AddStatValue(EStat::Hunger, Hunger->ChangeValue);
 
+	if (Hunger->Current < Hunger->Max * HungerTreshold)
+	{
+		OnAIStateChanged.Broadcast(this, EAIState::Hungry);
+	}
+	else
+	{
+		OnAIStateChanged.Broadcast(this, EAIState::Active);
+	}
+
+
 	if (Hunger->Current == 0) {
 		AddStatValue(EStat::Health, Health->Max * -0.02);
 	}

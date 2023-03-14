@@ -70,6 +70,7 @@ AAnimal* AAnimalSpawner::SpawnAnimal(FVector OriginLocation)
 	AAnimal* Animal = World->SpawnActor<AAnimal>(AnimalTypes[AnimlIndex], Location, FRotator(0, FMath::RandRange(-180,180), 0), Params);
 	Animal->OnStateChanged.AddDynamic(this, &AAnimalSpawner::RegisterAnimalState);
 	Animal->Init(LifeTime, DisableDistance);
+	DisabledAnimals.Add(Animal);
 	return Animal;
 }
 
@@ -111,8 +112,7 @@ void AAnimalSpawner::RegisterSpawnRequest(FVector OriginLocation)
 	}
 	if (ActiveAnimals.Num() + DisabledAnimals.Num() < MaxAnimals)
 	{
-		SpawnAnimal(OriginLocation);
-		return;
+		SpawnAnimal(OriginLocation);		
 	}
 	if (DisabledAnimals.IsEmpty() == true)
 	{

@@ -51,10 +51,12 @@ void UBTS_WorkerService::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponent
 		UE_LOG(LogTemp, Error, TEXT("UBTS_WorkerService::OnBecomeRelevant IsValid(Village) == false"));
 		return;
 	}
+
+	BlackBoard->SetValueAsObject(VillageRef.SelectedKeyName, Village);
+
 	ABaseWorkStation* WorkStationActor = Village->GetWorkPlaceFor(Self->ID);
 	if (IsValid(WorkStationActor) == false) {
-		UE_LOG(LogTemp, Error, TEXT("UBTS_WorkerService::OnBecomeRelevant IsValid(WorkStation) == false"));
-		return;
+		UE_LOG(LogTemp, Display, TEXT("UBTS_WorkerService::OnBecomeRelevant IsValid(WorkStation) == false Villager is unemployed"));
 	}
 	if (IsValid(Controller->WorkManager) == true)
 	{

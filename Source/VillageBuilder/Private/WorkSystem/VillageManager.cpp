@@ -205,6 +205,7 @@ void AVillageManager::AddVillagerToColony(AVillager* Villager)
 	PassingVillagers.Remove(Villager);
 	Villagers.Add(Villager);
 	Villager->SetProfession("Unemployed");
+	ApplyJobBehavior("Unemployed", Villager);
 	Villager->OnDeath.AddDynamic(this, &AVillageManager::OnVillagerDeath);
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	GenerateSave();

@@ -27,3 +27,21 @@ AActor* AVillagerAIController::GetFirstRememebred()
 	return TempActor;
 }
 
+void AVillagerAIController::RegisterAIState(APawn* ControlledPawn, EAIState State)
+{
+	UpdateAIState(ControlledPawn, State);
+}
+
+void AVillagerAIController::OnPossess(APawn* const InPawn)
+{
+	Super::OnPossess(InPawn);
+	ControlledVillager = Cast<AVillager>(InPawn);
+	if (IsValid(ControlledVillager) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillagerAIController::OnPossess IsValid(ControlledVillager) == false"));
+		return;
+	}
+	ControlledVillager->OnAIStateChanged.AddDynamic(this, &AVillagerAIController::RegisterAIState);
+}
+
+

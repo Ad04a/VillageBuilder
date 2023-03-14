@@ -73,20 +73,13 @@ void UGathererManager::Tick(float DeltaTime)
 			RememberedItems.RemoveAt(i);
 		}
 	}
-	RememberedItems.Remove(nullptr);
 	if (RememberedItems.IsEmpty() == true)
 	{
 		BlackBoard->ClearValue(GivenKeys[0].SelectedKeyName);
 		return;
 	}
 	BlackBoard->SetValueAsObject(GivenKeys[0].SelectedKeyName, RememberedItems[0]);
-	for (AActor* Actor : RememberedItems)
-	{
-		if (IsValid(Actor) == false)
-		{
-			continue;
-		}
-	}
+	
 }
 
 

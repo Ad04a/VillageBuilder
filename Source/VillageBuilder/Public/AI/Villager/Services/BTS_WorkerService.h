@@ -17,6 +17,9 @@ class VILLAGEBUILDER_API UBTS_WorkerService : public UBTService
 protected:
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)
+	struct FBlackboardKeySelector VillageRef;
+
+	UPROPERTY(EditAnywhere, Category = Blackboard)
 	struct FBlackboardKeySelector WorkStation;
 
 	UPROPERTY(EditAnywhere, Category = Blackboard)

@@ -15,14 +15,14 @@ EBTNodeResult::Type UBTT_SetNeededClasses::ExecuteTask(UBehaviorTreeComponent& O
 	AVillagerAIController* Controller = Cast<AVillagerAIController>(OwnerComponent.GetAIOwner());
 	if (IsValid(Controller) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTT_EquipRightItems::ExecuteTask IsValid(Controller) == false"));
+		UE_LOG(LogTemp, Error, TEXT("UBTT_SetNeededClasses::ExecuteTask IsValid(Controller) == false"));
 		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
 		return EBTNodeResult::Failed;
 	}
 	UBlackboardComponent* BlackBoard = Controller->GetBlackboard();
 	if (IsValid(BlackBoard) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTT_EquipRightItems::ExecuteTask IsValid(BlackBoard) == false"));
+		UE_LOG(LogTemp, Error, TEXT("UBTT_SetNeededClasses::ExecuteTask IsValid(BlackBoard) == false"));
 		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
 		return EBTNodeResult::Failed;
 	}
@@ -30,7 +30,7 @@ EBTNodeResult::Type UBTT_SetNeededClasses::ExecuteTask(UBehaviorTreeComponent& O
 	UWorkerManager* WorerkService = Controller->WorkManager;
 	if (IsValid(WorerkService) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTT_EquipRightItems::ExecuteTask IsValid(WorkService) == falses"));
+		UE_LOG(LogTemp, Error, TEXT("UBTT_SetNeededClasses::ExecuteTask IsValid(WorkService) == falses"));
 		FinishLatentTask(OwnerComponent, EBTNodeResult::Failed);
 		return EBTNodeResult::Failed;
 	}

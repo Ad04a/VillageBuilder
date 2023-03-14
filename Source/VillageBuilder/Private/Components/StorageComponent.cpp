@@ -212,9 +212,8 @@ UStoredItemInfo* UStorageComponent::TakeItemByClass(TSubclassOf<class AItem> Ite
 	for (TPair<UStoredItemInfo*, FIntPoint> ItemInfo : GetAllItems())
 	{
 		UStoredItemInfo* Item = ItemInfo.Key;
-		if (Item->GetItemInfo().ItemClass == ItemClass)
+		if (Item->GetItemInfo().ItemClass->IsChildOf(ItemClass))
 		{
-			
 			RemoveItem(Item);
 
 			return Item;

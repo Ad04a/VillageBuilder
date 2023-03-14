@@ -19,6 +19,7 @@ protected:
 
 	float Radius = 0;
 
+	UPROPERTY()
 	TArray<AActor*> RememberedItems;
 
 	TSubclassOf<class AItem> TargetClass;

@@ -72,9 +72,20 @@ EBTNodeResult::Type UBTT_EquipRightItems::ExecuteTask(UBehaviorTreeComponent& Ow
 			continue;
 		}
 		TSubclassOf<AItem> ItemClass = Item->GetItemInfo().ItemClass;
-		if (NeededClasses.Contains(ItemClass) == true)
+		bool Check = false;
+		for (TSubclassOf<AItem> TempClass : NeededClasses)
+		{
+			if (ItemClass->IsChildOf(TempClass))
+			{
+				UE_LOG(LogTemp, Error, TEXT("Vleze"));
+				Check = true;
+				ItemClass = TempClass;
+				break;
+			}
+		}
+		if (Check == true)
 		{		
-			NeededClasses.Remove(ItemClass);
+			NeededClasses.RemoveSingle(ItemClass);
 			VillagerStorage->TryPlaceItem(Item, true);
 			continue;
 		}
@@ -102,7 +113,18 @@ EBTNodeResult::Type UBTT_EquipRightItems::ExecuteTask(UBehaviorTreeComponent& Ow
 
 	for (UStoredItemInfo* Item : BufferedItems)
 	{
-		if (NeededClasses.Contains(Item->GetItemInfo().ItemClass) == true)
+		TSubclassOf<AItem> ItemClass = Item->GetItemInfo().ItemClass;
+		bool Check = false;
+		for (TSubclassOf<AItem> TempClass : NeededClasses)
+		{
+			if (ItemClass->IsChildOf(TempClass))
+			{
+				Check = true;
+				ItemClass = TempClass;
+				break;
+			}
+		}
+		if (Check == true)
 		{
 			if (VillagerStorage->TryPlaceItem(Item, true) == true)
 			{

@@ -7,9 +7,18 @@
 #include "Characters/VillageMayor.h"
 #include "VillageBuilderPlayerController.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_DELEGATE(FVillagerDeathSignature);
+
+USTRUCT(BlueprintType)
+struct FPlayerControllerInfoStruct
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float CurrentSurvivedTime = 0;
+
+};
+
 UCLASS()
 class VILLAGEBUILDER_API AVillageBuilderPlayerController : public APlayerController
 {
@@ -48,8 +57,30 @@ protected:
 
 	UFUNCTION()
 	void CaptureDrop();
+	UFUNCTION()
+	void Interact();
+	UFUNCTION()
+	void InitiateLink();
+	UFUNCTION()
+	void ShowTraitMenu();
+
+	UFUNCTION()
+	void OnPlayerDeath(AVillager* Villager);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Playtime)
+	float CurrentSurvivedTime = 0;
+
+	UFUNCTION()
+	void OpenSpectatorMenu();
+
+	FVillagerDeathSignature OnVillagerDeath;
 
 public:
 
+	void Init(FPlayerControllerInfoStruct InLoadInfo);
+	FPlayerControllerInfoStruct GetSaveInfo();
+
 	void Tick(float DeltaTime);
+
+	bool IsPlayerValid();
 };

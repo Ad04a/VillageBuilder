@@ -8,6 +8,7 @@
 #include "Headers/FoliageSaving.h"
 #include "Headers/AnimalSaving.h"
 #include "WorkSystem/VillageManager.h"
+#include "VillageBuilderPlayerController.h"
 #include "VillageBuilderSaveGame.generated.h"
 
 /**
@@ -23,17 +24,26 @@ public:
 	bool bIsFirstLoad = true;
 
 	UPROPERTY(VisibleAnywhere, Category = Basic)
-	TArray<FItemInfoStruct> UnequipedItems;
-
-	UPROPERTY(VisibleAnywhere, Category = Basic)
-	FVillagerLoadInfoStruct PlayerInfo = FVillagerLoadInfoStruct();
-
-	UPROPERTY(VisibleAnywhere, Category = Basic)
 	FVillageManagerLoadInfoStruct VillageInfo = FVillageManagerLoadInfoStruct();
 
-	UPROPERTY(VisibleAnywhere, Category = Basic)
+	UPROPERTY(VisibleAnywhere, Category = Enviroment)
+	TArray<FItemInfoStruct> UnequipedItems;
+
+	UPROPERTY(VisibleAnywhere, Category = Enviroment)
 	TArray<FHarvestableFoliageInfoStruct> FoliageInfo;
 
-	UPROPERTY(VisibleAnywhere, Category = Basic)
+	UPROPERTY(VisibleAnywhere, Category = Enviroment)
 	FAnimalSpawnerInfoStruct GlobalAnimalSpawner = FAnimalSpawnerInfoStruct();
+
+	UPROPERTY(VisibleAnywhere, Category = Player)
+	FVillagerLoadInfoStruct PlayerInfo = FVillagerLoadInfoStruct();
+
+	UPROPERTY(VisibleAnywhere, Category = Player)
+	FPlayerControllerInfoStruct PlayerControllerInfo = FPlayerControllerInfoStruct();
+
+	UPROPERTY(VisibleAnywhere, Category = Player)
+	bool IsPlayerDead = false;
+
+	UPROPERTY(VisibleAnywhere, Category = Player)
+	FTransform SpectatorTransform = FTransform();
 };

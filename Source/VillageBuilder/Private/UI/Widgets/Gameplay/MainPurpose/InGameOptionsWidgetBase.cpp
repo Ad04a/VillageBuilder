@@ -11,7 +11,7 @@ void UInGameOptionsWidgetBase::Init(UVisualizationInfo* VisualInfo)
 	UOptionsVisualInfo* OptionsInfo = Cast<UOptionsVisualInfo>(VisualInfo);
 	if (IsValid(OptionsInfo) == false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UTraitMenuWidgetBase::Init Given VisualInfo doesnt mach the required type"));
+		UE_LOG(LogTemp, Warning, TEXT("UInGameOptionsWidgetBase::Init Given VisualInfo doesnt mach the required type"));
 	}
 	ExitButton->OnClicked.AddDynamic(OptionsInfo, &UOptionsVisualInfo::ExitGame);
 }

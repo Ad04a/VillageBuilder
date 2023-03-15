@@ -2,6 +2,7 @@
 
 #include "VillageBuilderPlayerController.h"
 #include "UI/HUDS/GameplayHUDBase.h"
+#include "DataTransfers/DataLink.h"
 
 const FName AVillageBuilderPlayerController::MoveForwardBinding("MoveForward");
 const FName AVillageBuilderPlayerController::MoveRightBinding("MoveRight");
@@ -26,10 +27,6 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	}
 
 	ControlledVillageMayorPawn = Cast<AVillageMayor>(GetCharacter());
-	if (IsValid(ControlledVillageMayorPawn) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderPlayerController::OnPossess IsValid(ControlledVillager) == false"));
-		return;
-	}
 
 	AGameplayHUDBase* HUD = Cast<AGameplayHUDBase>(GetHUD());
 	if (IsValid(HUD) == false) {
@@ -43,33 +40,109 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	InputComponent->BindAxis(TurnRightBinding);
 	InputComponent->BindAxis(LookUpBinding);
 
-	InputComponent->BindAction(InteractBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::Interact);
-	InputComponent->BindAction(DataLinkBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::InitiateLink);
-	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, ControlledVillageMayorPawn, &AVillageMayor::ShowTraitMenu);
+	InputComponent->BindAction(InteractBinding, IE_Pressed, this, &AVillageBuilderPlayerController::Interact);
+	InputComponent->BindAction(DataLinkBinding, IE_Pressed, this, &AVillageBuilderPlayerController::InitiateLink);
+	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ShowTraitMenu);
 	InputComponent->BindAction(DropItemBinding, IE_Pressed, this, &AVillageBuilderPlayerController::CaptureDrop);
 
-	HUD->ShowMainWidget(ControlledVillageMayorPawn);
+	if (IsValid(ControlledVillageMayorPawn)==true)
+	{
+		HUD->ShowMainWidget(ControlledVillageMayorPawn);
+		ControlledVillageMayorPawn->OnDeath.AddDynamic(this, &AVillageBuilderPlayerController::OnPlayerDeath);
+	}
+	
+
+	OnVillagerDeath.BindDynamic(HUD, &AGameplayHUDBase::Clear);
 
 	InPawn->bUseControllerRotationYaw = true;
 
 	InputComponent->BindAction(ItemPrimaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ItemPrimary);
 	InputComponent->BindAction(ItemSecondaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ItemSecondary);
+	
 }
 
 void AVillageBuilderPlayerController::CaptureDrop()
 {
+	if (IsPlayerValid() == false)
+	{
+		OpenSpectatorMenu();
+		return;
+	}
 	ControlledVillageMayorPawn->DropItem();
+}
+
+void AVillageBuilderPlayerController::Interact()
+{
+	if (IsPlayerValid() == false)
+	{
+		OpenSpectatorMenu();
+		return;
+	}
+	ControlledVillageMayorPawn->Interact();
+}
+
+void AVillageBuilderPlayerController::InitiateLink()
+{
+	if (IsPlayerValid() == false)
+	{
+		OpenSpectatorMenu();
+		return;
+	}
+	ControlledVillageMayorPawn->InitiateLink();
+}
+
+void AVillageBuilderPlayerController::ShowTraitMenu()
+{
+	if (IsPlayerValid() == false)
+	{
+		OpenSpectatorMenu();
+		return;
+	}
+	ControlledVillageMayorPawn->ShowTraitMenu();
+}
+
+void AVillageBuilderPlayerController::Init(FPlayerControllerInfoStruct InLoadInfo)
+{
+	CurrentSurvivedTime = InLoadInfo.CurrentSurvivedTime;
+}
+
+FPlayerControllerInfoStruct AVillageBuilderPlayerController::GetSaveInfo()
+{
+	FPlayerControllerInfoStruct SaveInfo;
+	SaveInfo.CurrentSurvivedTime = CurrentSurvivedTime;
+	return SaveInfo;
 }
 
 void AVillageBuilderPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsPlayerValid() == false)
+	{
+		return;
+	}
+
+	CurrentSurvivedTime += DeltaTime;
+
 	UpdateMovement(DeltaTime);
 	UpdateTurnRotation();
 	UpdateRotation(DeltaTime);
 
-	
+}
+
+void AVillageBuilderPlayerController::OpenSpectatorMenu()
+{
+	UDataLink::CreateDataLink(this, nullptr);
+}
+
+void AVillageBuilderPlayerController::OnPlayerDeath(AVillager* Villager)
+{
+	OnVillagerDeath.ExecuteIfBound();
+
+	ControlledVillageMayorPawn->Destroy();
+	ControlledVillageMayorPawn = nullptr;
+
+	OpenSpectatorMenu();
 }
 
 void AVillageBuilderPlayerController::UpdateMovement(float DeltaTime)
@@ -108,13 +181,26 @@ void AVillageBuilderPlayerController::UpdateTurnRotation()
 
 void AVillageBuilderPlayerController::ItemPrimary()
 {
+	if (IsPlayerValid() == false)
+	{
+		OpenSpectatorMenu();
+		return;
+	}
 	ControlledVillageMayorPawn->UseItem(EItemActionType::Primary);
 }
 void AVillageBuilderPlayerController::ItemSecondary()
 {
+	if (IsPlayerValid() == false)
+	{
+		OpenSpectatorMenu();
+		return;
+	}
 	ControlledVillageMayorPawn->UseItem(EItemActionType::Secondary);
 }
 
-
+bool AVillageBuilderPlayerController::IsPlayerValid()
+{
+	return IsValid(ControlledVillageMayorPawn);
+}
 
 

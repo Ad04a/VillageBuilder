@@ -54,6 +54,7 @@ protected:
 
 	TArray<class APlayerController*> PlayerControllers;
 	AVillageMayor* Player;
+	class ASpectatorPawn* SpectatorPawn;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Building")
 	UDataTable* BuildingDataTable;
@@ -64,6 +65,11 @@ protected:
 
 	UFUNCTION()
 	void ReleaseDataLink(class UDataLink* InDataLink);
+
+	ASpectatorPawn* SpawnSpectator();
+
+	UFUNCTION()
+	void OnPlayerDeath(class AVillager* InPlayer);
 
 public:
 	AGameplayModeBase();
@@ -80,6 +86,9 @@ public:
 
 	UFUNCTION()
 	void SaveGame();
+
+	UFUNCTION()
+	void DeleteSave();
 
 	UFUNCTION()
 	void SetVillage(AVillageManager* VillageManager); //AddVillage for multicolony feature

@@ -8,12 +8,14 @@
 #include "DataTransfers/VisualizationInfos/OptionsVisualInfo.h"
 #include "DataTransfers/VisualizationInfos/BuildingVisualInfo.h"
 #include "DataTransfers/VisualizationInfos/ConstructionVisualInfo.h"
+#include "DataTransfers/VisualizationInfos/SpectatorVisualInfo.h"
 
 #include "GameModes/GameplayModeBase.h"
 #include "Characters/VillageMayor.h"
 #include "WorkSystem/BaseWorkStation.h"
 #include "Items/BuilderItem.h"
 #include "Headers/DataLinkable.h"
+#include "VillageBuilderPlayerController.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -119,10 +121,12 @@ bool UDataLink::EstablishConnection()
 		return true;
 	}
 
-	if (Initiator->IsA(AVillager::StaticClass()) == true && Target->IsA(ABaseWorkStation::StaticClass()) == true)
+	if (Initiator->IsA(AVillageBuilderPlayerController::StaticClass()) == true)
 	{
-		LinkType = EDataLinkType::VillagerStation;
-		bShouldVisualize = false;
+		LinkType = EDataLinkType::ControllerSelf;
+		TargetInfo.Add(EVisualiationTypes::Spectating, USpectatorVisualInfo::CreateVisualInfo(Initiator));
+		TargetInfo.Add(EVisualiationTypes::Options, UOptionsVisualInfo::CreateVisualInfo(Initiator));
+		bShouldVisualize = true;
 		return true;
 	}
 
@@ -136,25 +140,6 @@ void UDataLink::BreakConnection()
 		return;
 	}
 	bStartedBreak = true;
-	if (LinkType == EDataLinkType::PlayerSelf )
-	{
-		
-	}
-
-	if (LinkType == EDataLinkType::PlayerVillager )
-	{
-		
-	}
-
-	if (LinkType == EDataLinkType::PlayerStation )
-	{
-		
-	}
-
-	if (LinkType == EDataLinkType::VillagerStation )
-	{
-		
-	}
 	for(TPair<TEnumAsByte<EVisualiationTypes>, UVisualizationInfo*> Info : InitiatorInfo)
 	{
 		Info.Value->Clear();

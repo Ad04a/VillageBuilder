@@ -177,9 +177,9 @@ void AVillager::OnDamageTaken(AActor* DamagedActor, float Damage, const class UD
 
 void AVillager::Die()
 {
+	BreakDataLinks_Implementation();
 	Inventory->DropAllItems();
 	OnDeath.Broadcast(this);
-	BreakDataLinks_Implementation();
 }
 
 void AVillager::PickUp(AItem* ItemToPickUp, bool TryRotating)

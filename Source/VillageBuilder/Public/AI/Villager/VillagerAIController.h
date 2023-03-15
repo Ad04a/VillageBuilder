@@ -8,9 +8,7 @@
 #include "Headers/AIStates.h"
 #include "VillagerAIController.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class VILLAGEBUILDER_API AVillagerAIController : public AGeneralAIController
 {

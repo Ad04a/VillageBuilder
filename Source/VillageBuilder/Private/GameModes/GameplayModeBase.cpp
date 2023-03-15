@@ -8,11 +8,13 @@
 #include "Components/HarvestableFoliageComponent.h"
 #include "DataTransfers/DataLink.h"
 #include "Characters/AnimalSpawner.h"
+#include "VillageBuilderPlayerController.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "SignificanceManager.h"
 #include "EngineUtils.h"
 #include "Runtime/Foliage/Public/InstancedFoliageActor.h"
+#include "GameFramework/SpectatorPawn.h"
 
 AGameplayModeBase::AGameplayModeBase()
 {
@@ -47,16 +49,30 @@ void AGameplayModeBase::StartPlay() {
 	}
 	LoadedGame = Cast<UVillageBuilderSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, 0));
 
+	AVillageBuilderPlayerController* PlayerController = Cast<AVillageBuilderPlayerController>(UGameplayStatics::GetPlayerController(World, 0));
+
+	if (IsValid(PlayerController) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SaveGame IsValid(PlayerController) == false"));
+		return;
+	}
+	PlayerController->Init(LoadedGame->PlayerControllerInfo);
+
 	FActorSpawnParameters Params;
 	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	Player = World->SpawnActor<AVillageMayor>(PlayerClass, FVector(0,0,0), FRotator(0,0,0), Params);
-	Player->Init(LoadedGame->PlayerInfo, SaveSlotName);
-	APlayerController* Controller = UGameplayStatics::GetPlayerController(World, 0);
-	if (IsValid(Controller) == false) {
-		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(Controller) == false"));
+	if (LoadedGame->IsPlayerDead == false)
+	{
+		Player = World->SpawnActor<AVillageMayor>(PlayerClass, FVector(0, 0, 0), FRotator(0, 0, 0), Params);
+		Player->Init(LoadedGame->PlayerInfo, SaveSlotName);
+		PlayerController->Possess(Player);
+		Player->SetProfession("Mayor");
 	}
-	Controller->Possess(Player);
-	Player->SetProfession("Mayor");
+	else
+	{
+		SpectatorPawn = SpawnSpectator();
+		PlayerController->Possess(SpectatorPawn);
+		SpectatorPawn->SetActorTransform(LoadedGame->SpectatorTransform);
+	}
 
 	if (LoadedGame->bIsFirstLoad == true)
 	{
@@ -146,9 +162,34 @@ void AGameplayModeBase::Tick(float DeltaTime)
 
 void AGameplayModeBase::SaveGame()
 {
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SaveGame IsValid(World) == false"));
+		return;
+	}
+
 	OnSaveStarted.Broadcast();
 
-	LoadedGame->PlayerInfo  = Player->GetSaveInfo();
+	AVillageBuilderPlayerController* PlayerController = Cast<AVillageBuilderPlayerController>(UGameplayStatics::GetPlayerController(World, 0));
+
+	if (IsValid(PlayerController) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SaveGame IsValid(PlayerController) == false"));
+		return;
+	}
+	LoadedGame->PlayerControllerInfo = PlayerController->GetSaveInfo();
+	if (PlayerController->IsPlayerValid() == true)
+	{
+		LoadedGame->PlayerInfo = Player->GetSaveInfo();
+		LoadedGame->IsPlayerDead = false;
+	}
+	else
+	{ 
+		LoadedGame->SpectatorTransform = SpawnSpectator()->GetActorTransform();
+		LoadedGame->IsPlayerDead = true;
+	}
+
 	TArray<AActor*> FoundItems;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AItem::StaticClass(), FoundItems);
 	for (AActor* Actor : FoundItems)
@@ -183,12 +224,6 @@ void AGameplayModeBase::SaveGame()
 		}
 		
 	}
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SaveGame IsValid(World) == false"));
-		return;
-	}
 	TArray<AActor*> Spawners;
 	UGameplayStatics::GetAllActorsWithTag(World, SpawnerTag, Spawners);
 	if (Spawners.IsEmpty() == true)
@@ -207,6 +242,27 @@ void AGameplayModeBase::SaveGame()
 	UGameplayStatics::SaveGameToSlot(LoadedGame, SaveSlotName, 0);
 	LoadedGame->UnequipedItems.Empty();
 	OnSaveEnded.Broadcast();
+}
+
+
+void AGameplayModeBase::DeleteSave()
+{
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::DeleteSave IsValid(World) == false"));
+		return;
+	}
+	OnGameEnd.Broadcast();
+	UGameplayStatics::DeleteGameInSlot(SaveSlotName, 0);
+	UGameplayStatics::OpenLevel(World, MainMenu);
+}
+
+void AGameplayModeBase::OnPlayerDeath( AVillager* InPlayer)
+{
+	SpectatorPawn = SpawnSpectator();
+	PlayerControllers[0]->Possess(SpectatorPawn);
+	SpectatorPawn->SetActorTransform(InPlayer->GetActorTransform());
 }
 
 void AGameplayModeBase::EndGame()
@@ -280,6 +336,28 @@ void AGameplayModeBase::ReleaseDataLink(UDataLink* InDataLink)
 	CurrentDataLinks.Remove(InDataLink);
 }
 
+ASpectatorPawn* AGameplayModeBase::SpawnSpectator()
+{
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SpawnSpectator IsValid(World) == false"));
+		return nullptr;
+	}
+	FVector Location = FVector(0,0,0);
+	FRotator Rotation = FRotator(0, 0, 0);
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+	ASpectatorPawn* Spectator = World->SpawnActor<ASpectatorPawn>(SpectatorClass, Location, Rotation, Params);
+	if (IsValid(Spectator) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SpawnSpectator IsValid(World) == false"));
+		return nullptr;
+	}
+	return Spectator;
+}
+
 //---------------------CheatSection-----------------------------------
 
 void AGameplayModeBase::ForceBuildComponents()
@@ -312,3 +390,4 @@ void AGameplayModeBase::SpawnVillager(int Count)
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Spawned " + FString::FromInt(Count) + " villagers");
 }
+

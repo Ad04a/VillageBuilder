@@ -33,8 +33,6 @@ protected:
 	
 	virtual void BeginPlay()override;
 
-	void Clear();
-
 public:
 
 	UFUNCTION()
@@ -43,4 +41,6 @@ public:
 	UFUNCTION()
 	void ShowMainWidget(class AVillageMayor* Player);
 
+	UFUNCTION()
+	void Clear();
 };

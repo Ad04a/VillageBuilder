@@ -3,6 +3,7 @@
 
 #include "UI/Widgets/Gameplay/DataLinks/VisualButtonWidgetBase.h"
 
+#include "Components/image.h"
 #include "Components/Button.h"
 
 void UVisualButtonWidgetBase::NativeOnInitialized()
@@ -13,4 +14,9 @@ void UVisualButtonWidgetBase::NativeOnInitialized()
 void UVisualButtonWidgetBase::ButtonClicked()
 {
 	OnButtonClicked.ExecuteIfBound(this);
+}
+
+void UVisualButtonWidgetBase::SetIcon(UMaterialInterface* Image)
+{
+	Icon->SetBrushFromMaterial(Image);
 }

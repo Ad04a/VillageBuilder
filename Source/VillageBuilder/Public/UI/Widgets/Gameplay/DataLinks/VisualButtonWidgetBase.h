@@ -16,10 +16,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* VisualButton;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UImage* Icon;
+
 	UFUNCTION()
 	void ButtonClicked();
 
 public:
 	FButtonChosenSignature OnButtonClicked;
 	void NativeOnInitialized() override;
+	void SetIcon(UMaterialInterface* Image);
 };

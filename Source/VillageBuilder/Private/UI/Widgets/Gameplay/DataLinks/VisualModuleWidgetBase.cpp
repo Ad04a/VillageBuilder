@@ -30,7 +30,13 @@ void UVisualModuleWidgetBase::Init(TMap<TEnumAsByte<EVisualiationTypes>, UVisual
 			UE_LOG(LogTemp, Error, TEXT("UVisualModuleWidgetBase::Init IsValid(EmployeeWidget) == false"));
 			continue;
 		}
-		//set icon eventually
+		UMaterialInterface* Icon = *Icons.Find(VisualInfo.Key);
+		if (Icon == nullptr) {
+			UE_LOG(LogTemp, Error, TEXT("UVisualModuleWidgetBase::Init IsValid(Icon) == false"));
+			continue;
+		}
+		VisualButton->SetIcon(Icon);
+
 		VisualButton->OnButtonClicked.BindDynamic(this, &UVisualModuleWidgetBase::VisualButtonClicked);
 		ButtonsWrapBox->AddChild(VisualButton);
 

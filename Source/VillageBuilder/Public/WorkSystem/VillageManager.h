@@ -86,6 +86,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TMap<TEnumAsByte<EProfessions>, UBehaviorTree*> WorkerBehaviors;
 
+	UPROPERTY(EditDefaultsOnly)
+	TMap<TEnumAsByte<EProfessions>, UMaterialInterface*> WorkerMaterials;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* MeshComponent = nullptr;
 

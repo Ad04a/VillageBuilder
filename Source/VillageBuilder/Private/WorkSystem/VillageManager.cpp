@@ -167,7 +167,7 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 
 void AVillageManager::TimedSpawn()
 {
-	AddVillagerToColony(SpawnVillager(GetActorLocation() + FVector(FMath::RandRange(-Range, Range), FMath::RandRange(-Range, Range), 100)));
+	SpawnVillager(GetActorLocation() + FVector(FMath::RandRange(-Range, Range), FMath::RandRange(-Range, Range), 100));
 	float SpawnTime = FMath::RandRange(MinTimeBetweenSpawn, MaxTimeBetweenSpawn);
 	GetWorldTimerManager().SetTimer(SpawnHandle, this, &AVillageManager::TimedSpawn, SpawnTime, false);
 }
@@ -341,8 +341,10 @@ void AVillageManager::ApplyJobBehavior(EProfessions Profession, AVillager* Worke
 		}
 
 		WorkerBehaviors.Add(Profession, BehaviorData->BehaviorTree);
+		WorkerMaterials.Add(Profession, BehaviorData->Material);
 	}
 	WorkerController->SetBehavior(*WorkerBehaviors.Find(Profession));
+	Worker->GetMesh()->SetMaterial(0, *WorkerMaterials.Find(Profession));
 }
 
 ABaseWorkStation* AVillageManager::GetFirstForConstructing()

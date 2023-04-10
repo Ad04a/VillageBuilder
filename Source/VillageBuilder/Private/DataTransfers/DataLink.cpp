@@ -9,12 +9,14 @@
 #include "DataTransfers/VisualizationInfos/BuildingVisualInfo.h"
 #include "DataTransfers/VisualizationInfos/ConstructionVisualInfo.h"
 #include "DataTransfers/VisualizationInfos/SpectatorVisualInfo.h"
+#include "DataTransfers/VisualizationInfos/InviteVisualInfo.h"
 
 #include "GameModes/GameplayModeBase.h"
 #include "Characters/VillageMayor.h"
 #include "WorkSystem/BaseWorkStation.h"
 #include "Items/BuilderItem.h"
 #include "Headers/DataLinkable.h"
+#include "Headers/Professions.h"
 #include "VillageBuilderPlayerController.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -71,13 +73,24 @@ bool UDataLink::EstablishConnection()
 	{
 		LinkType = EDataLinkType::PlayerVillager;
 
-		InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
-		AVillager* Player = Cast<AVillager>(Initiator);
+		AVillageMayor* Player = Cast<AVillageMayor>(Initiator);
 		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
 
-		TargetInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Target));
-		TargetInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Target));
 		AVillager* Villager = Cast<AVillager>(Target);
+
+		TargetInfo.Add(EVisualiationTypes::StatAndTrait, UStatsAndTraitsVisualInfo::CreateVisualInfo(Target));
+		if (Villager->GetProfession() == EProfessions::Passing)
+		{
+			UInviteVisualInfo* InviteInfo = Cast<UInviteVisualInfo>(UInviteVisualInfo::CreateVisualInfo(Target));
+			InviteInfo->SetInviter(Player);
+			TargetInfo.Add(EVisualiationTypes::Invite, InviteInfo);
+		}
+		else
+		{
+			InitiatorInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Initiator));
+			TargetInfo.Add(EVisualiationTypes::Inventory, UInventoryVisualInfo::CreateVisualInfo(Target));
+		}
+		
 		Villager->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
 
 		bShouldVisualize = true;

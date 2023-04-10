@@ -11,5 +11,6 @@ enum EVisualiationTypes {
 	Options 	 UMETA(DisplayName = "Options"),
 	Building 	 UMETA(DisplayName = "Building"),
 	Construction UMETA(DisplayName = "Construction"),
-	Spectating   UMETA(DisplayName = "Spectating")
+	Spectating   UMETA(DisplayName = "Spectating"),
+	Invite       UMETA(DisplayName = "Invite")
 };

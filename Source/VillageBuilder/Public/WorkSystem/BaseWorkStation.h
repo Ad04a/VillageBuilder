@@ -45,6 +45,9 @@ struct FProfessionBehaviorData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UBehaviorTree* BehaviorTree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UMaterialInterface* Material;
 };
 
 

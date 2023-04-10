@@ -130,7 +130,7 @@ public:
 
 	AItem* GetItem()const { return ItemSlot; }
 
-	void SetProfession(EProfessions InProfession) { Profession = InProfession; }
+	void SetProfession(EProfessions InProfession) { Profession = InProfession;  BreakDataLinks(); }
 	EProfessions GetProfession() { return Profession; }
 	FString GetProfessionName() { return UEnum::GetValueAsName(Profession).ToString(); }
 

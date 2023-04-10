@@ -7,6 +7,7 @@
 #include "Headers/DataLinkable.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "Headers/ItemInfo.h"
+#include "Headers/Professions.h"
 #include "Engine/DataTable.h"
 #include "WorkSystem/BuildProjection.h"
 #include "Components/BuildingClusterComponent.h"
@@ -25,7 +26,7 @@ struct FWorkStationData : public FTableRowBase
 	FText DisplayName;
 
 	UPROPERTY(EditAnywhere)
-	FText ProfessionName;
+	TEnumAsByte<EProfessions> Profession;
 
 	UPROPERTY(EditAnywhere)
 	TMap<TEnumAsByte<ETrait>, float> TraitModifiers;
@@ -35,10 +36,18 @@ struct FWorkStationData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<ABuildProjection> BuildProjectionClass;
+};
+
+USTRUCT(BlueprintType)
+struct FProfessionBehaviorData : public FTableRowBase
+{
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UBehaviorTree* BehaviorTree;
 };
+
+
 
 USTRUCT(BlueprintType)
 struct FWorkStationInfoStruct
@@ -91,7 +100,7 @@ protected:
 	FText DisplayName;
 
 	UPROPERTY(VisibleAnywhere)
-	FText ProfessionName;
+	TEnumAsByte<EProfessions> Profession;
 
 	UPROPERTY(VisibleAnywhere)
 	TMap<TEnumAsByte<ETrait>, float> TraitModifiers;
@@ -136,7 +145,7 @@ public:
 
 	FText GetName() { return DisplayName; }
 	TMap<TEnumAsByte<ETrait>, float> GetModifiers() { return TraitModifiers; }
-	FText GetProfessionName() { return ProfessionName; }
+	EProfessions GetProfession() { return Profession; }
 	bool GetIsBuilt() { return IsBuilt; }
 	bool GetIsConstructing() { return IsConstructing; }
 	class UStorageComponent* GetStorageComponent() { return StorageComponent; }

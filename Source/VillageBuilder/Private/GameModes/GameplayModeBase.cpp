@@ -65,7 +65,7 @@ void AGameplayModeBase::StartPlay() {
 		Player = World->SpawnActor<AVillageMayor>(PlayerClass, FVector(0, 0, 0), FRotator(0, 0, 0), Params);
 		Player->Init(LoadedGame->PlayerInfo, SaveSlotName);
 		PlayerController->Possess(Player);
-		Player->SetProfession("Mayor");
+		Player->SetProfession(EProfessions::Mayor);
 	}
 	else
 	{

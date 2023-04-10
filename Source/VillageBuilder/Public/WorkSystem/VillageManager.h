@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Headers/StatAndTraitStructure.h"
+#include "Headers/Professions.h"
 #include "Characters/Villager.h"
 #include "WorkSystem/BaseWorkStation.h"
 #include "VillageManager.generated.h"
@@ -55,7 +56,7 @@ public:
 	AVillageManager();
 
 private:
-	void ApplyJobBehavior(FName StationName, AVillager* Worker);
+	void ApplyJobBehavior(EProfessions Profession, AVillager* Worker);
 	FTimerHandle SpawnHandle;
 	bool bCanGenerateSaves = true;
 	UPROPERTY(VisibleAnywhere, Category = Identification)
@@ -83,7 +84,7 @@ protected:
 	UDataTable* BehaviorDataTable;
 
 	UPROPERTY(EditDefaultsOnly)
-	TMap<FName, UBehaviorTree*> WorkerBehaviors;
+	TMap<TEnumAsByte<EProfessions>, UBehaviorTree*> WorkerBehaviors;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UStaticMeshComponent* MeshComponent = nullptr;

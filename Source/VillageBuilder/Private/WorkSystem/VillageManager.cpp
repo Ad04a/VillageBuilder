@@ -159,7 +159,7 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 		Villager->ID = CurrentID;
 		CurrentID += 1;
 	}
-	Villager->SetProfession("Passing");
+	Villager->SetProfession(EProfessions::Passing);
 	PassingVillagers.Add(Villager);
 	GenerateSave();
 	return Villager;
@@ -204,8 +204,8 @@ void AVillageManager::AddVillagerToColony(AVillager* Villager)
 
 	PassingVillagers.Remove(Villager);
 	Villagers.Add(Villager);
-	Villager->SetProfession("Unemployed");
-	ApplyJobBehavior("Unemployed", Villager);
+	Villager->SetProfession(EProfessions::Unemployed);
+	ApplyJobBehavior(EProfessions::Unemployed, Villager);
 	Villager->OnDeath.AddDynamic(this, &AVillageManager::OnVillagerDeath);
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	GenerateSave();
@@ -255,10 +255,10 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, int Worker
 	{
 		bWorksHere = (GetWorkerAt(WorkStation)->ID == WorkerID);
 	}
-	ApplyJobBehavior("Unemployed", GetWorkerAt(WorkStation));
+	ApplyJobBehavior(EProfessions::Unemployed, GetWorkerAt(WorkStation));
 	if (IsValid(GetWorkerAt(WorkStation)) == true)
 	{
-		GetWorkerAt(WorkStation)->SetProfession("Unemployed");
+		GetWorkerAt(WorkStation)->SetProfession(EProfessions::Unemployed);
 	}
 
 	if (GetWorkPlaceFor(WorkerID) != nullptr)
@@ -268,8 +268,8 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, int Worker
 	if (bWorksHere == false)
 	{
 		WorkStations.Add(WorkStation, WorkerID);
-		ApplyJobBehavior(WorkStation->GetClass()->GetFName(), GetWorkerAt(WorkStation));
-		GetWorkerAt(WorkStation)->SetProfession(WorkStation->GetProfessionName().ToString());
+		ApplyJobBehavior(WorkStation->GetProfession(), GetWorkerAt(WorkStation));
+		GetWorkerAt(WorkStation)->SetProfession(WorkStation->GetProfession());
 
 	}
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
@@ -312,7 +312,7 @@ void AVillageManager::AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation)
 	GenerateSave();
 }
 
-void AVillageManager::ApplyJobBehavior(FName StationName, AVillager* Worker)
+void AVillageManager::ApplyJobBehavior(EProfessions Profession, AVillager* Worker)
 {
 	if (IsValid(Worker) == false)
 	{
@@ -324,7 +324,7 @@ void AVillageManager::ApplyJobBehavior(FName StationName, AVillager* Worker)
 		UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(WorkerController) == false"));
 		return;
 	}
-	if (WorkerBehaviors.Contains(StationName) == false)
+	if (WorkerBehaviors.Contains(Profession) == false)
 	{
 		if (IsValid(BehaviorDataTable) == false)
 		{
@@ -332,7 +332,7 @@ void AVillageManager::ApplyJobBehavior(FName StationName, AVillager* Worker)
 			return;
 		}
 
-		FWorkStationData* BehaviorData = BehaviorDataTable->FindRow<FWorkStationData>(StationName, "");
+		FProfessionBehaviorData* BehaviorData = BehaviorDataTable->FindRow<FProfessionBehaviorData>(UEnum::GetValueAsName(Profession), "");
 
 		if (BehaviorData == nullptr)
 		{
@@ -340,9 +340,9 @@ void AVillageManager::ApplyJobBehavior(FName StationName, AVillager* Worker)
 			return;
 		}
 
-		WorkerBehaviors.Add(StationName, BehaviorData->BehaviorTree);
+		WorkerBehaviors.Add(Profession, BehaviorData->BehaviorTree);
 	}
-	WorkerController->SetBehavior(*WorkerBehaviors.Find(StationName));
+	WorkerController->SetBehavior(*WorkerBehaviors.Find(Profession));
 }
 
 ABaseWorkStation* AVillageManager::GetFirstForConstructing()

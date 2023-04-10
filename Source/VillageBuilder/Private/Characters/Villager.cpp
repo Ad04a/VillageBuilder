@@ -396,7 +396,7 @@ FVillagerVisualInfoStruct AVillager::ExtractVisualInfo()
 {
 	FVillagerVisualInfoStruct VisualStruct;
 	VisualStruct.Name = GetName();
-	VisualStruct.Profession = GetProfession();
+	VisualStruct.Profession = GetProfessionName();
 	for (ETrait Trait : TEnumRange<ETrait>())
 	{
 		VisualStruct.TraitMap.Add(Trait, GetTrait(Trait));

@@ -1,13 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+
+#include "BehaviorTree/BehaviorTreeTypes.h"
 #include "WorkerManager.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class VILLAGEBUILDER_API UWorkerManager : public UObject
@@ -18,7 +18,7 @@ protected:
 	TArray<TSubclassOf<class AItem>> NededItemClasses;
 
 	UPROPERTY(VisibleAnywhere)
-	TArray<struct FBlackboardKeySelector> GivenKeys;
+	TArray<FBlackboardKeySelector> GivenKeys;
 
 	class AVillageManager* Village;
 	class UBlackboardComponent* BlackBoard;
@@ -28,5 +28,5 @@ public:
 	virtual bool CheckGivenKeys() { return true; }
 	void SetNededItemClasses(TArray<TSubclassOf<class AItem>> Classes = TArray<TSubclassOf<class AItem>>()) { NededItemClasses.Empty(); NededItemClasses = Classes; }
 	TArray<TSubclassOf<class AItem>> GetNeededItemClasses() { return NededItemClasses; }
-	virtual void Clear() { Village = nullptr;  BlackBoard = nullptr; ConditionalBeginDestroy();}
+	virtual void Clear() { Village = nullptr;  BlackBoard = nullptr; ConditionalBeginDestroy(); }
 };

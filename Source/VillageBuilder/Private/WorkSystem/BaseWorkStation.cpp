@@ -60,7 +60,7 @@ void ABaseWorkStation::BeginPlay()
 
 	DisplayName    = StationData->DisplayName;
 	TraitModifiers = StationData->TraitModifiers;
-	ProfessionName = StationData->ProfessionName;
+	Profession     = StationData->Profession;
 
 	StorageComponent->Init();
 

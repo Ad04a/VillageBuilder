@@ -9,6 +9,7 @@
 #include "Headers/LoadInfo.h"
 #include "Headers/AIStates.h"
 #include "Headers/ItemActionEnums.h"
+#include "Headers/Professions.h"
 #include "Villager.generated.h"
 
 
@@ -37,7 +38,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	FString Name = "Name";
-	FString Profession = "Unemployed";
+	TEnumAsByte<EProfessions> Profession = EProfessions::Unemployed;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class UDataTable* StatTraitDataTable = nullptr;
@@ -129,8 +130,9 @@ public:
 
 	AItem* GetItem()const { return ItemSlot; }
 
-	void SetProfession(FString ProfessionName) { Profession = ProfessionName; }
-	FString GetProfession() { return Profession; }
+	void SetProfession(EProfessions InProfession) { Profession = InProfession; }
+	EProfessions GetProfession() { return Profession; }
+	FString GetProfessionName() { return UEnum::GetValueAsName(Profession).ToString(); }
 
 	UFUNCTION(BlueprintPure)
 	EItemType GetEquipItemType();

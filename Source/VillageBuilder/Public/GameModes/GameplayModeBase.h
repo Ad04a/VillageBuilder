@@ -7,6 +7,7 @@
 #include "Characters/VillageMayor.h"
 #include "Items/SpawningItem.h"
 #include "WorkSystem/VillageManager.h"
+#include "Headers/Professions.h"
 
 #include "Items/BuilderItem.h"
 

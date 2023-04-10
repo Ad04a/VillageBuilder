@@ -2,8 +2,8 @@
 
 
 #include "DataTransfers/VisualizationInfos/OptionsVisualInfo.h"
-#include "GameMOdes/GameplayModeBase.h"
-
+#include "GameModes/GameplayModeBase.h"
+#include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
 
 UVisualizationInfo* UOptionsVisualInfo::CreateVisualInfo(AActor* InActor)
@@ -26,7 +26,49 @@ UVisualizationInfo* UOptionsVisualInfo::CreateVisualInfo(AActor* InActor)
 		UE_LOG(LogTemp, Error, TEXT("UOptionsVisualInfo::CreateVisualInfo IsValid(GameMode) == false"));
 		return nullptr;
 	}
+
+	Info->GameSettings = GEngine->GameUserSettings;
+	if (IsValid(Info->GameSettings) == false) {
+		UE_LOG(LogTemp, Error, TEXT("UOptionsVisualInfo::CreateVisualInfo IsValid(GameSettings) == false"));
+		return nullptr;
+	}
+
 	return Info;
+}
+
+void UOptionsVisualInfo::RecieveUpdatedGraphics(FGraphicsSettings Settings)
+{
+	if (Settings.bIsTestSignal == false)
+	{
+		GameSettings->SetOverallScalabilityLevel(Settings.OverallScalabilityLevel);
+
+		GameSettings->SetAntiAliasingQuality(Settings.AntiAliasingQuality);
+		GameSettings->SetFoliageQuality(Settings.FoliageQuality);
+		GameSettings->SetPostProcessingQuality(Settings.PostProcessingQuality);
+		GameSettings->SetShadingQuality(Settings.ShadingQuality);
+		GameSettings->SetShadowQuality(Settings.ShadowQuality);
+		GameSettings->SetTextureQuality(Settings.TextureQuality);
+		GameSettings->SetViewDistanceQuality(Settings.ViewDistanceQuality);
+		GameSettings->SetVisualEffectQuality(Settings.VisualEffectQuality);
+	}
+
+	GameSettings->ApplySettings(false);
+
+	FGraphicsSettings NewSettings;
+
+	NewSettings.OverallScalabilityLevel = GameSettings->GetOverallScalabilityLevel();
+	NewSettings.AntiAliasingQuality     = GameSettings->GetAntiAliasingQuality();
+	NewSettings.FoliageQuality          = GameSettings->GetFoliageQuality();
+	NewSettings.PostProcessingQuality   = GameSettings->GetPostProcessingQuality();
+	NewSettings.ShadingQuality			= GameSettings->GetShadingQuality();
+	NewSettings.ShadowQuality			= GameSettings->GetShadowQuality();
+	NewSettings.TextureQuality			= GameSettings->GetTextureQuality();
+	NewSettings.ViewDistanceQuality		= GameSettings->GetViewDistanceQuality();
+	NewSettings.VisualEffectQuality		= GameSettings->GetVisualEffectQuality();
+
+
+	OnGraphicsSaved.ExecuteIfBound(NewSettings);
+
 }
 
 void UOptionsVisualInfo::ExitGame()
@@ -38,4 +80,5 @@ void UOptionsVisualInfo::Clear()
 {
 	Super::Clear();
 	GameMode = nullptr;
+	GameSettings = nullptr;
 }

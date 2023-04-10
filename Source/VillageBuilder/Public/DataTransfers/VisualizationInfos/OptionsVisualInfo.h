@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "DataTransfers/VisualizationInfo.h"
+#include "Headers/OptionStructures.h"
 #include "OptionsVisualInfo.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_DELEGATE_OneParam(FGraphicsSaved, FGraphicsSettings, Settings);
 UCLASS()
 class VILLAGEBUILDER_API UOptionsVisualInfo : public UVisualizationInfo
 {
@@ -16,9 +15,16 @@ class VILLAGEBUILDER_API UOptionsVisualInfo : public UVisualizationInfo
 
 protected:
 	class AGameplayModeBase* GameMode;
+	class UGameUserSettings* GameSettings;
 public:
+	FGraphicsSaved OnGraphicsSaved;
+
 	UFUNCTION()
 	void ExitGame();
+
+	UFUNCTION()
+	void RecieveUpdatedGraphics(FGraphicsSettings Settings);
+
 	static UVisualizationInfo* CreateVisualInfo(AActor* InActor);
 	virtual void Clear() override;
 };

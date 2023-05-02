@@ -25,6 +25,15 @@ public:
 	UFUNCTION()
 	void RecieveUpdatedGraphics(FGraphicsSettings Settings);
 
+	UFUNCTION()
+	void RecieveUpdatedQuality(int Value);
+
+	void ReturnUpdate();
+
+	void UpdateAll(int Value);
+
+	int GetCurrentOverallLevel();
+
 	static UVisualizationInfo* CreateVisualInfo(AActor* InActor);
 	virtual void Clear() override;
 };

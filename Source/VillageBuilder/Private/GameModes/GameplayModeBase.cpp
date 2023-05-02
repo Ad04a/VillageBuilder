@@ -391,3 +391,27 @@ void AGameplayModeBase::SpawnVillager(int Count)
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Spawned " + FString::FromInt(Count) + " villagers");
 }
 
+void AGameplayModeBase::GetItem(FName Name, int Num)
+{
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::GetItem IsValid(World) == false"));
+		return;
+	}
+
+	if (CheatItemTypes.Contains(Name) == false)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Cheat items dont contain: " + Name.ToString());
+		return;
+	}
+	
+	TSubclassOf<AItem> ItemClass = *CheatItemTypes.Find(Name);
+	
+	for (int i = 0; i < Num; i++)
+	{
+		Player->PickUp(AItem::SpawnItem(World, ItemClass), true);
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, "Given " + ItemClass->StaticClass()->GetFName().ToString() + " to player");
+}

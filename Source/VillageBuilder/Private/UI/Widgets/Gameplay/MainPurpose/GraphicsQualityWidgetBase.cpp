@@ -7,7 +7,6 @@
 void UGraphicsQualityWidgetBase::NativeOnInitialized()
 {
 	TArray<USlider*> Sliders;
-	Sliders.Add(OverallScalabilityLevel);
 	Sliders.Add(AntiAliasingQuality);
 	Sliders.Add(FoliageQuality);
 	Sliders.Add(PostProcessingQuality);
@@ -25,7 +24,11 @@ void UGraphicsQualityWidgetBase::NativeOnInitialized()
 		Slider->MouseUsesStep = true;
 		Slider->OnValueChanged.AddDynamic(this, &UGraphicsQualityWidgetBase::OnUpdate);
 	}
-	Sliders[0]->SetMinValue(-0.5);
+	OverallScalabilityLevel->SetMinValue(-1.5);
+	OverallScalabilityLevel->SetMaxValue(3.5);
+	OverallScalabilityLevel->SetStepSize(1);
+	OverallScalabilityLevel->MouseUsesStep = true;
+	OverallScalabilityLevel->OnValueChanged.AddDynamic(this, &UGraphicsQualityWidgetBase::OnQualityUpdate);
 }
 
 void UGraphicsQualityWidgetBase::OnUpdate(float Value)
@@ -41,7 +44,6 @@ void UGraphicsQualityWidgetBase::OnUpdate(float Value)
 	}
 
 	FGraphicsSettings NewSettings;
-	NewSettings.OverallScalabilityLevel = OverallScalabilityLevel->GetValue();
 	NewSettings.AntiAliasingQuality     = AntiAliasingQuality->GetValue();
 	NewSettings.FoliageQuality			= FoliageQuality->GetValue();
 	NewSettings.PostProcessingQuality	= PostProcessingQuality->GetValue();
@@ -52,6 +54,11 @@ void UGraphicsQualityWidgetBase::OnUpdate(float Value)
 	NewSettings.VisualEffectQuality		= VisualEffectQuality->GetValue();
 
 	OnGraphicsUpdated.ExecuteIfBound(NewSettings);
+}
+
+void UGraphicsQualityWidgetBase::OnQualityUpdate(float Value)
+{
+	OnQualityUpdated.ExecuteIfBound(Value);
 }
 
 void UGraphicsQualityWidgetBase::UpdateWindowMode(EWindowMode::Type InWindowMode)

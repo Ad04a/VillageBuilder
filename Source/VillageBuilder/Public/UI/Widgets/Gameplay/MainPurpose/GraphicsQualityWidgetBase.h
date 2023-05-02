@@ -8,6 +8,7 @@
 #include "GraphicsQualityWidgetBase.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FGraphicsUpdatedSignature, FGraphicsSettings, Settings);
+DECLARE_DYNAMIC_DELEGATE_OneParam(FQualityUpdatedSignature, int, Value);
 
 UCLASS()class VILLAGEBUILDER_API UGraphicsQualityWidgetBase : public UUserWidget
 {
@@ -44,10 +45,14 @@ protected:
 	UFUNCTION()
 	void OnUpdate(float Value);
 
+	UFUNCTION()
+	void OnQualityUpdate(float Value);
+
 	bool bCanUpdate = true;
 
 public:
 
+	FQualityUpdatedSignature OnQualityUpdated;
 	FGraphicsUpdatedSignature OnGraphicsUpdated;
 	FGraphicsUpdatedSignature   RequestUpdate;
 

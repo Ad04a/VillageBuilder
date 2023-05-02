@@ -56,11 +56,15 @@ void UBuilderManager::SetTargetBuildingCluster()
 
 void UBuilderManager::ResetBuildingCluster(bool State)
 {
-	TargetBuildingCluster->OnBuildingFinisehd.RemoveAll(this);
-	TargetBuildingCluster->OnBuildStarted.RemoveAll(this);
+	if (IsValid(TargetBuildingCluster) == true)
+	{
+		TargetBuildingCluster->OnBuildingFinisehd.RemoveAll(this);
+		TargetBuildingCluster->OnBuildStarted.RemoveAll(this);
+
+		TargetBuildingCluster = nullptr;
+	}
 	BlackBoard->ClearValue(GivenKeys[0].SelectedKeyName);
 	BlackBoard->ClearValue(GivenKeys[1].SelectedKeyName);
-	TargetBuildingCluster = nullptr;
 	UpdateNeededClasses();
 }
 

@@ -11,7 +11,7 @@ struct FGraphicsSettings
 
 	EWindowMode::Type FullscreenMode;
 
-	int OverallScalabilityLevel;
+	int OverallScalabilityLevel = -1;
 	int AntiAliasingQuality;
 	int FoliageQuality;
 	int PostProcessingQuality;

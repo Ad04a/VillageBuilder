@@ -57,6 +57,7 @@ void UInGameOptionsWidgetBase::Init(UVisualizationInfo* VisualInfo)
 		return;
 	}
 	GraphicsWidget->OnGraphicsUpdated.BindDynamic(OptionsInfo, &UOptionsVisualInfo::RecieveUpdatedGraphics);
+	GraphicsWidget->OnQualityUpdated.BindDynamic(OptionsInfo, &UOptionsVisualInfo::RecieveUpdatedQuality);
 	GraphicsWidget->RequestUpdate.BindDynamic(OptionsInfo, &UOptionsVisualInfo::RecieveUpdatedGraphics);
 	OptionsInfo->OnGraphicsSaved.BindDynamic(GraphicsWidget, &UGraphicsQualityWidgetBase::UpdateScaleability);
 

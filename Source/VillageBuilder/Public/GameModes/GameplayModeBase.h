@@ -110,4 +110,10 @@ public:
 
 	UFUNCTION(Exec, Category = Cheat)
 	void SpawnVillager(int Count);
+
+	UFUNCTION(Exec, Category = Cheat)
+	void GetItem(FName Name, int Num=1);
+
+	UPROPERTY(EditDefaultsOnly, Category = Cheat)
+	TMap<FName, TSubclassOf<class AItem>> CheatItemTypes;
 };

@@ -5,6 +5,7 @@
 #include "DataTransfers/VisualizationInfos/SpectatorVisualInfo.h"
 
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 
 void USpectatorWidgetBase::Init(UVisualizationInfo* VisualInfo)
 {
@@ -15,4 +16,6 @@ void USpectatorWidgetBase::Init(UVisualizationInfo* VisualInfo)
 	}
 	DeleteButton->OnClicked.AddDynamic(SpectatorInfo, &USpectatorVisualInfo::DeleteSave);
 	SpectateButton->OnClicked.AddDynamic(SpectatorInfo, &USpectatorVisualInfo::Spectate);
+
+	SurvivedTime->SetText(FText::FromString(FString::FromInt(int(SpectatorInfo->GetTimeSurvived() / 150)) + " days"));
 }

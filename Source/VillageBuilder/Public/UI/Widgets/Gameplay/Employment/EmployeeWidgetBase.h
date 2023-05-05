@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Headers/LoadInfo.h"
+#include "Headers/StatAndTraitStructure.h"
 #include "EmployeeWidgetBase.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FManageButtonSignature, UEmployeeWidgetBase*, Emitter);

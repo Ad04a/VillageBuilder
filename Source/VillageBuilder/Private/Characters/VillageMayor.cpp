@@ -126,3 +126,60 @@ void AVillageMayor::ToggleStableInteraction()
 	bIsMovementEnabled = !bIsMovementEnabled;
 	bIsRotationEnabled = !bIsRotationEnabled;
 }
+
+void AVillageMayor::UpdateMovement_Implementation(float MoveForwardValue, float MoveRightValue)
+{
+	if (InputEnabled() == false || bIsMovementEnabled == false)
+	{
+		return;
+	}
+
+	if (MoveForwardValue != 0.0f)
+	{
+		AddMovementInput(GetActorForwardVector(), MoveForwardValue);
+	}
+	if (MoveRightValue != 0.0f)
+	{
+		AddMovementInput(GetActorRightVector(), MoveRightValue);
+	}
+}
+
+void AVillageMayor::PawnTurnAtRate_Implementation(float Rate)
+{
+	if (InputEnabled() == false || bIsRotationEnabled == false)
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillager::TurnAtRate IsValid(World) == false"));
+		return;
+	}
+
+	//Functionality to move slower with lower energy
+
+	AddControllerYawInput(Rate * World->GetDeltaSeconds());
+}
+
+void AVillageMayor::PawnLookUpAtRate_Implementation(float Rate)
+{
+	if (InputEnabled() == false || bIsRotationEnabled == false)
+	{
+		return;
+	}
+
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AVillager::LookUpAtRate IsValid(World) == false"));
+		return;
+	}
+
+	//Functionality to turn slower with lower energy
+
+
+	AddControllerPitchInput(Rate * Energy * World->GetDeltaSeconds());
+
+}

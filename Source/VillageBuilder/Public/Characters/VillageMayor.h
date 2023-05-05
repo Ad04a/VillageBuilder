@@ -6,13 +6,14 @@
 #include "Characters/Villager.h"
 #include "Camera/CameraComponent.h"
 #include "WorkSystem/BaseWorkStation.h"
+#include "Headers/Interfaces/Controlable.h"
 #include "VillageMayor.generated.h"
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FInteractingSignature, FText, ActionText);
 
 UCLASS()
-class VILLAGEBUILDER_API AVillageMayor : public AVillager
+class VILLAGEBUILDER_API AVillageMayor : public AVillager, public IControlable
 {
 	GENERATED_BODY()
 
@@ -45,6 +46,10 @@ protected:
 	void ToggleStableInteraction();
 
 public:
+
+	virtual void UpdateMovement_Implementation(float MoveForwardValue, float MoveRightValue);
+	virtual void PawnTurnAtRate_Implementation(float Rate);
+	virtual void PawnLookUpAtRate_Implementation(float Rate);
 
 	FInteractingSignature OnInteraction;
 	FInteractingSignature OnDataLink;

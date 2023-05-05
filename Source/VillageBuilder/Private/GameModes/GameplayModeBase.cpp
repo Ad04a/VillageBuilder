@@ -51,6 +51,8 @@ void AGameplayModeBase::StartPlay() {
 
 	AVillageBuilderPlayerController* PlayerController = Cast<AVillageBuilderPlayerController>(UGameplayStatics::GetPlayerController(World, 0));
 
+	PlayerControllers.Add(PlayerController);
+
 	if (IsValid(PlayerController) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SaveGame IsValid(PlayerController) == false"));
@@ -66,6 +68,7 @@ void AGameplayModeBase::StartPlay() {
 		Player->Init(LoadedGame->PlayerInfo, SaveSlotName);
 		PlayerController->Possess(Player);
 		Player->SetProfession(EProfessions::Mayor);
+		Player->OnDeath.AddDynamic(this, &AGameplayModeBase::OnPlayerDeath);
 	}
 	else
 	{
@@ -186,7 +189,7 @@ void AGameplayModeBase::SaveGame()
 	}
 	else
 	{ 
-		LoadedGame->SpectatorTransform = SpawnSpectator()->GetActorTransform();
+		LoadedGame->SpectatorTransform = SpectatorPawn->GetActorTransform();
 		LoadedGame->IsPlayerDead = true;
 	}
 
@@ -355,6 +358,7 @@ ASpectatorPawn* AGameplayModeBase::SpawnSpectator()
 		UE_LOG(LogTemp, Error, TEXT("AGameplayModeBase::SpawnSpectator IsValid(World) == false"));
 		return nullptr;
 	}
+	UE_LOG(LogTemp, Display, TEXT("AGameplayModeBase::SpawnSpectator Successfully spawn spectator pawn"));
 	return Spectator;
 }
 

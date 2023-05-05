@@ -53,7 +53,7 @@ protected:
 	UPROPERTY()
 	AVillageManager* Village; //TArray Villages for multicolony feature
 
-	TArray<class APlayerController*> PlayerControllers;
+	TArray<class AVillageBuilderPlayerController*> PlayerControllers;
 	AVillageMayor* Player;
 	class ASpectatorPawn* SpectatorPawn;
 
@@ -103,6 +103,8 @@ public:
 	void LockDataLink(class UDataLink* InDataLink);
 
 	TMap<FString, FName> GetBuildingsInfo() { return BuildingsInfo; }
+
+	class AVillageBuilderPlayerController* GetPlayerController(int Num) { return PlayerControllers[Num]; }
 
 	//---------------------CheatSection-----------------------------------
 	UFUNCTION(Exec, Category = Cheat)

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "FoliageInstancedStaticMeshComponent.h"
 #include "Enviroment/HarvestableActor.h"
-#include "Headers/FoliageSaving.h"
+#include "Headers/Saving/FoliageSaving.h"
 #include "HarvestableFoliageComponent.generated.h"
 
 /**

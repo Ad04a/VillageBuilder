@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Engine/DataTable.h"
-//#include "Headers/InventoryInfos.h"
 #include "ItemInfo.generated.h"
 
 UENUM(BlueprintType)

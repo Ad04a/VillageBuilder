@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
-#include "Headers/LoadInfo.h"
-#include "Headers/FoliageSaving.h"
-#include "Headers/AnimalSaving.h"
+#include "Headers/Saving/LoadInfo.h"
+#include "Headers/Saving/FoliageSaving.h"
+#include "Headers/Saving/AnimalSaving.h"
 #include "WorkSystem/VillageManager.h"
 #include "VillageBuilderPlayerController.h"
 #include "VillageBuilderSaveGame.generated.h"

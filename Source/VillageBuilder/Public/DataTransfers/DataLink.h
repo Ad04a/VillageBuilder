@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Headers/VisualizationTypes.h"
-#include "Headers/DataLinkable.h"
+#include "Headers/Interfaces/DataLinkable.h"
 #include "DataLink.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FLinkBrokenSignature, UDataLink*, BrokenLink);

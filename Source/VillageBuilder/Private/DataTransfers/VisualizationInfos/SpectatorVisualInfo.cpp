@@ -2,7 +2,8 @@
 
 
 #include "DataTransfers/VisualizationInfos/SpectatorVisualInfo.h"
-#include "GameMOdes/GameplayModeBase.h"
+#include "GameModes/GameplayModeBase.h"
+#include "VillageBuilderPlayerController.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -26,6 +27,9 @@ UVisualizationInfo* USpectatorVisualInfo::CreateVisualInfo(AActor* InActor)
 		UE_LOG(LogTemp, Error, TEXT("USpectatorVisualInfo::CreateVisualInfo IsValid(GameMode) == false"));
 		return nullptr;
 	}
+
+	Info->TimeSurvived = Info->GameMode->GetPlayerController(0)->GetCurrentSurvivedTime();
+
 	return Info;
 }
 

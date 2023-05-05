@@ -262,63 +262,6 @@ void AVillager::AcknowledgeWidgetBinding()
 
 }
 
-void AVillager::UpdateMovement(float MoveForwardValue, float MoveRightValue)
-{
-	if ( InputEnabled() == false || bIsMovementEnabled == false)
-	{
-		return;
-	}
-
-	if (MoveForwardValue != 0.0f)
-	{
-		AddMovementInput(GetActorForwardVector(), MoveForwardValue);
-	}
-	if (MoveRightValue != 0.0f)
-	{
-		AddMovementInput(GetActorRightVector(), MoveRightValue);
-	}
-}
-
-void AVillager::TurnAtRate(float Rate)
-{
-	if (InputEnabled() == false || bIsRotationEnabled == false)
-	{
-		return;
-	}
-
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("AVillager::TurnAtRate IsValid(World) == false"));
-		return;
-	}
-
-	//Functionality to move slower with lower energy
-
-	AddControllerYawInput(Rate * World->GetDeltaSeconds());
-}
-
-void AVillager::LookUpAtRate(float Rate)
-{
-	if (InputEnabled() == false || bIsRotationEnabled == false)
-	{
-		return;
-	}
-
-	UWorld* World = GetWorld();
-	if (IsValid(World) == false)
-	{
-		UE_LOG(LogTemp, Error, TEXT("AVillager::LookUpAtRate IsValid(World) == false"));
-		return;
-	}
-
-	//Functionality to turn slower with lower energy
-
-
-	AddControllerPitchInput(Rate *Energy * World->GetDeltaSeconds());
-	
-}
-
 void AVillager::PlayItemAnimMontage(UAnimMontage* AnimMontage, FName StartSectionName)
 {
 	if (IsValid(AnimMontage) == false)

@@ -8,7 +8,7 @@
 
 #include "AI/Villager/VillagerAIController.h"
 #include "Headers/VillagerBBKeys.h"
-#include "Headers/Interactable.h"
+#include "Headers/Interfaces/Interactable.h"
 
 #include "BTTask_InteractWithObject.generated.h"
 

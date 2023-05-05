@@ -64,3 +64,18 @@ struct FStatTraitData : public FTableRowBase
 		TMap<TEnumAsByte<EStat>, TEnumAsByte<ETrait>> StatTraitRelation;
 };
 
+USTRUCT(BlueprintType)
+struct FVillagerVisualInfoStruct
+{
+	GENERATED_BODY()
+
+		UPROPERTY()
+		FString Name;
+
+	UPROPERTY()
+		FString Profession;
+
+	UPROPERTY()
+		TMap<TEnumAsByte<ETrait>, float> TraitMap;
+};
+

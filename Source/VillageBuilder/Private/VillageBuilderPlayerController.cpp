@@ -3,6 +3,7 @@
 #include "VillageBuilderPlayerController.h"
 #include "UI/HUDS/GameplayHUDBase.h"
 #include "DataTransfers/DataLink.h"
+#include "Headers/Interfaces/Controlable.h"
 
 const FName AVillageBuilderPlayerController::MoveForwardBinding("MoveForward");
 const FName AVillageBuilderPlayerController::MoveRightBinding("MoveRight");
@@ -15,10 +16,28 @@ const FName AVillageBuilderPlayerController::DropItemBinding("DropItem");
 const FName AVillageBuilderPlayerController::InteractBinding("Interact");
 const FName AVillageBuilderPlayerController::DataLinkBinding("DataLink");
 
+void AVillageBuilderPlayerController::BeginPlay()
+{
+	InputComponent->BindAxis(MoveForwardBinding);
+	InputComponent->BindAxis(MoveRightBinding);
 
+	InputComponent->BindAxis(TurnRightBinding);
+	InputComponent->BindAxis(LookUpBinding);
+
+
+	InputComponent->BindAction(InteractBinding, IE_Pressed, this, &AVillageBuilderPlayerController::Interact);
+	InputComponent->BindAction(DataLinkBinding, IE_Pressed, this, &AVillageBuilderPlayerController::InitiateLink);
+	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ShowTraitMenu);
+	InputComponent->BindAction(DropItemBinding, IE_Pressed, this, &AVillageBuilderPlayerController::CaptureDrop);
+
+	InputComponent->BindAction(ItemPrimaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ItemPrimary);
+	InputComponent->BindAction(ItemSecondaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ItemSecondary);
+}
 
 void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	Super::OnPossess(InPawn);
+
+	InPawn->bUseControllerRotationYaw = true;
 
 	if (IsValid(InputComponent) == false)
 	{
@@ -34,30 +53,17 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 		return;
 	}
 
-	InputComponent->BindAxis(MoveForwardBinding);
-	InputComponent->BindAxis(MoveRightBinding);
-
-	InputComponent->BindAxis(TurnRightBinding);
-	InputComponent->BindAxis(LookUpBinding);
-
-	InputComponent->BindAction(InteractBinding, IE_Pressed, this, &AVillageBuilderPlayerController::Interact);
-	InputComponent->BindAction(DataLinkBinding, IE_Pressed, this, &AVillageBuilderPlayerController::InitiateLink);
-	InputComponent->BindAction(TraitsMenuBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ShowTraitMenu);
-	InputComponent->BindAction(DropItemBinding, IE_Pressed, this, &AVillageBuilderPlayerController::CaptureDrop);
-
-	if (IsValid(ControlledVillageMayorPawn)==true)
+	if (IsValid(ControlledVillageMayorPawn)==false)
 	{
-		HUD->ShowMainWidget(ControlledVillageMayorPawn);
-		ControlledVillageMayorPawn->OnDeath.AddDynamic(this, &AVillageBuilderPlayerController::OnPlayerDeath);
+		UE_LOG(LogTemp, Display, TEXT("AVillageBuilderPlayerController::OnPossess IsValid(ControlledVillageMayorPawn)==false"));
+		return;
 	}
 	
+	HUD->ShowMainWidget(ControlledVillageMayorPawn);
+	ControlledVillageMayorPawn->OnDeath.AddDynamic(this, &AVillageBuilderPlayerController::OnPlayerDeath);
 
 	OnVillagerDeath.BindDynamic(HUD, &AGameplayHUDBase::Clear);
 
-	InPawn->bUseControllerRotationYaw = true;
-
-	InputComponent->BindAction(ItemPrimaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ItemPrimary);
-	InputComponent->BindAction(ItemSecondaryBinding, IE_Pressed, this, &AVillageBuilderPlayerController::ItemSecondary);
 	
 }
 
@@ -65,7 +71,6 @@ void AVillageBuilderPlayerController::CaptureDrop()
 {
 	if (IsPlayerValid() == false)
 	{
-		OpenSpectatorMenu();
 		return;
 	}
 	ControlledVillageMayorPawn->DropItem();
@@ -117,11 +122,6 @@ void AVillageBuilderPlayerController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsPlayerValid() == false)
-	{
-		return;
-	}
-
 	CurrentSurvivedTime += DeltaTime;
 
 	UpdateMovement(DeltaTime);
@@ -147,34 +147,44 @@ void AVillageBuilderPlayerController::OnPlayerDeath(AVillager* Villager)
 
 void AVillageBuilderPlayerController::UpdateMovement(float DeltaTime)
 {
-	
+	IControlable* ControlledPawn = Cast<IControlable>(GetPawnOrSpectator());
+
+	if (ControlledPawn == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT(" AVillageBuilderPlayerController::UpdateMovement ControlledPawn == nullptr"));
+		return;
+	}
+
 	const float MoveForwardValue = GetInputAxisValue(MoveForwardBinding);
 	const float MoveRightValue = GetInputAxisValue(MoveRightBinding);
 
 	if (MoveForwardValue!=0 || MoveRightValue!=0) {
-		ControlledVillageMayorPawn->UpdateMovement(MoveForwardValue, MoveRightValue);
+		ControlledPawn->Execute_UpdateMovement(GetPawnOrSpectator(), MoveForwardValue, MoveRightValue);
 	}
 }
 
 void AVillageBuilderPlayerController::UpdateTurnRotation()
 {
+	IControlable* ControlledPawn = Cast<IControlable>(GetPawnOrSpectator());
+
+	if (ControlledPawn == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT(" AVillageBuilderPlayerController::UpdateTurnRotation ControlledPawn == nullptr"));
+		return;
+	}
+
 	float X = GetInputAxisValue(TurnRightBinding);
 	float Y = GetInputAxisValue(LookUpBinding);
 
 	X *= MouseTurnRate;
 	Y *= MouseTurnRate;
 
-	/*if (InputDeviceType == EInputDeviceType::Gamepad)
-	{
-		X *= GamepadTurnRate;
-		Y *= GamepadTurnRate;
-	}*/
 	if (X != 0) {
-		ControlledVillageMayorPawn->TurnAtRate(X);
+		ControlledPawn->Execute_PawnTurnAtRate(GetPawnOrSpectator(), X);
 	}
 
 	if (Y != 0) {
-		ControlledVillageMayorPawn->LookUpAtRate(Y);
+		ControlledPawn->Execute_PawnLookUpAtRate(GetPawnOrSpectator(), Y);
 	}
 	
 }
@@ -200,7 +210,7 @@ void AVillageBuilderPlayerController::ItemSecondary()
 
 bool AVillageBuilderPlayerController::IsPlayerValid()
 {
-	return IsValid(ControlledVillageMayorPawn);
+	return IsValid(GetCharacter());
 }
 
 

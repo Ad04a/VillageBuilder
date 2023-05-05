@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
-#include "Headers/Interactable.h"
+#include "Headers/Interfaces/Interactable.h"
 #include "BuildingClusterComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBuildingClusterStateSignature, bool, State);

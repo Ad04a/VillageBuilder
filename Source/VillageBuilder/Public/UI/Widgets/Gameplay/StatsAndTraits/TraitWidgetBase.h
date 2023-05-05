@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Headers/LoadInfo.h"
+#include "Headers/StatAndTraitStructure.h"
 #include "TraitWidgetBase.generated.h"
 
 UCLASS()

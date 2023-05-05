@@ -15,7 +15,7 @@
 #include "Characters/VillageMayor.h"
 #include "WorkSystem/BaseWorkStation.h"
 #include "Items/BuilderItem.h"
-#include "Headers/DataLinkable.h"
+#include "Headers/Interfaces/DataLinkable.h"
 #include "Headers/Professions.h"
 #include "VillageBuilderPlayerController.h"
 

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DataTransfers/VisualizationInfo.h"
-#include "Headers/LoadInfo.h"
+#include "Headers/Saving/LoadInfo.h"
 #include "StatsAndTraitsVisualInfo.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_ThreeParams(FInitiatorStatUpdatedSignature, EStat, StatName, float, Current, float, Max);

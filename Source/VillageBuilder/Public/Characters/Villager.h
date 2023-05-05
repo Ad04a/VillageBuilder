@@ -5,8 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Items/Item.h"
-#include "Headers/DataLinkable.h"
-#include "Headers/LoadInfo.h"
+#include "Headers/Interfaces/DataLinkable.h"
+#include "Headers/Saving/LoadInfo.h"
 #include "Headers/AIStates.h"
 #include "Headers/ItemActionEnums.h"
 #include "Headers/Professions.h"
@@ -93,9 +93,6 @@ public:
 	FBrakeLinkSignature OnLinkBroken;
 	FAIStateSignature OnAIStateChanged;
 
-	void UpdateMovement(float MoveForwardValue, float MoveRightValue);
-	void TurnAtRate(float Rate);
-	void LookUpAtRate(float Rate);
 	void PlayItemAnimMontage(UAnimMontage* AnimMontage, FName StartSectionName);
 
 	bool bIsMovementEnabled = true;

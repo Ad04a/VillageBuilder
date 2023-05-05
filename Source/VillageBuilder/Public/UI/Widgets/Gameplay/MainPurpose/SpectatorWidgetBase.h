@@ -20,6 +20,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UButton* SpectateButton;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
+	class UTextBlock* SurvivedTime;
+
 public:
 	virtual void Init(class UVisualizationInfo* VisualInfo) override;
 

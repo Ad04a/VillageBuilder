@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DataTransfers/VisualizationInfo.h"
-#include "Headers/LoadInfo.h"
+#include "Headers/Saving/LoadInfo.h"
 #include "EmploymentVisualInfo.generated.h"
 
 USTRUCT(BlueprintType)

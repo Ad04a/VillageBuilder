@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Headers/DataLinkable.h"
+#include "Headers/Interfaces/DataLinkable.h"
 #include "Headers/StatAndTraitEnums.h"
 #include "Headers/ItemInfo.h"
 #include "Headers/Professions.h"

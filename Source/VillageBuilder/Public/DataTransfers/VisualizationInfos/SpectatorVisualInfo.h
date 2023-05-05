@@ -16,12 +16,15 @@ class VILLAGEBUILDER_API USpectatorVisualInfo : public UVisualizationInfo
 protected:
 	class AGameplayModeBase* GameMode;
 
+	float TimeSurvived = 0;
 public:
 	UFUNCTION()
 	void DeleteSave();
 
 	UFUNCTION()
 	void Spectate();
+
+	float GetTimeSurvived() { return TimeSurvived; }
 
 	static UVisualizationInfo* CreateVisualInfo(AActor* InActor);
 	virtual void Clear() override;

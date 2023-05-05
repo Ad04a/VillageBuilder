@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/StaticMeshComponent.h"
 #include "Items/Item.h"
-#include "Headers/Interactable.h"
+#include "Headers/Interfaces/Interactable.h"
 #include "BaseBuildingComponent.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_TwoParams(FComponentStateSignature,int,ID, bool, State);

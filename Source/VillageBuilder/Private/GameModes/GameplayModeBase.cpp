@@ -9,6 +9,7 @@
 #include "DataTransfers/DataLink.h"
 #include "Characters/AnimalSpawner.h"
 #include "VillageBuilderPlayerController.h"
+#include "Headers/StatAndTraitEnums.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "SignificanceManager.h"
@@ -363,6 +364,16 @@ ASpectatorPawn* AGameplayModeBase::SpawnSpectator()
 }
 
 //---------------------CheatSection-----------------------------------
+
+void AGameplayModeBase::Die()
+{
+	Player->AddStatValue(EStat::Health, -10000);
+}
+
+void AGameplayModeBase::Starve()
+{
+	Player->AddStatValue(EStat::Hunger, -10000);
+}
 
 void AGameplayModeBase::ForceBuildComponents()
 {

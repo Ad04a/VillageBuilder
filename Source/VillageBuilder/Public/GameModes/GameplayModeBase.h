@@ -111,6 +111,12 @@ public:
 	void ForceBuildComponents();
 
 	UFUNCTION(Exec, Category = Cheat)
+	void Die();
+
+	UFUNCTION(Exec, Category = Cheat)
+	void Starve();
+
+	UFUNCTION(Exec, Category = Cheat)
 	void SpawnVillager(int Count);
 
 	UFUNCTION(Exec, Category = Cheat)

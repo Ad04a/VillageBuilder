@@ -88,8 +88,8 @@ TMap<UBaseBuildingComponent*, TSubclassOf<AItem>> UBuilderManager::UpdateNeededC
 	return ComponentClasses;
 }
 
-void UBuilderManager::Clear()
+void UBuilderManager::Clear(AVillager* InVillager)
 {
 	ResetBuildingCluster(false);
-	Super::Clear();
+	Super::Clear(InVillager);
 }

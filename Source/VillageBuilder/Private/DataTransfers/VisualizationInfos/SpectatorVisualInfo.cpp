@@ -37,10 +37,6 @@ void USpectatorVisualInfo::DeleteSave()
 {
 	GameMode->DeleteSave();
 }
-void USpectatorVisualInfo::Spectate()
-{
-
-}
 
 void USpectatorVisualInfo::Clear()
 {

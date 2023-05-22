@@ -26,6 +26,10 @@ void AVillageManager::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("AVillageBuilderGameModeBase::StartPlay IsValid(World) == false"));
 		return;
 	}
+
+	FString FilePath = FPaths::ProjectContentDir() + NamesFile;
+	FFileHelper::LoadFileToStringArray(Names, *FilePath);
+
 	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));
 	GameMode->SetVillage(this);
 	float SpawnTime = FMath::RandRange(MinTimeBetweenSpawn, MaxTimeBetweenSpawn);
@@ -67,7 +71,7 @@ void AVillageManager::Init(FVillageManagerLoadInfoStruct InLoadInfo)
 				break;
 			}
 		}
-		int TempIndex = -1;
+		int TempIndex = 0;
 		for (AVillager* Villager : Villagers)
 		{
 			if (Villager->ID == Contract.Value)
@@ -152,9 +156,14 @@ AVillager* AVillageManager::SpawnVillager(FVector Position, FVillagerLoadInfoStr
 		UE_LOG(LogTemp, Error, TEXT("AVillageManager::SpawnVillager IsValid(Villager) == false"));
 		return nullptr;
 	}
-
-	Villager->Init(LoadInfo);
-	if (Villager->ID == -1)
+	FString Name = "";
+	if (LoadInfo.Name == "Name")
+	{
+		int32 RandomIndex = FMath::RandRange(0, Names.Num() - 1);
+		Name = Names[RandomIndex];
+	}
+	Villager->Init(LoadInfo, Name);
+	if (Villager->ID == 0)
 	{
 		Villager->ID = CurrentID;
 		CurrentID += 1;
@@ -188,10 +197,13 @@ void AVillageManager::OnVillagerDeath(AVillager* Villager)
 	ABaseWorkStation* Station = GetWorkPlaceFor(Villager->ID);
 	if (Station != nullptr)
 	{
-		ManageEmployment(Station, -1);
+		ManageEmployment(Station, 0);
 	}
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	Villager->Destroy();
+
+	VillagerRequests.Remove(Villager->ID);
+	SendRequests();
 }
 
 void AVillageManager::AddVillagerToColony(AVillager* Villager)
@@ -211,6 +223,18 @@ void AVillageManager::AddVillagerToColony(AVillager* Villager)
 	GenerateSave();
 }
 
+AVillager* AVillageManager::GetVillagerByID(unsigned int ID)
+{
+	for (AVillager* Villager : Villagers)
+	{
+		if (Villager->ID == ID)
+		{
+			return Villager;
+		}
+	}
+	return nullptr;
+}
+
 AVillager* AVillageManager::GetWorkerAt(ABaseWorkStation* WorkStation)
 {
 	int WorkerID = *WorkStations.Find(WorkStation);
@@ -224,9 +248,9 @@ AVillager* AVillageManager::GetWorkerAt(ABaseWorkStation* WorkStation)
 	return nullptr;
 }
 
-ABaseWorkStation* AVillageManager::GetWorkPlaceFor(int WorkerID)
+ABaseWorkStation* AVillageManager::GetWorkPlaceFor(unsigned int WorkerID)
 {
-	for (TPair<ABaseWorkStation*, int>Station : WorkStations)
+	for (TPair<ABaseWorkStation*, unsigned int>Station : WorkStations)
 	{
 		if (Station.Value == WorkerID)
 		{
@@ -238,7 +262,7 @@ ABaseWorkStation* AVillageManager::GetWorkPlaceFor(int WorkerID)
 
 void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, int WorkerIndex)
 {
-
+	VillagerRequests.Remove(WorkerIndex);
 	if (IsValid(WorkStation) == false)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AVillageManager::ManageEmployment IsValid(WorkStation) == false"));
@@ -263,7 +287,7 @@ void AVillageManager::ManageEmployment(ABaseWorkStation* WorkStation, int Worker
 
 	if (GetWorkPlaceFor(WorkerID) != nullptr)
 	{
-		WorkStations.Add(GetWorkPlaceFor(WorkerID), -1);
+		WorkStations.Add(GetWorkPlaceFor(WorkerID), 0);
 	}
 	if (bWorksHere == false)
 	{
@@ -280,7 +304,7 @@ void AVillageManager::AddWorkStationToColony(ABaseWorkStation* WorkStation)
 {
 	PlacedBuildings.Add(WorkStation);
 	WorkStation->OnStartedConstruction.AddUniqueDynamic(this, &AVillageManager::AknowedgeStartedConstruction);
-	if (WorkStation->ID == -1)
+	if (WorkStation->ID == 0)
 	{
 		WorkStation->ID = CurrentID++;
 	}
@@ -308,7 +332,7 @@ void AVillageManager::AknowedgeFinishedBuilding(ABaseWorkStation* WorkStation)
 	UnderConstruction.Remove(WorkStation);
 	WorkStation->OnStartedConstruction.RemoveDynamic(this, &AVillageManager::AknowedgeStartedConstruction);
 	WorkStation->OnBuildingReady.Unbind();
-	WorkStations.Add(WorkStation, -1);
+	WorkStations.Add(WorkStation, 0);
 	GenerateSave();
 }
 
@@ -363,4 +387,44 @@ void AVillageManager::GenerateSave()
 		return;
 	}
 	OnStateUpdated.Broadcast();
+}
+
+void AVillageManager::CommitRequest(TArray<TSubclassOf<class AItem>> Classes, AVillager* Villager, bool IsFull)
+{
+	FRequest Request;
+	Request.Villager = Villager;
+	Request.WorkStation = GetWorkPlaceFor(Villager->ID);
+	Request.IsFull = IsFull;
+	Request.Items = Classes;
+
+	if (VillagerRequests.Contains(Villager->ID) == true)
+	{
+		FRequest CurrentRequest = *VillagerRequests.Find(Villager->ID);
+
+		if (Request == CurrentRequest)
+		{
+			return;
+		}
+	}
+
+	VillagerRequests.Emplace(Villager->ID, Request);
+
+	SendRequests();
+}
+
+void AVillageManager::SendRequests()
+{
+	TArray<FRequest> Requests;
+	VillagerRequests.GenerateValueArray(Requests);
+	OnRequestsUpdated.Broadcast(Requests);
+}
+
+void AVillageManager::BreakDataLinks_Implementation()
+{
+
+}
+
+FText AVillageManager::DisplayDataLinkText_Implementation()
+{
+	return FText::FromString("Manage Colony");
 }

@@ -323,7 +323,7 @@ void AVillager::BreakDataLinks_Implementation()
 
 FText AVillager::DisplayDataLinkText_Implementation()
 {
-	return FText::FromString( "Talk with " + Name);//Add name variable
+	return FText::FromString( "Talk with " + Name);
 }
 
 EItemType AVillager::GetEquipItemType()

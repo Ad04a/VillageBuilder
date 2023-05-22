@@ -61,6 +61,8 @@ void AVillageBuilderPlayerController::OnPossess(APawn* InPawn) {
 	
 	HUD->ShowMainWidget(ControlledVillageMayorPawn);
 	ControlledVillageMayorPawn->OnDeath.AddDynamic(this, &AVillageBuilderPlayerController::OnPlayerDeath);
+	ControlledVillageMayorPawn->OnInteraction.AddDynamic(this, &AVillageBuilderPlayerController::RecieveInteractionText);
+	ControlledVillageMayorPawn->OnDataLink.AddDynamic(this, &AVillageBuilderPlayerController::RecieveDataLinkText);
 
 	OnVillagerDeath.BindDynamic(HUD, &AGameplayHUDBase::Clear);
 
@@ -94,6 +96,46 @@ void AVillageBuilderPlayerController::InitiateLink()
 		return;
 	}
 	ControlledVillageMayorPawn->InitiateLink();
+}
+
+void AVillageBuilderPlayerController::RecieveInteractionText(FText Text)
+{
+	FText NewText;
+	if (Text.IsEmpty() == true)
+	{
+		OnInteraction.Broadcast(NewText);
+		return;
+	}
+	FKey Key;
+	if (IsValid(PlayerInput) == false)
+	{
+		return;
+	}
+	const TArray<FInputActionKeyMapping> KeyMappings = PlayerInput->GetKeysForAction(InteractBinding);
+	Key = KeyMappings[0].Key;
+
+	NewText = FText::FromString(Key.GetDisplayName().ToString() + " " + Text.ToString());
+	OnInteraction.Broadcast(NewText);
+}
+
+void AVillageBuilderPlayerController::RecieveDataLinkText(FText Text)
+{
+	FText NewText;
+	if (Text.IsEmpty() == true)
+	{
+		OnDataLink.Broadcast(NewText);
+		return;
+	}
+	FKey Key;
+	if (IsValid(PlayerInput) == false)
+	{
+		return;
+	}
+	const TArray<FInputActionKeyMapping> KeyMappings = PlayerInput->GetKeysForAction(DataLinkBinding);
+	Key = KeyMappings[0].Key;
+	
+	NewText = FText::FromString(Key.GetDisplayName().ToString() + " " + Text.ToString());
+	OnDataLink.Broadcast(NewText);
 }
 
 void AVillageBuilderPlayerController::ShowTraitMenu()

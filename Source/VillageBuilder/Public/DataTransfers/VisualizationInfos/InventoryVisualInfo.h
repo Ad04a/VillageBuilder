@@ -15,6 +15,8 @@ class VILLAGEBUILDER_API UInventoryVisualInfo : public UVisualizationInfo
 protected:
 	class UStorageComponent* Storage;
 
+	FString VillagerName;
+
 	class UDragDropOperation* CurrentOperation;
 
 	UFUNCTION()
@@ -42,4 +44,5 @@ public:
 	virtual void Clear() override;
 	FVector2D GetSize();
 	void InvokeInitial();
+	FString GetVillagerName() { return VillagerName; }
 };

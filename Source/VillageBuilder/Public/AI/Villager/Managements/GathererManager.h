@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class VILLAGEBUILDER_API UGathererManager : public UWorkerManager, public FTickableGameObject
+class VILLAGEBUILDER_API UGathererManager : public UWorkerManager
 {
 	GENERATED_BODY()
 protected:
@@ -27,10 +27,9 @@ protected:
 public:
 
 	void Tick(float DeltaTime) override;
-	TStatId GetStatId() const override;
 
 	virtual bool CheckGivenKeys() override;
-	virtual void Clear() override;
+	virtual void Clear(AVillager* InVillager) override;
 
 	void Init(class AVillager* InGatherer, float BaseRadius, TSubclassOf<class AItem> SearchClass);
 

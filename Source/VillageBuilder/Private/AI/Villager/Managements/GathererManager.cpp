@@ -24,13 +24,15 @@ bool UGathererManager::CheckGivenKeys()
 
 void UGathererManager::Init(class AVillager* InGatherer, float BaseRadius, TSubclassOf<class AItem> SearchClass)
 {
-	Gatherer	= InGatherer;
-	Radius		= BaseRadius;
+	Gatherer = InGatherer;
+	Radius = BaseRadius;
 	TargetClass = SearchClass;
 }
 
 void UGathererManager::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+
 	if (IsValid(Gatherer) == false)
 	{
 		return;
@@ -55,7 +57,7 @@ void UGathererManager::Tick(float DeltaTime)
 	Shape.SetSphere(Radius);
 
 	World->SweepMultiByChannel(OutHits, Gatherer->GetActorLocation(), Gatherer->GetActorLocation(), FQuat::MakeFromRotator(Gatherer->GetActorRotation()),
-							   ECC_GameTraceChannel2, Shape, CQP, FCollisionResponseParams::FCollisionResponseParams());
+		ECC_GameTraceChannel2, Shape, CQP, FCollisionResponseParams::FCollisionResponseParams());
 
 	for (FHitResult Hit : OutHits)
 	{
@@ -79,17 +81,11 @@ void UGathererManager::Tick(float DeltaTime)
 		return;
 	}
 	BlackBoard->SetValueAsObject(GivenKeys[0].SelectedKeyName, RememberedItems[0]);
-	
+
 }
 
-
-TStatId UGathererManager::GetStatId() const
-{
-	return TStatId();
-}
-
-void UGathererManager::Clear()
+void UGathererManager::Clear(AVillager* InVillager)
 {
 	Init(nullptr, 0, nullptr);
-	Super::Clear();
+	Super::Clear(InVillager);
 }

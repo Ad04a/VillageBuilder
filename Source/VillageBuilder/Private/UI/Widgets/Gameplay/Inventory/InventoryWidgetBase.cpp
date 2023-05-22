@@ -10,6 +10,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Border.h"
+#include "Components/TextBlock.h"
 #include "Blueprint/DragDropOperation.h"
 
 
@@ -27,6 +28,8 @@ void UInventoryWidgetBase::Init(UVisualizationInfo* VisualInfo)
 		UE_LOG(LogTemp, Error, TEXT("UInventoryWidgetBase::RevieveUpdatedItems IsValid(World) == false"));
 		return;
 	}
+
+	EntityName->SetText(FText::FromString(InventoryInfo->GetVillagerName()));
 
 	DropSpace->OnDropStarted.BindDynamic(this, &UInventoryWidgetBase::RegisterChiledDropped);
 

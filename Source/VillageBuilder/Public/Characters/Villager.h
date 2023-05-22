@@ -84,7 +84,7 @@ protected:
 
 public:	
 	UPROPERTY(VisibleAnywhere, Category = Identification)
-	unsigned int ID = -1;
+	unsigned int ID = 0;
 
 	bool bCanInteract = true;
 

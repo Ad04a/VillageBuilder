@@ -72,6 +72,7 @@ void ABaseWorkStation::Init(FWorkStationInfoStruct InLoadInfo )
 	BuildingComponent->Init(InLoadInfo.BuildingClusterInfo);
 	StorageComponent->Init(InLoadInfo.InventoryInfo);
 	ID = InLoadInfo.ID;
+	
 }
 
 FWorkStationInfoStruct ABaseWorkStation::GetSaveInfo()

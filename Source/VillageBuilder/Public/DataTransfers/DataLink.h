@@ -16,7 +16,8 @@ enum EDataLinkType {
 	PlayerVillager      UMETA(DisplayName = "PlayerVillager"),
 	PlayerStation 		UMETA(DisplayName = "PlayerStation"),
 	PlayerBuildTool		UMETA(DisplayName = "PlayerBuildTool"),
-	ControllerSelf		UMETA(DisplayName = "ControllerSelf")
+	ControllerSelf		UMETA(DisplayName = "ControllerSelf"),
+	PlayerColony		UMETA(DisplayName = "PlayerColony")
 };
 
 UCLASS()

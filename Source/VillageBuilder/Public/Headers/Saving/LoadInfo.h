@@ -10,7 +10,7 @@ struct FVillagerLoadInfoStruct
 	GENERATED_BODY()
 
 	UPROPERTY()
-	FString Name;
+	FString Name = "Name";
 
 	UPROPERTY()
 	TMap<TEnumAsByte<ETrait>, FTraitInfoStruct> TraitsMap;
@@ -25,7 +25,7 @@ struct FVillagerLoadInfoStruct
 	TMap<FIntPoint, FItemInfoStruct> InventoryInfo;
 
 	UPROPERTY()
-	int ID = -1;
+	int ID = 0;
 
 	inline bool operator==(const FVillagerLoadInfoStruct& other) const
 	{

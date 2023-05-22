@@ -60,8 +60,10 @@ void UBTS_WorkerService::OnBecomeRelevant(UBehaviorTreeComponent& OwnerComponent
 	}
 	if (IsValid(Controller->WorkManager) == true)
 	{
-		Controller->WorkManager->Clear();
+		Controller->WorkManager->Clear(Self);
 	}
-	Controller->WorkManager = UWorkerManager::CreateInstance(this, ManagerClass, Village, BlackBoard, KeysToPassToManager);
+	UWorkerManager* NewManager = UWorkerManager::CreateInstance(this, ManagerClass, Village, BlackBoard, KeysToPassToManager, Self);
+	Self->OnDeath.AddDynamic(NewManager, &UWorkerManager::Clear);
+	Controller->WorkManager = NewManager;
 	BlackBoard->SetValueAsObject(WorkStation.SelectedKeyName, WorkStationActor);
 }

@@ -18,9 +18,6 @@ protected:
 	class UButton* DeleteButton;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
-	class UButton* SpectateButton;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (BindWidget))
 	class UTextBlock* SurvivedTime;
 
 public:

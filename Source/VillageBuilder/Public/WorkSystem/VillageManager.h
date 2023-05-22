@@ -6,12 +6,14 @@
 #include "GameFramework/Actor.h"
 #include "Headers/StatAndTraitStructure.h"
 #include "Headers/Professions.h"
+#include "Headers/Request.h"
 #include "Characters/Villager.h"
 #include "WorkSystem/BaseWorkStation.h"
 #include "VillageManager.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE_OneParam(FVilligersUpdatedSignature, TArray<AVillager*>, Villagers);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FStateUpdatedSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRequestsUpdatedSignature, TArray<FRequest>, Requests);
 
 USTRUCT(BlueprintType)
 struct FVillageManagerLoadInfoStruct
@@ -47,7 +49,7 @@ struct FVillageManagerLoadInfoStruct
 };
 
 UCLASS()
-class VILLAGEBUILDER_API AVillageManager : public AActor 
+class VILLAGEBUILDER_API AVillageManager : public AActor, public IDataLinkable
 {
 	GENERATED_BODY()
 	
@@ -60,7 +62,7 @@ private:
 	FTimerHandle SpawnHandle;
 	bool bCanGenerateSaves = true;
 	UPROPERTY(VisibleAnywhere, Category = Identification)
-	unsigned int CurrentID = 0;
+	unsigned int CurrentID = 1;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -71,7 +73,10 @@ protected:
 	TArray<AVillager*> Villagers;
 
 	UPROPERTY(VisibleAnywhere)
-	TMap<ABaseWorkStation*, int> WorkStations; //(WorkStation, HiredVillager)
+	TMap<unsigned int, FRequest> VillagerRequests;
+
+	UPROPERTY(VisibleAnywhere)
+	TMap<ABaseWorkStation*, unsigned int> WorkStations; //(WorkStation, HiredVillager)
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<ABaseWorkStation*> UnderConstruction;
@@ -98,6 +103,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = VillageProperties)
 	TSubclassOf<AVillager> VillagerClass;
 
+	UPROPERTY(VisibleAnywhere, Category = VillagerProperties)
+	TArray<FString> Names;
+
+	UPROPERTY(EditDefaultsOnly, Category = VillagerProperties)
+	FString NamesFile = "Names.txt";
+
 	UFUNCTION()
 	AVillager* SpawnVillager(FVector Position = FVector(0, 0, 0), FVillagerLoadInfoStruct LoadInfo = FVillagerLoadInfoStruct());
 
@@ -121,6 +132,8 @@ protected:
 
 public:	
 	
+	FRequestsUpdatedSignature OnRequestsUpdated;
+
 	void GenerateSave();
 
 	UFUNCTION()
@@ -139,12 +152,29 @@ public:
 
 	FVillageManagerLoadInfoStruct GetSaveInfo();
 
+	AVillager* GetVillagerByID(unsigned int ID);
 	TArray<AVillager*> GetAllVillagers() { return Villagers; }
 	AVillager* GetWorkerAt(ABaseWorkStation* WorkStation);
-	ABaseWorkStation* GetWorkPlaceFor(int WorkerID);
+	ABaseWorkStation* GetWorkPlaceFor(unsigned int WorkerID);
 	UFUNCTION()
 	void ManageEmployment(ABaseWorkStation* WorkStation, int WorkerIndex);
 	ABaseWorkStation* GetFirstForConstructing();
+
+
+	void CommitRequest(TArray<TSubclassOf<class AItem>> Classes, class AVillager* Villager, bool IsFull = false);
+
+	UFUNCTION()
+	void SendRequests();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "DataLink")
+	void BreakDataLinks();
+	virtual void BreakDataLinks_Implementation();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "DataLink")
+	FText DisplayDataLinkText();
+	virtual FText DisplayDataLinkText_Implementation();
+
+	
 
 	//---------------------CheatSection-----------------------------------
 	friend class AGameplayModeBase;

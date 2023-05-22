@@ -77,7 +77,6 @@ EBTNodeResult::Type UBTT_EquipRightItems::ExecuteTask(UBehaviorTreeComponent& Ow
 		{
 			if (ItemClass->IsChildOf(TempClass))
 			{
-				UE_LOG(LogTemp, Error, TEXT("Vleze"));
 				Check = true;
 				ItemClass = TempClass;
 				break;
@@ -140,6 +139,7 @@ EBTNodeResult::Type UBTT_EquipRightItems::ExecuteTask(UBehaviorTreeComponent& Ow
 		VillagerStorage->TryPlaceItem(Item, true);
 		
 	}
+
 	if (NotifyIfFull == false)
 	{
 		FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
@@ -152,6 +152,8 @@ EBTNodeResult::Type UBTT_EquipRightItems::ExecuteTask(UBehaviorTreeComponent& Ow
 		IsInventorySame = IsInventorySame && NewItems.Contains(Item.Key);
 	}
 	BlackBoard->SetValueAsBool(IsFull.SelectedKeyName, IsInventorySame);
+
+	WorerkService->CommitRequest(NeededClasses, IsInventorySame);
 
 	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;

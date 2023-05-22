@@ -10,10 +10,12 @@
 #include "DataTransfers/VisualizationInfos/ConstructionVisualInfo.h"
 #include "DataTransfers/VisualizationInfos/SpectatorVisualInfo.h"
 #include "DataTransfers/VisualizationInfos/InviteVisualInfo.h"
+#include "DataTransfers/VisualizationInfos/RequestVisualInfo.h"
 
 #include "GameModes/GameplayModeBase.h"
 #include "Characters/VillageMayor.h"
 #include "WorkSystem/BaseWorkStation.h"
+#include "WorkSystem/VillageManager.h"
 #include "Items/BuilderItem.h"
 #include "Headers/Interfaces/DataLinkable.h"
 #include "Headers/Professions.h"
@@ -139,6 +141,19 @@ bool UDataLink::EstablishConnection()
 		LinkType = EDataLinkType::ControllerSelf;
 		TargetInfo.Add(EVisualiationTypes::Spectating, USpectatorVisualInfo::CreateVisualInfo(Initiator));
 		TargetInfo.Add(EVisualiationTypes::Options, UOptionsVisualInfo::CreateVisualInfo(Initiator));
+		bShouldVisualize = true;
+		return true;
+	}
+
+	if (Initiator->IsA(AVillageMayor::StaticClass()) == true && Target->IsA(AVillageManager::StaticClass()) == true)
+	{
+		LinkType = EDataLinkType::PlayerColony;
+
+		AVillager* Player = Cast<AVillager>(Initiator);
+		Player->OnLinkBroken.AddDynamic(this, &UDataLink::BreakConnection);
+
+		TargetInfo.Add(EVisualiationTypes::Request, URequestVisualInfo::CreateVisualInfo(Target));
+
 		bShouldVisualize = true;
 		return true;
 	}

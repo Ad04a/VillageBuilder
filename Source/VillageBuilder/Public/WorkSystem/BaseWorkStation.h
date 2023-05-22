@@ -70,7 +70,7 @@ struct FWorkStationInfoStruct
 	TMap<FIntPoint, FItemInfoStruct> InventoryInfo;
 
 	UPROPERTY()
-	int ID = -1;
+	unsigned int ID = 0;
 
 	inline bool operator==(const FWorkStationInfoStruct& other) const
 	{

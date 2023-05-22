@@ -74,9 +74,18 @@ protected:
 	UFUNCTION()
 	void OpenSpectatorMenu();
 
+	UFUNCTION()
+	void RecieveInteractionText(FText Text);
+
+	UFUNCTION()
+	void RecieveDataLinkText(FText Text);
+
 	FVillagerDeathSignature OnVillagerDeath;
 
 public:
+
+	FInteractingSignature OnInteraction;
+	FInteractingSignature OnDataLink;
 
 	void Init(FPlayerControllerInfoStruct InLoadInfo);
 	FPlayerControllerInfoStruct GetSaveInfo();

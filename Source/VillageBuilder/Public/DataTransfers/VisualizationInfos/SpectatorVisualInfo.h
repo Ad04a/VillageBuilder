@@ -21,9 +21,6 @@ public:
 	UFUNCTION()
 	void DeleteSave();
 
-	UFUNCTION()
-	void Spectate();
-
 	float GetTimeSurvived() { return TimeSurvived; }
 
 	static UVisualizationInfo* CreateVisualInfo(AActor* InActor);

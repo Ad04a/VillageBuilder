@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 
+#include "VillageBuilderPlayerController.h"
 #include "UI/Widgets/Gameplay/MainPurpose/MainPurposeWidgetBase.h"
 #include "UI/Widgets/Gameplay/DataLinks/DataLinkWidgetBase.h"
 #include "DataTransfers/DataLink.h"
@@ -73,9 +74,14 @@ void AGameplayHUDBase::ShowMainWidget(class AVillageMayor* Player)
 	{
 		return;
 	}
+	AVillageBuilderPlayerController* PC = Cast<AVillageBuilderPlayerController>(PlayerOwner);
+	if (IsValid(PC) == false)
+	{
+		return;
+	}
 	Player->OnStatUpdated.AddDynamic(MainWidget, &UMainPurposeWidgetBase::PassStatUpdate);
-	Player->OnInteraction.AddDynamic(MainWidget, &UMainPurposeWidgetBase::SetInteractionText);
-	Player->OnDataLink.AddDynamic(MainWidget, &UMainPurposeWidgetBase::SetDataLinkText);
+	PC->OnInteraction.AddDynamic(MainWidget, &UMainPurposeWidgetBase::SetInteractionText);
+	PC->OnDataLink.AddDynamic(MainWidget, &UMainPurposeWidgetBase::SetDataLinkText);
 	Player->AcknowledgeWidgetBinding();
 	PlayerOwner->bShowMouseCursor = false;
 	PlayerOwner->SetInputMode(FInputModeGameOnly());

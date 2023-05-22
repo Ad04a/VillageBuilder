@@ -6,6 +6,7 @@
 #include "AI/Villager/VillagerAIController.h"
 #include "Characters/Villager.h"
 #include "Components/StorageComponent.h"
+#include "WorkSystem/BaseWorkStation.h"
 #include "Items/StoredItemInfo.h"
 
 
@@ -39,7 +40,6 @@ EBTNodeResult::Type UBTT_SortInventory::ExecuteTask(UBehaviorTreeComponent& Owne
 		return EBTNodeResult::Failed;
 	}
 
-
 	AVillager* Villager = Controller->GetControlledVillager();
 	if (IsValid(Villager) == false)
 	{
@@ -60,7 +60,6 @@ EBTNodeResult::Type UBTT_SortInventory::ExecuteTask(UBehaviorTreeComponent& Owne
 	}
 
 	VillagerStorage->Sort(VillagerStorage->TakeItemByClass(SelectedClass));
-
 
 	FinishLatentTask(OwnerComponent, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;

@@ -15,7 +15,6 @@ void USpectatorWidgetBase::Init(UVisualizationInfo* VisualInfo)
 		UE_LOG(LogTemp, Warning, TEXT("USpectatorWidgetBase::Init Given VisualInfo doesnt mach the required type"));
 	}
 	DeleteButton->OnClicked.AddDynamic(SpectatorInfo, &USpectatorVisualInfo::DeleteSave);
-	SpectateButton->OnClicked.AddDynamic(SpectatorInfo, &USpectatorVisualInfo::Spectate);
 
 	SurvivedTime->SetText(FText::FromString(FString::FromInt(int(SpectatorInfo->GetTimeSurvived() / 150)) + " days"));
 }

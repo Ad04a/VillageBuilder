@@ -19,6 +19,7 @@ UVisualizationInfo* UInventoryVisualInfo::CreateVisualInfo(AActor* InActor)
 	if (IsValid(Villager) == true)
 	{
 		Info->Storage = Villager->GetStorageComponent();
+		Info->VillagerName = Villager->GetName();
 	}
 	ABaseWorkStation* WorkStation = Cast<ABaseWorkStation>(InActor);
 	if (IsValid(WorkStation) == true)

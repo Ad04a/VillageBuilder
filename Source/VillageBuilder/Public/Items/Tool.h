@@ -14,6 +14,9 @@ struct FToolData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float BaseDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UNiagaraSystem* HitParticle;
 };
 
 UCLASS()
@@ -37,6 +40,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Tool )
 	float BaseDamage;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	class UNiagaraSystem* HitParticle;
+
+	void GenerateHit(FVector Location);
+
 public:
+
 
 };

@@ -5,6 +5,8 @@
 #include "Characters/Villager.h"
 #include "Engine/StaticMeshActor.h"
 
+#include "Kismet/GameplayStatics.h"
+
 UBaseBuildingComponent::UBaseBuildingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
@@ -49,6 +51,12 @@ void UBaseBuildingComponent::Build()
 	NewMesh->GetStaticMeshComponent()->SetStaticMesh(GetStaticMesh());
 	NewMesh->GetStaticMeshComponent()->SetMaterial(0, PlacedMaterial);
 	NewMesh->SetMobility(EComponentMobility::Static);
+
+	if (IsValid(PlacedSound) == true)
+	{
+		UGameplayStatics::PlaySoundAtLocation(World, PlacedSound, GetComponentLocation());
+	}
+
 	DestroyComponent();
 }
 

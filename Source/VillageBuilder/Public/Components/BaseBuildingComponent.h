@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	UMaterialInterface* PlacedMaterial;
 
+	UPROPERTY(EditDefaultsOnly)
+	class USoundBase* PlacedSound;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Interact")
 	FText InteractionText;
 

@@ -3,7 +3,7 @@
 
 #include "Items/Tool.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "NiagaraFunctionLibrary.h"
 
 ATool::ATool()
 {
@@ -62,6 +62,7 @@ void ATool::Tick(float DeltaTime)
 	{
 		DamagedActors.Add(HitActor);
 		UGameplayStatics::ApplyPointDamage(HitActor, Damage, HitResult.ImpactNormal, HitResult, nullptr, this, UDamageType::StaticClass());
+		GenerateHit(HitResult.Location);
 	}
 	if (HitActor == HandleHitActor)
 	{
@@ -71,6 +72,7 @@ void ATool::Tick(float DeltaTime)
 	{
 		DamagedActors.Add(HandleHitActor);
 		UGameplayStatics::ApplyPointDamage(HandleHitActor, Damage / 3, HandleHitResult.ImpactNormal, HandleHitResult, nullptr, this, UDamageType::StaticClass());
+		GenerateHit(HandleHitResult.Location);
 	}
 }
 
@@ -98,5 +100,20 @@ void ATool::LoadFromDataTable()
 		return;
 	}
 
-	BaseDamage = ToolData->BaseDamage;
+	BaseDamage  = ToolData->BaseDamage;
+	HitParticle = ToolData->HitParticle;
+}
+
+void ATool::GenerateHit(FVector Location)
+{
+	UWorld* World = GetWorld();
+	if (IsValid(World) == false)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ATool::GenerateHit IsValid(World) == false"));
+	}
+	FRotator Roatation = GetActorRotation();
+	if (IsValid(HitParticle) == true)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitParticle, Location, Roatation);
+	}
 }

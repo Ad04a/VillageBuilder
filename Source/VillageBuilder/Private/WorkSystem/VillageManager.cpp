@@ -197,7 +197,7 @@ void AVillageManager::OnVillagerDeath(AVillager* Villager)
 	ABaseWorkStation* Station = GetWorkPlaceFor(Villager->ID);
 	if (Station != nullptr)
 	{
-		ManageEmployment(Station, 0);
+		ManageEmployment(Station, -1);
 	}
 	OnVillagersUpdated.ExecuteIfBound(Villagers);
 	Villager->Destroy();

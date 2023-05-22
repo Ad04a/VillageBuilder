@@ -389,6 +389,13 @@ void AVillageManager::GenerateSave()
 	OnStateUpdated.Broadcast();
 }
 
+TArray<ABaseWorkStation*> AVillageManager::GetWorkStations()
+{
+	TArray<ABaseWorkStation*> Stations;
+	WorkStations.GenerateKeyArray(Stations);
+	return Stations;
+}
+
 void AVillageManager::CommitRequest(TArray<TSubclassOf<class AItem>> Classes, AVillager* Villager, bool IsFull)
 {
 	FRequest Request;
@@ -417,6 +424,19 @@ void AVillageManager::SendRequests()
 	TArray<FRequest> Requests;
 	VillagerRequests.GenerateValueArray(Requests);
 	OnRequestsUpdated.Broadcast(Requests);
+}
+
+FRequest AVillageManager::GetFirstRequest()
+{
+	FRequest RequestToGet;
+	for (TPair<unsigned int, FRequest> Request : VillagerRequests)
+	{
+		if (Request.Value.Items.IsEmpty() == false && IsValid(Request.Value.WorkStation) == true)
+		{
+			return Request.Value;
+		}
+	}
+	return RequestToGet;
 }
 
 void AVillageManager::BreakDataLinks_Implementation()

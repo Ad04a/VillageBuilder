@@ -156,12 +156,17 @@ public:
 	TArray<AVillager*> GetAllVillagers() { return Villagers; }
 	AVillager* GetWorkerAt(ABaseWorkStation* WorkStation);
 	ABaseWorkStation* GetWorkPlaceFor(unsigned int WorkerID);
+
 	UFUNCTION()
 	void ManageEmployment(ABaseWorkStation* WorkStation, int WorkerIndex);
+
 	ABaseWorkStation* GetFirstForConstructing();
 
+	TArray<class ABaseWorkStation*> GetWorkStations();
 
 	void CommitRequest(TArray<TSubclassOf<class AItem>> Classes, class AVillager* Villager, bool IsFull = false);
+
+	FRequest GetFirstRequest();
 
 	UFUNCTION()
 	void SendRequests();

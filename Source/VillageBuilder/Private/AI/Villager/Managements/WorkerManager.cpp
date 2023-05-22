@@ -15,19 +15,19 @@ UWorkerManager* UWorkerManager::CreateInstance(UObject* Outer, TSubclassOf<UWork
 {
 	if (IsValid(Outer) == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTS_WorkerService::OnBecomeRelevant No Outer object Specified or is invalid"));
+		UE_LOG(LogTemp, Error, TEXT("UWorkerManager::CreateInstance No Outer object Specified or is invalid"));
 		return nullptr;
 	}
 
 	if (IsValid(ManagerClass) == false)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UBTS_WorkerService::OnBecomeRelevant No Class Specified"));
+		UE_LOG(LogTemp, Warning, TEXT("UWorkerManager::CreateInstance No Class Specified"));
 		return nullptr;
 	}
 
 	UWorkerManager* WorkerManager = NewObject<UWorkerManager>(Outer, ManagerClass);
 	if (IsValid(WorkerManager) == false) {
-		UE_LOG(LogTemp, Error, TEXT("UBTS_WorkerService::OnBecomeRelevant IsValid(WorkerManager) == false"));
+		UE_LOG(LogTemp, Error, TEXT("UWorkerManager::CreateInstance IsValid(WorkerManager) == false"));
 		return nullptr;
 	}
 
@@ -35,11 +35,15 @@ UWorkerManager* UWorkerManager::CreateInstance(UObject* Outer, TSubclassOf<UWork
 	WorkerManager->BlackBoard = InBlackboard;
 	WorkerManager->GivenKeys = InKeys;
 	WorkerManager->WorkStation = InVillage->GetWorkPlaceFor(InVillager->ID);
+	if (IsValid(WorkerManager->WorkStation) == false)
+	{
+		UE_LOG(LogTemp, Display, TEXT("UWorkerManager::CreateInstance IsValid(WorkerManager->WorkStation) == false for Villager with ID: %d"), InVillager->ID );
+	}
 	WorkerManager->Villager = InVillager;
 
 	if (WorkerManager->CheckGivenKeys() == false)
 	{
-		UE_LOG(LogTemp, Error, TEXT("UBTS_WorkerService::OnBecomeRelevant Passed Blackboard Keys are not valid for the given WorkManager of class %s"), *WorkerManager->GetClass()->GetName());
+		UE_LOG(LogTemp, Error, TEXT("UWorkerManager::CreateInstance Passed Blackboard Keys are not valid for the given WorkManager of class %s"), *WorkerManager->GetClass()->GetName());
 		return nullptr;
 	}
 

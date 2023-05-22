@@ -5,7 +5,7 @@
 #include "Items/StoredItemInfo.h"
 #include "Items/Item.h"
 
-void UStorageComponent::Init(TMap<FIntPoint, FItemInfoStruct> SavedItems)
+void UStorageComponent::Init(TMap<FIntPoint, FItemInfoStruct> SavedItems, int DexModifier)
 {
 	if (IsValid(StorageDataTable) == false)
 	{
@@ -22,6 +22,10 @@ void UStorageComponent::Init(TMap<FIntPoint, FItemInfoStruct> SavedItems)
 	}
 
 	Rows	 = StorageData->Rows;
+	for (int i = DexModifier; i >= 10; i -= 10)
+	{
+		Rows += 1;
+	}
 	Columns  = StorageData->Columns;
 	Items.Init(nullptr, Rows * Columns);
 	if (false)

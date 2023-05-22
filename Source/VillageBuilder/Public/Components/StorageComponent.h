@@ -67,7 +67,7 @@ public:
 	FItemSignature OnFirstItemUpdated;
 	FItemSignature OnItemRemoved;
 
-	void Init(TMap<FIntPoint, FItemInfoStruct> SavedItems = TMap<FIntPoint, FItemInfoStruct>());
+	void Init(TMap<FIntPoint, FItemInfoStruct> SavedItems = TMap<FIntPoint, FItemInfoStruct>(), int DexModifier = 0);
 	TMap<FIntPoint, FItemInfoStruct> GetSaveInfo();
 	int GetRows() { return Rows; }
 	int GetColumns() { return Columns; }

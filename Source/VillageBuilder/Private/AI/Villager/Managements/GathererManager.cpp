@@ -31,10 +31,16 @@ void UGathererManager::Init(class AVillager* InGatherer, float BaseRadius, TSubc
 
 void UGathererManager::Tick(float DeltaTime)
 {
+	if (CanTick == false)
+	{
+		return;
+	}
+
 	Super::Tick(DeltaTime);
 
 	if (IsValid(Gatherer) == false)
 	{
+		UE_LOG(LogTemp, Error, TEXT(" UGathererManager::Tick IsValid(Gatherer) == false"));
 		return;
 	}
 

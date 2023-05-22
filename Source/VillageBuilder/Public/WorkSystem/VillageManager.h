@@ -24,7 +24,7 @@ struct FVillageManagerLoadInfoStruct
 	TArray<FVillagerLoadInfoStruct> PassingVillagers = TArray<FVillagerLoadInfoStruct>();
 
 	UPROPERTY()
-	int CurrentID;
+	unsigned int CurrentID;
 
 	UPROPERTY()
 	TArray<FVillagerLoadInfoStruct> Villagers = TArray<FVillagerLoadInfoStruct>();
@@ -33,7 +33,7 @@ struct FVillageManagerLoadInfoStruct
 	TArray<FWorkStationInfoStruct> WorkStations = TArray<FWorkStationInfoStruct>();
 	
 	UPROPERTY()
-	TMap<int, int> WorkPlaces;
+	TMap<unsigned int, unsigned int> WorkPlaces;
 
 	UPROPERTY()
 	FTransform Transform;

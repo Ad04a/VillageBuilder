@@ -52,7 +52,7 @@ void UBaseBuildingComponent::Build()
 	NewMesh->GetStaticMeshComponent()->SetMaterial(0, PlacedMaterial);
 	NewMesh->SetMobility(EComponentMobility::Static);
 
-	if (IsValid(PlacedSound) == true)
+	if (IsValid(PlacedSound) == true && bIsActive == true)
 	{
 		UGameplayStatics::PlaySoundAtLocation(World, PlacedSound, GetComponentLocation());
 	}

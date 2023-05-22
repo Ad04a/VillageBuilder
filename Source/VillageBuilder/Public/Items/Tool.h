@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Items/Item.h"
 #include "Characters/Villager.h"
+#include "Headers/StatAndTraitEnums.h"
 #include "Tool.generated.h"
 
 USTRUCT(BlueprintType)
@@ -17,6 +18,13 @@ struct FToolData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UNiagaraSystem* HitParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TEnumAsByte<ETrait>  ProficiencyModifier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ProficiencyValue;
+
 };
 
 UCLASS()
@@ -42,6 +50,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	class UNiagaraSystem* HitParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TEnumAsByte<ETrait> ProficiencyModifier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ProficiencyValue;
 
 	void GenerateHit(FVector Location);
 

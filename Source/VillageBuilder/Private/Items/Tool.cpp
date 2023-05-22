@@ -57,10 +57,11 @@ void ATool::Tick(float DeltaTime)
 		return;
 	}
 
-	float Damage = BaseDamage;
+	float Damage = BaseDamage * (UsingVillager->GetTrait(ProficiencyModifier)/ProficiencyValue);
 	if (HitActor != nullptr )
 	{
 		DamagedActors.Add(HitActor);
+		UE_LOG(LogTemp, Error, TEXT("%f"), Damage);
 		UGameplayStatics::ApplyPointDamage(HitActor, Damage, HitResult.ImpactNormal, HitResult, nullptr, this, UDamageType::StaticClass());
 		GenerateHit(HitResult.Location);
 	}
@@ -102,6 +103,8 @@ void ATool::LoadFromDataTable()
 
 	BaseDamage  = ToolData->BaseDamage;
 	HitParticle = ToolData->HitParticle;
+	ProficiencyModifier = ToolData->ProficiencyModifier;
+	ProficiencyValue = ToolData->ProficiencyValue;
 }
 
 void ATool::GenerateHit(FVector Location)

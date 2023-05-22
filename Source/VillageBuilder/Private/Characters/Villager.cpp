@@ -6,7 +6,8 @@
 #include "GameModes/GameplayModeBase.h"
 #include "Components/StorageComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "GameFramework/PawnMovementComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AVillager::AVillager()
@@ -29,9 +30,14 @@ void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
 		ID		  = InLoadInfo.ID;
 		SetActorTransform(InLoadInfo.Transform);
 		bIsLoadingFromFile = true;
-		
+		UCharacterMovementComponent* CharacterMovementComp = GetCharacterMovement();
+
+		float WalkSpeed = CharacterMovementComp->MaxWalkSpeed;
+		CharacterMovementComp->MaxAcceleration = CharacterMovementComp->MaxAcceleration * GetTrait(ETrait::Agility) / 25;
+		CharacterMovementComp->MaxWalkSpeed = WalkSpeed * GetTrait(ETrait::Agility) / 25;
+		Inventory->Init(InLoadInfo.InventoryInfo, GetTrait(ETrait::Dexterity));
 	}
-	Inventory->Init(InLoadInfo.InventoryInfo);
+	
 	if (InName != "")
 	{
 		Name = InName;
@@ -73,6 +79,7 @@ void AVillager::Init(FVillagerLoadInfoStruct InLoadInfo, FString InName)
 		}
 		Trait->Level = FMath::RandRange(1, PossibleLevel);
 	}
+	Inventory->Init(InLoadInfo.InventoryInfo, GetTrait(ETrait::Dexterity));
 	CalculateStats();
 }
 
@@ -100,6 +107,12 @@ void AVillager::CalculateStats()
 		Stat->Max = Stat->Default + Trait->Level * Stat->PerLevel;
 		Stat->Current = Stat->Max;
 	}
+
+	UCharacterMovementComponent* CharacterMovementComp = GetCharacterMovement();
+
+	float WalkSpeed = CharacterMovementComp->MaxWalkSpeed;
+	CharacterMovementComp->MaxAcceleration = CharacterMovementComp->MaxAcceleration * GetTrait(ETrait::Agility) / 25;
+	CharacterMovementComp->MaxWalkSpeed = WalkSpeed * GetTrait(ETrait::Agility) / 25;
 }
 
 FVillagerLoadInfoStruct AVillager::GetSaveInfo()

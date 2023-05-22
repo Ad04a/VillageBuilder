@@ -25,7 +25,7 @@ struct FVillagerLoadInfoStruct
 	TMap<FIntPoint, FItemInfoStruct> InventoryInfo;
 
 	UPROPERTY()
-	int ID = 0;
+	unsigned int ID = 0;
 
 	inline bool operator==(const FVillagerLoadInfoStruct& other) const
 	{

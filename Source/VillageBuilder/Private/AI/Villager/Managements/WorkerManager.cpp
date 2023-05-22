@@ -94,7 +94,10 @@ TStatId UWorkerManager::GetStatId() const
 
 void UWorkerManager::Clear(AVillager* InVillager)
 { 
-	InVillager->OnDeath.RemoveAll(this);
+	if (IsValid(InVillager) == true)
+	{
+		InVillager->OnDeath.RemoveAll(this);
+	}
 	CanTick = false; 
 	Villager = nullptr; 
 	Village = nullptr;  

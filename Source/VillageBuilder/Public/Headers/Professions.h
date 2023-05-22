@@ -9,5 +9,6 @@ enum EProfessions {
 	Mayor       UMETA(DisplayName = "Mayor"),
 	Builder     UMETA(DisplayName = "Builder"),
 	Forester    UMETA(DisplayName = "Forester"),
-	Courier		UMETA(DisplayName = "Courier")
+	Courier		UMETA(DisplayName = "Courier"),
+	Cooker		UMETA(DisplayName = "Cooker")
 };

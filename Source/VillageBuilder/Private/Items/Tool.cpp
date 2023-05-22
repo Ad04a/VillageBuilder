@@ -61,7 +61,6 @@ void ATool::Tick(float DeltaTime)
 	if (HitActor != nullptr )
 	{
 		DamagedActors.Add(HitActor);
-		UE_LOG(LogTemp, Error, TEXT("%f"), Damage);
 		UGameplayStatics::ApplyPointDamage(HitActor, Damage, HitResult.ImpactNormal, HitResult, nullptr, this, UDamageType::StaticClass());
 		GenerateHit(HitResult.Location);
 	}

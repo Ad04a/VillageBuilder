@@ -27,7 +27,7 @@ void AVillageManager::BeginPlay()
 		return;
 	}
 
-	FString FilePath = FPaths::ProjectContentDir() + NamesFile;
+	FString FilePath = FPaths::ProjectContentDir() + "/NonAssets/"  + NamesFile;
 	FFileHelper::LoadFileToStringArray(Names, *FilePath);
 
 	AGameplayModeBase* GameMode = Cast<AGameplayModeBase>(UGameplayStatics::GetGameMode(World));

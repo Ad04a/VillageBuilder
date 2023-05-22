@@ -17,7 +17,7 @@ class VILLAGEBUILDER_API UCourierManager : public UWorkerManager
 public:
 	virtual bool CheckGivenKeys() override;
 	virtual void Clear(AVillager* InVillager) override;
-
+	void Tick(float DeltaTime) override;
 	void GetFirstRequest();
 	void GetStationToClear();
 };

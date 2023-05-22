@@ -8,6 +8,11 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 
+void UCourierManager::Tick(float DeltaTime)
+{
+
+}
+
 bool UCourierManager::CheckGivenKeys()
 {
 	if (GivenKeys.Num() != 1)
